@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+import "aelf/core.proto";
+import "aelf/options.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Sinodac.Contracts.Credit";
+
+service CreditContract {
+    option (aelf.csharp_state) = "CreditContractState";
+
+    // Actions
+
+    rpc Create (CreateInput) returns (google.protobuf.Empty) { }
+    rpc Issue (IssueInput) returns (google.protobuf.Empty) { }
+    rpc Transfer (TransferInput) returns (google.protobuf.Empty) { }
+    rpc TransferFrom (TransferFromInput) returns (google.protobuf.Empty) { }
+    rpc Approve (ApproveInput) returns (google.protobuf.Empty) { }
+    rpc Burn (BurnInput) returns (google.protobuf.Empty) { }
+
+    rpc GetCreditInfo (GetCreditInfoInput) returns (CreditInfo) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetBalance (GetBalanceInput) returns (google.protobuf.Int64Value) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetAllowance (GetAllowanceInput) returns (google.protobuf.Int64Value) {
+        option (aelf.is_view) = true;
+    }
+}
+
+message CreateInput {
+}
+
+message IssueInput {
+}
+
+message TransferInput {
+}
+
+message TransferFromInput {
+}
+
+message ApproveInput {
+}
+
+message BurnInput {
+}
+
+message GetCreditInfoInput {
+}
+
+message GetBalanceInput {
+}
+
+message GetAllowanceInput {
+}
+
+message CreditInfo {
+}

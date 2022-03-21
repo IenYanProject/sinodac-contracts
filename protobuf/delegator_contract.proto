@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+import "aelf/core.proto";
+import "aelf/options.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "Sinodac.Contracts.Delegator";
+
+service DelegatorContract {
+    option (aelf.csharp_state) = "DelegatorContractState";
+
+    rpc Register (RegisterInput) returns (google.protobuf.Empty) { }
+    rpc Forward (ForwardInput) returns (google.protobuf.Empty) { }
+
+    rpc GetForwardRecord (aelf.Hash) returns (ForwardRecord) {
+        option (aelf.is_view) = true;
+    }
+}
+
+message RegisterInput {
+    AddressList permitted_address_list = 1;
+    string event_id = 2;
+    bool is_remove = 3;
+}
+
+message AddressList {
+    repeated aelf.Address value = 1;
+}
+
+message ForwardInput {
+    string from_id = 1;
+    aelf.Address to_address = 2;
+    string method_name = 3;
+    bytes parameter = 4;
+    string event_id = 5;
+}
+
+message ForwardRecord {
+    string from_id = 1;
+    string event_id = 2;
+    aelf.Address virtual_from_address = 3;
+    aelf.Address to_address = 4;
+    string method_name = 5;
+    bytes parameter = 6;
+}
