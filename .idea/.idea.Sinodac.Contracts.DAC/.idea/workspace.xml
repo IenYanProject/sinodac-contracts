@@ -6,170 +6,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/indexLayout.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/projectSettingsUpdater.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AElf.Contract.Tools.targets" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Directory.Build.props" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Sinodac.Contracts.DAC.sln" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Directory.Build.props" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContractState.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/Sinodac.Contracts.Credit.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractState.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Sinodac.Contracts.DAC.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContractState.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/Sinodac.Contracts.DACMarket.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMinter/DACMinterContract.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMinter/DACMinterContractState.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMinter/Sinodac.Contracts.DACMinter.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Sinodac.Contracts.Delegator.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuget.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs0.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs1.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs10.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs10_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs11.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs1_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs2.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs2_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs3.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs3_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs4.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs4_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs5.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs5_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs6.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs6_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs7.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs8.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs8_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs9.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/acs9_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/aedpos_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/aedpos_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/aelf/core.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/aelf/options.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/association_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/association_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/authority_info.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/basic_contract_zero.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/basic_contract_zero_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/basic_contract_zero_update.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/bingo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/bingo_game_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/code_check.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/configuration_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/configuration_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/credit_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/cross_chain_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/cross_chain_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/crosschain_rpc.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/dac_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/dac_market_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/dac_minter_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/delegator_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/economic_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/economic_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/election_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/election_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/execution.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/game_store_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/greeter_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/kernel.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/lottery_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/lottery_demo_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/metadata.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/my_app_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/network_types.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/parallel_execution.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/parliament_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/parliament_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/peer_service.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/profit_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/profit_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/random_demo.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/referendum_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/referendum_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/token_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/token_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/token_converter_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/token_converter_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/token_holder_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/token_holder_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/transaction_fee.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/treasury_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/treasury_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/vote_contract.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/vote_contract_impl.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/build.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/deploy_docker.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/deploy_myget.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/deploy_myget_daily.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/deploy_nuget.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/download_binary.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/download_binary.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_contract_base.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_contract_base.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_contract_code.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_contract_code.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_contract_reference.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_contract_reference.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_contract_stub.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_contract_stub.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_event_only.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generate_event_only.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/install.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/install.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/install_choco.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/install_dependency.ps1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/install_protobuf.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/template_script/gen_template.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/template_script/template.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/test.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/upload_coverage.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.ContractPatcher/AElf.Boilerplate.ContractPatcher.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.ContractPatcher/ContractPatcherModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.ContractPatcher/Program.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.DACContract.Launcher/AElf.Boilerplate.DACContract.Launcher.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.DACContract.Launcher/DeployContractsSystemTransactionGenerator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.DACContract.Launcher/Program.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.DACContract.Launcher/Startup.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.DACContract.Launcher/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.DACContract.Launcher/appsettings.MainChain.MainNet.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.DACContract.Launcher/appsettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.DACContract.Launcher/log4net.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/AElf.Boilerplate.MainChain.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/ContractInitDataProviders/AEDPoSContractInitializationDataProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/ContractInitDataProviders/CrossChainContractInitializationDataProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/ContractInitDataProviders/MainChainGenesisSmartContractDtoProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/ContractInitDataProviders/ParliamentContractInitializationDataProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/ContractInitDataProviders/TokenContractInitializationDataProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/MainChainAElfModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/MainChainContractDeploymentListProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.SystemTransactionGenerator/AElf.Boilerplate.SystemTransactionGenerator.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.SystemTransactionGenerator/SystemTransactionGeneratorModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.SystemTransactionGenerator/TransactionGeneratingService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.TestBase/AElf.Boilerplate.TestBase.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.TestBase/DAppContractTestBase.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.TestBase/DAppContractTestDeploymentListProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.TestBase/DAppContractTestModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.TestBase/DAppSmartContractAddressNameProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractInitializationProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestBase.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/Sinodac.Contracts.DAC.Tests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract_Helpers.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract_Views.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractConstants.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Certificate.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Helpers.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_OrganizationUnit.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Role.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/SinodacPermissions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/protobuf/scs1.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContractState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/Sinodac.Contracts.DACMarket.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/Sinodac.Contracts.DACMarket.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protobuf/credit_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/credit_contract.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protobuf/delegator_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/delegator_contract.proto" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -203,6 +57,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager" selected=".NET Project.AElf.Boilerplate.ContractPatcher">
@@ -251,15 +106,24 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1647834836462</updated>
-      <workItem from="1647834848446" duration="6707000" />
+      <workItem from="1647834848446" duration="14826000" />
+      <workItem from="1647926236973" duration="10623000" />
     </task>
+    <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
+      <created>1647851255016</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1647851255016</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
-  <component name="UnityProjectConfiguration" hasMinimizedUI="null" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -274,5 +138,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Initial Commit and initial Delegator Contract." />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit and initial Delegator Contract." />
   </component>
 </project>

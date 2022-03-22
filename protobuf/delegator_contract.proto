@@ -3,18 +3,58 @@ syntax = "proto3";
 import "aelf/core.proto";
 import "aelf/options.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 option csharp_namespace = "Sinodac.Contracts.Delegator";
 
 service DelegatorContract {
     option (aelf.csharp_state) = "DelegatorContractState";
 
+    rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
     rpc Register (RegisterInput) returns (google.protobuf.Empty) { }
+
+    // Roles Management
+    rpc CreateRole (CreateRoleInput) returns (google.protobuf.Empty) { }
+    rpc EditRole (EditRoleInput) returns (google.protobuf.Empty) { }
+    rpc DeleteRole (DeleteRoleInput) returns (google.protobuf.Empty) { }
+
+    // Organization Units Management
+    rpc CreateOrganizationUnit (CreateOrganizationUnitInput) returns (google.protobuf.Empty) { }
+    rpc EditOrganizationUnit (EditOrganizationUnitInput) returns (google.protobuf.Empty) { }
+    rpc DeleteOrganizationUnit (DeleteOrganizationUnitInput) returns (google.protobuf.Empty) { }
+
+    // Users Management
+    rpc CreateUser (CreateUserInput) returns (google.protobuf.Empty) { }
+    rpc EditUser (EditUserInput) returns (google.protobuf.Empty) { }
+    rpc DeleteUser (DeleteUserInput) returns (google.protobuf.Empty) { }
+
+    // Certificate Management
+    rpc CreateCertificate (CreateCertificateInput) returns (google.protobuf.Empty) { }
+    rpc EditCertificate (EditCertificateInput) returns (google.protobuf.Empty) { }
+    rpc DeleteCertificate (DeleteCertificateInput) returns (google.protobuf.Empty) { }
+
     rpc Forward (ForwardInput) returns (google.protobuf.Empty) { }
 
     rpc GetForwardRecord (aelf.Hash) returns (ForwardRecord) {
         option (aelf.is_view) = true;
     }
+    rpc GetRoleList (GetRoleListInput) returns (RoleList) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetOrganizationUnitList (GetOrganizationUnitListInput) returns (OrganizationUnitList) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetUserList (GetUserListInput) returns (UserList) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetCertificateList (GetCertificateListInput) returns (CertificateList) {
+        option (aelf.is_view) = true;
+    }
+}
+
+message InitializeInput {
+    aelf.Address admin_address = 1;
+    
 }
 
 message RegisterInput {
@@ -23,8 +63,56 @@ message RegisterInput {
     bool is_remove = 3;
 }
 
-message AddressList {
-    repeated aelf.Address value = 1;
+message CreateRoleInput {
+    string from_id = 1;
+    string role_name = 2;
+    bool enable = 3;
+    string role_description = 4;
+    repeated string permission_list = 5;
+}
+message EditRoleInput {
+    string from_id = 1;
+    string role_name = 2;
+    bool enable = 3;
+    string role_description = 4;
+    repeated string permission_list = 5;
+}
+message DeleteRoleInput {
+    string from_id = 1;
+    string role_name = 2;
+}
+message GetRoleListInput {
+    string role_name = 1;
+    string role_creator = 2;
+    google.protobuf.Timestamp create_time_min = 3;
+    google.protobuf.Timestamp create_time_max = 4;
+}
+
+message CreateOrganizationUnitInput {
+}
+message EditOrganizationUnitInput {
+}
+message DeleteOrganizationUnitInput {
+}
+message GetOrganizationUnitListInput {
+}
+
+message CreateUserInput {
+}
+message EditUserInput {
+}
+message DeleteUserInput {
+}
+message GetUserListInput {
+}
+
+message CreateCertificateInput {
+}
+message EditCertificateInput {
+}
+message DeleteCertificateInput {
+}
+message GetCertificateListInput {
 }
 
 message ForwardInput {
@@ -35,6 +123,66 @@ message ForwardInput {
     string event_id = 5;
 }
 
+message AddressList {
+    repeated aelf.Address value = 1;
+}
+
+message StringList {
+    repeated string value = 1;
+}
+
+message Role {
+    string role_name = 1;// Will be the primary key.
+    string role_creator = 2;
+    string role_description = 3;
+    google.protobuf.Timestamp create_time = 4;
+    google.protobuf.Timestamp latest_edit_time = 5;
+    int32 organization_unit_count = 6;
+    int32 user_count = 7;
+    bool enabled = 8;
+}
+
+message RoleList {
+    repeated Role value = 1;
+}
+
+message OrganizationUnit {
+    string organization_name = 1;
+    string organization_creator = 2;
+    string role_name = 3;
+    int32 user_count = 4;
+    bool enabled = 5;
+    google.protobuf.Timestamp create_time = 6;
+}
+
+message OrganizationUnitList {
+    repeated OrganizationUnit value = 1;
+}
+
+message User {
+    string user_name = 1;
+    string user_creator = 2;
+    string organization_name = 3;
+    google.protobuf.Timestamp create_time = 4;
+    bool enabled = 5;
+}
+
+message UserList {
+    repeated User value = 1;
+}
+
+message Certificate {
+    string organization_name = 1;
+    int32 apply_status = 2;
+    int32 apply_type = 3;
+    google.protobuf.Timestamp apply_time = 4;
+    bool enabled = 5;
+}
+
+message CertificateList {
+    repeated Certificate value = 1;
+}
+
 message ForwardRecord {
     string from_id = 1;
     string event_id = 2;
@@ -42,4 +190,21 @@ message ForwardRecord {
     aelf.Address to_address = 4;
     string method_name = 5;
     bytes parameter = 6;
+}
+
+// Events
+
+message RoleCreated {
+    option (aelf.is_event) = true;
+    Role role = 1;
+}
+
+message RoleEdited {
+    option (aelf.is_event) = true;
+    Role role = 1;
+}
+
+message RoleDeleted {
+    option (aelf.is_event) = true;
+    string role_name = 1;
 }

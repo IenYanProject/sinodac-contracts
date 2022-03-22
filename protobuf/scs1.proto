@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package scs1;
+
+import "aelf/options.proto";
+import "aelf/core.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+option (aelf.identity) = "scs1";
+option csharp_namespace = "Sinodac.Standards.Permission";
+
+service PermissionProviderContract {
+    rpc CheckPermission (google.protobuf.BytesValue) returns (google.protobuf.BoolValue) {
+        option (aelf.is_view) = true;
+    }
+}

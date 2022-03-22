@@ -12,6 +12,7 @@ service CreditContract {
 
     // Actions
 
+    rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
     rpc Create (CreateInput) returns (google.protobuf.Empty) { }
     rpc Issue (IssueInput) returns (google.protobuf.Empty) { }
     rpc Transfer (TransferInput) returns (google.protobuf.Empty) { }
@@ -28,9 +29,33 @@ service CreditContract {
     rpc GetAllowance (GetAllowanceInput) returns (google.protobuf.Int64Value) {
         option (aelf.is_view) = true;
     }
+    rpc IsInCreateTokenWhiteList (aelf.Address) returns (google.protobuf.BoolValue) {
+        option (aelf.is_view) = true;
+    }
+}
+
+// Inputs
+
+message InitializeInput {
+    aelf.Address dac_contract_address = 1;
+    aelf.Address admin_address = 2;
 }
 
 message CreateInput {
+    string symbol = 1;
+    string usage = 2;
+    int64 supply = 3;
+    int64 total_supply = 4;
+    int32 decimals = 5;
+    aelf.Address issuer = 6;
+    bool is_burnable = 7;
+    int32 issue_chain_id = 8;
+    int64 issued = 9;
+    ExternalInfo external_info = 10;
+}
+
+message ExternalInfo {
+    map<string, string> value = 1;
 }
 
 message IssueInput {
@@ -58,4 +83,10 @@ message GetAllowanceInput {
 }
 
 message CreditInfo {
+}
+
+
+// Events
+message CreditCreated {
+    
 }
