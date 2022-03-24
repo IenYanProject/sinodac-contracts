@@ -4,19 +4,30 @@ namespace Sinodac.Contracts.Delegator
 {
     public partial class DelegatorContract
     {
-        public override Empty CreateCertificate(CreateCertificateInput input)
+        public override Empty CreateOrganizationCertificate(CreateOrganizationCertificateInput input)
         {
-            return base.CreateCertificate(input);
+            CheckPermission(input.FromId, Permissions.Certificates.Create);
+            return new Empty();
         }
 
-        public override Empty EditCertificate(EditCertificateInput input)
+        public override Empty UpdateOrganizationCertificate(UpdateOrganizationCertificateInput input)
         {
-            return base.EditCertificate(input);
+            return new Empty();
+        }
+
+        public override Empty CreateIndependentCertificate(CreateIndependentCertificateInput input)
+        {
+            return new Empty();
+        }
+
+        public override Empty UpdateIndependentCertificate(UpdateIndependentCertificateInput input)
+        {
+            return new Empty();
         }
 
         public override Empty DeleteCertificate(DeleteCertificateInput input)
         {
-            return base.DeleteCertificate(input);
+            return new Empty();
         }
 
         public override CertificateList GetCertificateList(GetCertificateListInput input)

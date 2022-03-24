@@ -29,16 +29,25 @@ namespace Sinodac.Contracts.Delegator
             return new Empty();
         }
 
-        public override Empty EditRole(EditRoleInput input)
+        public override Empty UpdateRole(UpdateRoleInput input)
         {
-            CheckPermission(input.FromId, Permissions.Roles.Edit);
+            CheckPermission(input.FromId, Permissions.Roles.Update);
+            var oldRole = State.RoleMap[input.RoleName].Clone();
+            if (oldRole.Enabled)
+            {
+                Assert(input.Enable, "更新角色信息时无法禁用角色");
+            }
             var role = new Role
             {
                 RoleName = input.RoleName,
-                RoleCreator = input.FromId,
-                CreateTime = Context.CurrentBlockTime,
-                Enabled = input.Enable,
-                RoleDescription = input.RoleDescription
+                RoleDescription = input.RoleDescription,
+                LatestEditTime = Context.CurrentBlockTime,
+                // Stay old values.
+                RoleCreator = oldRole.RoleCreator,
+                CreateTime = oldRole.CreateTime,
+                Enabled = oldRole.Enabled,
+                OrganizationUnitCount = oldRole.OrganizationUnitCount,
+                UserCount = oldRole.UserCount
             };
             State.RoleMap[input.RoleName] = role;
             foreach (var actionId in input.PermissionList)
@@ -46,27 +55,32 @@ namespace Sinodac.Contracts.Delegator
                 State.RolePermissionMap[input.RoleName][actionId] = true;
             }
 
-            Context.Fire(new RoleEdited
+            Context.Fire(new RoleUpdated
             {
                 Role = role
             });
             return new Empty();
         }
 
-        public override Empty DeleteRole(DeleteRoleInput input)
+        public override Empty DisableRole(DisableRoleInput input)
         {
-            CheckPermission(input.FromId, Permissions.Roles.Edit);
+            CheckPermission(input.FromId, Permissions.Roles.Disable);
+
+            if (input.Enable)
+            {
+                State.RoleMap[input.RoleName].Enabled = true;
+                return new Empty();
+            }
+
             var organizationUnitList = State.RoleOrganizationUnitListMap[input.RoleName];
             foreach (var organizationUnit in organizationUnitList.Value)
             {
-                var userList = State.OrganizationUnitUserListMap[organizationUnit];
-                foreach (var user in userList.Value)
-                {
-                    Assert(!State.UserMap[user].Enabled, "当前角色下存在【启用】状态用户，请先禁用该用户后再禁用当前角色");
-                }
+                Assert(!State.OrganizationUnitMap[organizationUnit].Enabled,
+                    $"当前角色下存在【启用】状态机构 {organizationUnit} ，请先禁用该机构后再禁用当前角色");
             }
 
-            Context.Fire(new RoleDeleted
+            State.RoleMap[input.RoleName].Enabled = false;
+            Context.Fire(new RoleDisabled
             {
                 RoleName = input.RoleName
             });

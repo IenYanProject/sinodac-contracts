@@ -4,6 +4,7 @@ import "aelf/core.proto";
 import "aelf/options.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 option csharp_namespace = "Sinodac.Contracts.Delegator";
 
@@ -11,30 +12,39 @@ service DelegatorContract {
     option (aelf.csharp_state) = "DelegatorContractState";
 
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
-    rpc Register (RegisterInput) returns (google.protobuf.Empty) { }
+    rpc RegisterSenders (RegisterSendersInput) returns (google.protobuf.Empty) { }
+    rpc RegisterMethods (RegisterMethodsInput) returns (google.protobuf.Empty) { }
+    rpc Forward (ForwardInput) returns (google.protobuf.Empty) { }
+    rpc ForwardCheck (aelf.Hash) returns (google.protobuf.Empty) { }
 
     // Roles Management
     rpc CreateRole (CreateRoleInput) returns (google.protobuf.Empty) { }
-    rpc EditRole (EditRoleInput) returns (google.protobuf.Empty) { }
-    rpc DeleteRole (DeleteRoleInput) returns (google.protobuf.Empty) { }
+    rpc UpdateRole (UpdateRoleInput) returns (google.protobuf.Empty) { }
+    rpc DisableRole (DisableRoleInput) returns (google.protobuf.Empty) { }
 
     // Organization Units Management
     rpc CreateOrganizationUnit (CreateOrganizationUnitInput) returns (google.protobuf.Empty) { }
-    rpc EditOrganizationUnit (EditOrganizationUnitInput) returns (google.protobuf.Empty) { }
-    rpc DeleteOrganizationUnit (DeleteOrganizationUnitInput) returns (google.protobuf.Empty) { }
+    rpc UpdateOrganizationUnit (UpdateOrganizationUnitInput) returns (google.protobuf.Empty) { }
+    rpc DisableOrganizationUnit (DisableOrganizationUnitInput) returns (google.protobuf.Empty) { }
 
     // Users Management
     rpc CreateUser (CreateUserInput) returns (google.protobuf.Empty) { }
-    rpc EditUser (EditUserInput) returns (google.protobuf.Empty) { }
-    rpc DeleteUser (DeleteUserInput) returns (google.protobuf.Empty) { }
+    rpc UpdateUser (UpdateUserInput) returns (google.protobuf.Empty) { }
+    rpc DisableUser (DisableUserInput) returns (google.protobuf.Empty) { }
 
     // Certificate Management
-    rpc CreateCertificate (CreateCertificateInput) returns (google.protobuf.Empty) { }
-    rpc EditCertificate (EditCertificateInput) returns (google.protobuf.Empty) { }
+    rpc CreateOrganizationCertificate (CreateOrganizationCertificateInput) returns (google.protobuf.Empty) { }
+    rpc CreateIndependentCertificate (CreateIndependentCertificateInput) returns (google.protobuf.Empty) { }
+    rpc UpdateOrganizationCertificate (UpdateOrganizationCertificateInput) returns (google.protobuf.Empty) { }
+    rpc UpdateIndependentCertificate (UpdateIndependentCertificateInput) returns (google.protobuf.Empty) { }
     rpc DeleteCertificate (DeleteCertificateInput) returns (google.protobuf.Empty) { }
 
-    rpc Forward (ForwardInput) returns (google.protobuf.Empty) { }
-
+    rpc IsPermittedAddress (IsPermittedAddressInput) returns (google.protobuf.BoolValue) {
+        option (aelf.is_view) = true;
+    }
+    rpc IsPermittedMethod (IsPermittedMethodInput) returns (google.protobuf.BoolValue) {
+        option (aelf.is_view) = true;
+    }
     rpc GetForwardRecord (aelf.Hash) returns (ForwardRecord) {
         option (aelf.is_view) = true;
     }
@@ -54,12 +64,17 @@ service DelegatorContract {
 
 message InitializeInput {
     aelf.Address admin_address = 1;
-    
 }
 
-message RegisterInput {
-    AddressList permitted_address_list = 1;
-    string event_id = 2;
+message RegisterSendersInput {
+    string scope_id = 1;
+    AddressList address_list = 2;
+    bool is_remove = 3;
+}
+
+message RegisterMethodsInput {
+    string scope_id = 1;
+    StringList method_name_list = 2;
     bool is_remove = 3;
 }
 
@@ -70,16 +85,17 @@ message CreateRoleInput {
     string role_description = 4;
     repeated string permission_list = 5;
 }
-message EditRoleInput {
+message UpdateRoleInput {
     string from_id = 1;
     string role_name = 2;
     bool enable = 3;
     string role_description = 4;
     repeated string permission_list = 5;
 }
-message DeleteRoleInput {
+message DisableRoleInput {
     string from_id = 1;
     string role_name = 2;
+    bool enable = 3;
 }
 message GetRoleListInput {
     string role_name = 1;
@@ -89,30 +105,120 @@ message GetRoleListInput {
 }
 
 message CreateOrganizationUnitInput {
+    string from_id = 1;
+    string organization_name = 2;
+    string role_name = 3;
+    bool enable = 4;
 }
-message EditOrganizationUnitInput {
+message UpdateOrganizationUnitInput {
+    string from_id = 1;
+    string organization_name = 2;
+    string role_name = 3;
+    bool enable = 4;
 }
-message DeleteOrganizationUnitInput {
+message DisableOrganizationUnitInput {
+    string from_id = 1;
+    string organization_name = 2;
+    bool enable = 3;
 }
 message GetOrganizationUnitListInput {
+    string organization_name = 1;
+    bool enabled = 2;
+    string organization_creator = 3;
 }
 
 message CreateUserInput {
+    string from_id = 1;
+    string user_name = 2;
+    string organization_name = 3;
+    bool enable = 4;
 }
-message EditUserInput {
+message UpdateUserInput {
+    string from_id = 1;
+    string user_name = 2;
+    string organization_name = 3;
+    bool enable = 4;
 }
-message DeleteUserInput {
+message DisableUserInput {
+    string from_id = 1;
+    string user_name = 2;
+    bool enable = 3;
 }
 message GetUserListInput {
+    string user_name = 1;
+    bool enabled = 2;
+    string user_creator = 3;
 }
 
-message CreateCertificateInput {
+message CreateOrganizationCertificateInput {
+    string from_id = 1;
+    string organization_name = 2;
+    int32 organization_type = 3;
+    int32 organization_level = 4;
+    string organization_location = 5;
+    string organization_credit_code = 6;
+    string organization_artificial_person = 7;// 机构法人
+    google.protobuf.Timestamp organization_established_time = 8;
+    string registration_authority = 9;// 登记机关
+    string organization_phone_number = 10;
+    string organization_email = 11;
+    string organization_description = 12;
+    repeated string photo_ids = 13;
 }
-message EditCertificateInput {
+message UpdateOrganizationCertificateInput {
+    string from_id = 1;
+    string organization_name = 2;
+    int32 organization_type = 3;
+    int32 organization_level = 4;
+    string organization_location = 5;
+    string organization_credit_code = 6;
+    string organization_artificial_person = 7;// 机构法人
+    google.protobuf.Timestamp organization_established_time = 8;
+    string registration_authority = 9;// 登记机关
+    string organization_phone_number = 10;
+    string organization_email = 11;
+    string organization_description = 12;
+    repeated string photo_ids = 13;
+}
+message CreateIndependentCertificateInput {
+    string from_id = 1;
+    string name = 2;
+    string id = 3;
+    string phone_number = 4;
+    string email = 5;
+    string organization_name = 6;
+    string location = 7;
+    string description = 8;
+    repeated string photo_ids = 9;
+}
+message UpdateIndependentCertificateInput {
+    string from_id = 1;
+    string name = 2;
+    string id = 3;
+    string phone_number = 4;
+    string email = 5;
+    string organization_name = 6;
+    string location = 7;
+    string description = 8;
+    repeated string photo_ids = 9;
 }
 message DeleteCertificateInput {
+    string from_id = 1;
+    string name = 2;
 }
 message GetCertificateListInput {
+}
+
+message IsPermittedAddressInput {
+    aelf.Address to_address = 1;
+    string scope_id = 2;
+    aelf.Address address = 3;
+}
+
+message IsPermittedMethodInput {
+    aelf.Address to_address = 1;
+    string scope_id = 2;
+    string method_name = 3;
 }
 
 message ForwardInput {
@@ -120,7 +226,7 @@ message ForwardInput {
     aelf.Address to_address = 2;
     string method_name = 3;
     bytes parameter = 4;
-    string event_id = 5;
+    string scope_id = 5;
 }
 
 message AddressList {
@@ -171,12 +277,41 @@ message UserList {
     repeated User value = 1;
 }
 
+message OrganizationCertificate {
+    google.protobuf.Timestamp create_time = 1;
+    string organization_name = 2;
+    int32 organization_type = 3;
+    int32 organization_level = 4;
+    string organization_location = 5;
+    string organization_credit_code = 6;
+    string organization_artificial_person = 7;// 机构法人
+    google.protobuf.Timestamp organization_established_time = 8;
+    string registration_authority = 9;// 登记机关
+    string organization_phone_number = 10;
+    string organization_email = 11;
+    string organization_description = 12;
+    repeated string photo_ids = 13;
+}
+
+message IndependentCertificate {
+    google.protobuf.Timestamp create_time = 1;
+    string name = 2;
+    string id = 3;
+    string phone_number = 4;
+    string email = 5;
+    string organization_name = 6;
+    string location = 7;
+    string description = 8;
+    repeated string photo_ids = 9;
+}
+
 message Certificate {
-    string organization_name = 1;
+    string applier = 1;
     int32 apply_status = 2;
     int32 apply_type = 3;
     google.protobuf.Timestamp apply_time = 4;
     bool enabled = 5;
+    string organization_name = 6;
 }
 
 message CertificateList {
@@ -185,7 +320,7 @@ message CertificateList {
 
 message ForwardRecord {
     string from_id = 1;
-    string event_id = 2;
+    string scope_id = 2;
     aelf.Address virtual_from_address = 3;
     aelf.Address to_address = 4;
     string method_name = 5;
@@ -199,12 +334,47 @@ message RoleCreated {
     Role role = 1;
 }
 
-message RoleEdited {
+message RoleUpdated {
     option (aelf.is_event) = true;
     Role role = 1;
 }
 
-message RoleDeleted {
+message RoleDisabled {
     option (aelf.is_event) = true;
-    string role_name = 1;
+    string role_name = 1 [(aelf.is_indexed) = true];
+}
+
+message RoleEnabled {
+    option (aelf.is_event) = true;
+    string role_name = 1 [(aelf.is_indexed) = true];
+}
+
+message OrganizationUnitCreated {
+    option (aelf.is_event) = true;
+    OrganizationUnit organization_unit = 1;
+}
+
+message OrganizationUnitUpdated {
+    option (aelf.is_event) = true;
+    OrganizationUnit organization_unit = 1;
+}
+
+message OrganizationUnitDisabled {
+    option (aelf.is_event) = true;
+    string organization_name = 1;
+}
+
+message UserCreated {
+    option (aelf.is_event) = true;
+    User user = 1;
+}
+
+message UserUpdated {
+    option (aelf.is_event) = true;
+    User user = 1;
+}
+
+message UserDisabled {
+    option (aelf.is_event) = true;
+    string user_name = 1;
 }

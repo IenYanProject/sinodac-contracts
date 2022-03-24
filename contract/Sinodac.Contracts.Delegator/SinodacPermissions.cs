@@ -23,33 +23,33 @@ namespace Sinodac.Contracts.Delegator
         public class Roles
         {
             public const string Default = nameof(Roles);
-            public const string Edit = Default + ":Edit";
             public const string Create = Default + ":Create";
-            public const string Delete = Default + ":Delete";
+            public const string Update = Default + ":Update";
+            public const string Disable = Default + ":Disable";
         }
 
         public class OrganizationUnits
         {
             public const string Default = nameof(OrganizationUnits);
-            public const string Edit = Default + ":Edit";
             public const string Create = Default + ":Create";
-            public const string Delete = Default + ":Delete";
+            public const string Update = Default + ":Update";
+            public const string Disable = Default + ":Disable";
         }
 
         public class Certificates
         {
             public const string Default = nameof(Certificates);
-            public const string Edit = Default + ":Edit";
             public const string Create = Default + ":Create";
-            public const string Delete = Default + ":Delete";
+            public const string Update = Default + ":Update";
+            public const string Disable = Default + ":Disable";
         }
 
         public class Users
         {
             public const string Default = nameof(Users);
-            public const string Edit = Default + ":Edit";
             public const string Create = Default + ":Create";
-            public const string Delete = Default + ":Delete";
+            public const string Update = Default + ":Update";
+            public const string Disable = Default + ":Disable";
         }
     }
 }

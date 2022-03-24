@@ -8,14 +8,21 @@ namespace Sinodac.Contracts.Delegator
         public SingletonState<Address> Admin { get; set; }
 
         /// <summary>
-        /// To Address -> Event Id -> Sender Address -> Is Permitted.
+        /// To Address -> Scope Id -> Sender Address -> Is Permitted.
         /// </summary>
         public MappedState<Address, string, Address, bool> IsPermittedAddressMap { get; set; }
 
         /// <summary>
-        /// Tx Id -> Forward Record (History).
+        /// To Address -> Scope Id -> Method Name -> Is Permitted.
+        /// </summary>
+        public MappedState<Address, string, string, bool> IsPermittedMethodNameMap { get; set; }
+
+        /// <summary>
+        /// Tx Id -> ForwardRecord.
         /// </summary>
         public MappedState<Hash, ForwardRecord> ForwardRecordMap { get; set; }
+
+        public MappedState<Hash, bool> TemporaryTxIdMap { get; set; }
 
         /// <summary>
         /// Role Name -> Action Id -> Is Permitted.

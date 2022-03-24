@@ -6,23 +6,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract_Helpers.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract_Views.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractConstants.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Certificate.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Helpers.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_OrganizationUnit.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Role.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/SinodacPermissions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/protobuf/scs1.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContractState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/Sinodac.Contracts.DACMarket.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/Sinodac.Contracts.DACMarket.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/protobuf/credit_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/credit_contract.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Certificate.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Certificate.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Helpers.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_OrganizationUnit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_OrganizationUnit.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Role.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Role.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/SinodacPermissions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/SinodacPermissions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/protobuf/delegator_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/delegator_contract.proto" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -40,6 +32,9 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Protobuf/Generated/DelegatorContract.g.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -107,7 +102,8 @@
       <option name="presentableId" value="Default" />
       <updated>1647834836462</updated>
       <workItem from="1647834848446" duration="14826000" />
-      <workItem from="1647926236973" duration="10623000" />
+      <workItem from="1647926236973" duration="12192000" />
+      <workItem from="1648006044181" duration="16581000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
       <created>1647851255016</created>
@@ -116,7 +112,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647851255016</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Role part in Delegator Contract.">
+      <created>1647939813295</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1647939813295</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -139,6 +142,7 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Initial Commit and initial Delegator Contract." />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial Commit and initial Delegator Contract." />
+    <MESSAGE value="Role part in Delegator Contract." />
+    <option name="LAST_COMMIT_MESSAGE" value="Role part in Delegator Contract." />
   </component>
 </project>
