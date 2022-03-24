@@ -1,11 +1,25 @@
 using System.Collections.Generic;
+using System.Linq;
 using AElf.Sdk.CSharp;
 
 namespace Sinodac.Contracts.Delegator
 {
     public partial class DelegatorContract
     {
-        private void CheckPermission(string fromId, string actionId)
+        private void CheckPermissions(string fromId, params string[] actionIds)
+        {
+            Assert(actionIds.Any(actionId => CheckPermission(fromId, actionId)),
+                $"用户{fromId}没有权限调用当前方法");
+        }
+
+        /// <summary>
+        /// Only CheckPermissions method should use this method.
+        /// </summary>
+        /// <param name="fromId"></param>
+        /// <param name="actionId"></param>
+        /// <returns></returns>
+        /// <exception cref="AssertionException"></exception>
+        private bool CheckPermission(string fromId, string actionId)
         {
             var user = State.UserMap[fromId];
             if (user == null)
@@ -28,33 +42,64 @@ namespace Sinodac.Contracts.Delegator
             }
 
             Assert(organizationUnit.Enabled, $"机构 {organizationUnit.OrganizationName} 当前为禁用状态");
-            Assert(State.RolePermissionMap[organizationUnit.RoleName][actionId],
-                $"角色{organizationUnit.RoleName}没有调用 {actionId} 的权限");
+
+            return State.RolePermissionMap[organizationUnit.RoleName][actionId];
+        }
+
+        private void TransferPermissionToForwardPermission(List<string> actionIds)
+        {
+            var dacContractActionIds = new List<string>
+            {
+                DAC.CreateProtocol,
+                DAC.CreateCollection,
+                DAC.CreateMysteryBox,
+            };
+            var dacMarketContractActionIds = new List<string>
+            {
+                DAC.List
+            };
+
+            // TODO: Move this logic to DAC Contract & DAC Market Contract.
         }
 
         private List<string> GetAllActionIds()
         {
             return new List<string>
             {
-                Permissions.Roles.Default,
-                Permissions.Roles.Create,
-                Permissions.Roles.Update,
-                Permissions.Roles.Disable,
+                HomePage.Default,
 
-                Permissions.OrganizationUnits.Default,
-                Permissions.OrganizationUnits.Create,
-                Permissions.OrganizationUnits.Update,
-                Permissions.OrganizationUnits.Disable,
+                DAC.Default,
+                DAC.List,
+                DAC.Create,
+                DAC.CreateProtocol,
+                DAC.CreateCollection,
+                DAC.CreateMysteryBox,
+                DAC.Audit,
+                DAC.AuditDetail,
+                DAC.Copyright,
 
-                Permissions.Users.Default,
-                Permissions.Users.Create,
-                Permissions.Users.Update,
-                Permissions.Users.Disable,
+                Permission.Default,
+                Permission.Role.RoleDefault,
+                Permission.Role.Create,
+                Permission.Role.Update,
+                Permission.Role.Disable,
+                Permission.OrganizationUnit.OrganizationUnitDefault,
+                Permission.OrganizationUnit.Create,
+                Permission.OrganizationUnit.Update,
+                Permission.OrganizationUnit.Disable,
+                Permission.User.UserDefault,
+                Permission.User.Create,
+                Permission.User.Update,
+                Permission.User.Disable,
+                Permission.Certificate.CertificateDefault,
+                Permission.Certificate.Detail,
 
-                Permissions.Certificates.Default,
-                Permissions.Certificates.Create,
-                Permissions.Certificates.Update,
-                Permissions.Certificates.Disable
+                Statistic.Default,
+
+                Profile.Default,
+                Profile.Information,
+                Profile.CertificateOrganizationUnit,
+                Profile.CertificateIndependent
             };
         }
     }

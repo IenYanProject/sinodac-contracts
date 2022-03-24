@@ -1,4 +1,5 @@
 using AElf;
+using AElf.Sdk.CSharp;
 using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
 
@@ -12,10 +13,10 @@ namespace Sinodac.Contracts.Delegator
 
             State.Admin.Value = input.AdminAddress ?? Context.Sender;
 
-            const string admin = "Admin";
-            const string defaultOrganizationName = "Default";
-            const string defaultRoleName = "Independent";
-            const string system = "System";
+            const string admin = "管理员";
+            const string defaultOrganizationName = "默认机构";
+            const string defaultRoleName = "默认角色";
+            const string system = "系统";
 
             State.RoleMap[admin] = new Role
             {
@@ -44,7 +45,7 @@ namespace Sinodac.Contracts.Delegator
                 RoleCreator = system,
                 CreateTime = Context.CurrentBlockTime,
                 Enabled = true,
-                RoleDescription = $"{defaultRoleName} stands for himself.",
+                RoleDescription = "缺省设置",
             };
             State.OrganizationUnitMap[defaultOrganizationName] = new OrganizationUnit
             {
@@ -109,10 +110,18 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty Forward(ForwardInput input)
         {
+            var user = State.UserMap[input.FromId];
+            if (user == null)
+            {
+                throw new AssertionException($"用户 {input.FromId} 不存在");
+            }
+            var organization = State.OrganizationUnitMap[user.OrganizationName];
+            Assert(State.RolePermissionMap[organization.RoleName][input.ScopeId],
+                $"用户所属的角色 {organization.RoleName} 没有 {input.ScopeId} 权限");
             Assert(State.IsPermittedAddressMap[input.ToAddress][input.ScopeId][Context.Sender],
-                "[Sender] No permission.");
+                "交易发起人无权限");
             Assert(State.IsPermittedMethodNameMap[input.ToAddress][input.ScopeId][input.MethodName],
-                "[MethodName] No permission.");
+                $"交易发起人没有调用 {input.MethodName} 的权限");
             var fromHash = HashHelper.ComputeFrom($"{input.ScopeId}-{input.FromId}");
             Context.SendVirtualInline(fromHash, input.ToAddress, input.MethodName,
                 input.Parameter);

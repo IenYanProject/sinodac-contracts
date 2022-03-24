@@ -8,7 +8,7 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateOrganizationUnit(CreateOrganizationUnitInput input)
         {
-            CheckPermission(input.FromId, Permissions.OrganizationUnits.Create);
+            CheckPermissions(input.FromId, Profile.CertificateOrganizationUnit, Permission.OrganizationUnit.Create);
 
             var role = State.RoleMap[input.RoleName];
             if (role == null)
@@ -39,12 +39,10 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty UpdateOrganizationUnit(UpdateOrganizationUnitInput input)
         {
-            CheckPermission(input.FromId, Permissions.OrganizationUnits.Update);
+            CheckPermissions(input.FromId, Profile.CertificateOrganizationUnit, Permission.OrganizationUnit.Update);
+
             var oldOrganizationUnit = State.OrganizationUnitMap[input.OrganizationName].Clone();
-            if (oldOrganizationUnit.Enabled)
-            {
-                Assert(input.Enable, "更新机构信息时无法禁用机构");
-            }
+            Assert(oldOrganizationUnit.Enabled == input.Enable, "更新机构信息时无法禁用或启用机构");
 
             var organizationUnit = new OrganizationUnit
             {
@@ -63,9 +61,10 @@ namespace Sinodac.Contracts.Delegator
             });
             return new Empty();
         }
+
         public override Empty DisableOrganizationUnit(DisableOrganizationUnitInput input)
         {
-            CheckPermission(input.FromId, Permissions.OrganizationUnits.Disable);
+            CheckPermissions(input.FromId, Permission.OrganizationUnit.Disable);
 
             var organizationUnit = State.OrganizationUnitMap[input.OrganizationName];
 
@@ -76,6 +75,10 @@ namespace Sinodac.Contracts.Delegator
                     $"机构 {input.OrganizationName} 所属角色 {organizationUnit.RoleName} 当前为禁用状态");
                 State.RoleMap[organizationUnit.RoleName].OrganizationUnitCount =
                     State.RoleMap[organizationUnit.RoleName].OrganizationUnitCount.Add(1);
+                Context.Fire(new OrganizationUnitEnabled
+                {
+                    OrganizationName = input.OrganizationName
+                });
                 return new Empty();
             }
 

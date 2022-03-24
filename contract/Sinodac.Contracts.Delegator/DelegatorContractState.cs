@@ -30,6 +30,12 @@ namespace Sinodac.Contracts.Delegator
         public MappedState<string, string, bool> RolePermissionMap { get; set; }
 
         /// <summary>
+        /// Role Name -> Action Id List (Stands For Permissions).
+        /// Only for reading, not for checking.
+        /// </summary>
+        public MappedState<string, StringList> RoleActionIdListMap { get; set; }
+
+        /// <summary>
         /// Role Name -> Role.
         /// </summary>
         public MappedState<string, Role> RoleMap { get; set; }
@@ -50,5 +56,10 @@ namespace Sinodac.Contracts.Delegator
         public MappedState<string, StringList> RoleOrganizationUnitListMap { get; set; }
 
         public MappedState<string, StringList> OrganizationUnitUserListMap { get; set; }
+
+        /// <summary>
+        /// Organization Name -> OrganizationCertificate.
+        /// </summary>
+        public MappedState<string, OrganizationCertificate> OrganizationCertificateMap { get; set; }
     }
 }

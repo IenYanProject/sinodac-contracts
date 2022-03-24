@@ -8,7 +8,7 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateUser(CreateUserInput input)
         {
-            CheckPermission(input.FromId, Permissions.Users.Create);
+            CheckPermissions(input.FromId, Permission.User.Create);
 
             var organizationUnit = State.OrganizationUnitMap[input.OrganizationName];
             if (organizationUnit == null)
@@ -40,11 +40,8 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty UpdateUser(UpdateUserInput input)
         {
-            CheckPermission(input.FromId, Permissions.Users.Update);
-            if (State.UserMap[input.UserName].Enabled)
-            {
-                Assert(input.Enable, "更新用户信息时无法禁用用户");
-            }
+            CheckPermissions(input.FromId, Permission.User.Update);
+            Assert(State.UserMap[input.UserName].Enabled == input.Enable, "更新用户信息时无法禁用或启用用户");
 
             var user = new User
             {
@@ -65,7 +62,7 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty DisableUser(DisableUserInput input)
         {
-            CheckPermission(input.FromId, Permissions.Users.Disable);
+            CheckPermissions(input.FromId, Permission.User.Disable);
             var user = State.UserMap[input.UserName];
             var organizationUnit = State.OrganizationUnitMap[user.OrganizationName];
 
@@ -77,6 +74,10 @@ namespace Sinodac.Contracts.Delegator
                 State.OrganizationUnitMap[user.OrganizationName].UserCount = organizationUnit.UserCount.Add(1);
                 State.RoleMap[organizationUnit.RoleName].UserCount =
                     State.RoleMap[organizationUnit.RoleName].UserCount.Add(1);
+                Context.Fire(new UserEnabled
+                {
+                    UserName = input.UserName
+                });
                 return new Empty();
             }
 

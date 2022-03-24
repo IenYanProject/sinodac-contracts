@@ -6,12 +6,31 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateOrganizationCertificate(CreateOrganizationCertificateInput input)
         {
-            CheckPermission(input.FromId, Permissions.Certificates.Create);
+            CheckPermissions(input.FromId, Profile.CertificateOrganizationUnit);
+            var organizationCertificate = new OrganizationCertificate
+            {
+                CreateTime = Context.CurrentBlockTime,
+                OrganizationDescription = input.OrganizationDescription,
+                OrganizationEmail = input.OrganizationEmail,
+                OrganizationLevel = input.OrganizationLevel,
+                OrganizationLocation = input.OrganizationLocation,
+                OrganizationName = input.OrganizationName,
+                OrganizationType = input.OrganizationType,
+                OrganizationArtificialPerson = input.OrganizationArtificialPerson,
+                OrganizationCreditCode = input.OrganizationCreditCode,
+                OrganizationEstablishedTime = input.OrganizationEstablishedTime,
+                OrganizationPhoneNumber = input.OrganizationPhoneNumber,
+                RegistrationAuthority = input.RegistrationAuthority,
+                PhotoIds = { input.PhotoIds }
+            };
+            State.OrganizationCertificateMap[input.OrganizationName] = organizationCertificate;
+            
             return new Empty();
         }
 
         public override Empty UpdateOrganizationCertificate(UpdateOrganizationCertificateInput input)
         {
+            CheckPermissions(input.FromId, Profile.CertificateOrganizationUnit);
             return new Empty();
         }
 

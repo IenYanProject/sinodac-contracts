@@ -7,7 +7,7 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateRole(CreateRoleInput input)
         {
-            CheckPermission(input.FromId, Permissions.Roles.Create);
+            CheckPermissions(input.FromId, Permission.Role.Create);
             var role = new Role
             {
                 RoleName = input.RoleName,
@@ -17,10 +17,14 @@ namespace Sinodac.Contracts.Delegator
                 RoleDescription = input.RoleDescription
             };
             State.RoleMap[input.RoleName] = role;
-            foreach (var permission in input.PermissionList)
+            var actionIdList = new StringList();
+            foreach (var actionId in input.PermissionList)
             {
-                State.RolePermissionMap[input.RoleName][permission] = true;
+                State.RolePermissionMap[input.RoleName][actionId] = true;
+                actionIdList.Value.Add(actionId);
             }
+
+            State.RoleActionIdListMap[input.RoleName] = actionIdList;
 
             Context.Fire(new RoleCreated
             {
@@ -31,12 +35,10 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty UpdateRole(UpdateRoleInput input)
         {
-            CheckPermission(input.FromId, Permissions.Roles.Update);
+            CheckPermissions(input.FromId, Permission.Role.Update);
             var oldRole = State.RoleMap[input.RoleName].Clone();
-            if (oldRole.Enabled)
-            {
-                Assert(input.Enable, "更新角色信息时无法禁用角色");
-            }
+            Assert(oldRole.Enabled == input.Enable, "更新角色信息时无法禁用或启用角色");
+
             var role = new Role
             {
                 RoleName = input.RoleName,
@@ -64,11 +66,15 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty DisableRole(DisableRoleInput input)
         {
-            CheckPermission(input.FromId, Permissions.Roles.Disable);
+            CheckPermissions(input.FromId, Permission.Role.Disable);
 
             if (input.Enable)
             {
                 State.RoleMap[input.RoleName].Enabled = true;
+                Context.Fire(new RoleEnabled
+                {
+                    RoleName = input.RoleName
+                });
                 return new Empty();
             }
 
