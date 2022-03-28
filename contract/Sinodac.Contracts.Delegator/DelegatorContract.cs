@@ -15,10 +15,10 @@ namespace Sinodac.Contracts.Delegator
 
             const string admin = "管理员";
             const string defaultOrganizationName = "默认机构";
-            const string defaultRoleName = "默认角色";
+            const string defaultRoleName = "默认";
             const string system = "系统";
 
-            State.RoleMap[admin] = new Role
+            var roleAdmin = new Role
             {
                 RoleName = admin,
                 RoleCreator = system,
@@ -26,28 +26,66 @@ namespace Sinodac.Contracts.Delegator
                 Enabled = true,
                 RoleDescription = $"{admin} can do anything.",
             };
-            State.OrganizationUnitMap[admin] = new OrganizationUnit
+            State.RoleMap[admin] = roleAdmin;
+            Context.Fire(new RoleCreated
+            {
+                FromId = system,
+                Role = roleAdmin
+            });
+            // 管理员组织没有OrganizationCertificate
+            var organizationUnitAdmin = new OrganizationUnit
             {
                 OrganizationName = admin,
                 CreateTime = Context.CurrentBlockTime,
                 Enabled = true,
                 OrganizationCreator = system,
                 RoleName = admin,
+                AdminList = new StringList
+                {
+                    Value = { admin }
+                }
             };
+            State.OrganizationUnitMap[admin] = organizationUnitAdmin;
             State.RoleOrganizationUnitListMap[admin] = new StringList
             {
                 Value = { admin }
             };
+            Context.Fire(new OrganizationUnitCreated
+            {
+                FromId = system,
+                OrganizationUnit = organizationUnitAdmin
+            });
+            var userAdmin = new User
+            {
+                CreateTime = Context.CurrentBlockTime,
+                Enabled = true,
+                OrganizationName = admin,
+                UserCreator = system,
+                UserName = nameof(admin)
+            };
+            State.UserMap[nameof(admin)] = userAdmin;
+            Context.Fire(new UserCreated
+            {
+                FromId = system,
+                User = userAdmin
+            });
 
-            State.RoleMap[defaultRoleName] = new Role
+            var roleDefault = new Role
             {
                 RoleName = defaultRoleName,
                 RoleCreator = system,
                 CreateTime = Context.CurrentBlockTime,
                 Enabled = true,
-                RoleDescription = "缺省设置",
+                RoleDescription = "新建用户的默认角色",
+                OrganizationUnitCount = 1,
             };
-            State.OrganizationUnitMap[defaultOrganizationName] = new OrganizationUnit
+            State.RoleMap[defaultRoleName] = roleDefault;
+            Context.Fire(new RoleCreated
+            {
+                FromId = system,
+                Role = roleDefault
+            });
+            var organizationUnitDefault = new OrganizationUnit
             {
                 OrganizationName = defaultOrganizationName,
                 CreateTime = Context.CurrentBlockTime,
@@ -55,15 +93,22 @@ namespace Sinodac.Contracts.Delegator
                 OrganizationCreator = system,
                 RoleName = defaultRoleName,
             };
+            State.OrganizationUnitMap[defaultOrganizationName] = organizationUnitDefault;
             State.RoleOrganizationUnitListMap[defaultRoleName] = new StringList
             {
                 Value = { defaultOrganizationName }
             };
+            Context.Fire(new OrganizationUnitCreated
+            {
+                FromId = system,
+                OrganizationUnit = organizationUnitDefault
+            });
 
             foreach (var actionId in GetAllActionIds())
             {
                 State.RolePermissionMap[admin][actionId] = true;
             }
+
 
             return new Empty();
         }

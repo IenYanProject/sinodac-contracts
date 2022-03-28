@@ -61,5 +61,10 @@ namespace Sinodac.Contracts.Delegator
         /// Organization Name -> OrganizationCertificate.
         /// </summary>
         public MappedState<string, OrganizationCertificate> OrganizationCertificateMap { get; set; }
+
+        /// <summary>
+        /// Independent Artist Name -> IndependentCertificate.
+        /// </summary>
+        public MappedState<string, IndependentCertificate> IndependentCertificateMap { get; set; }
     }
 }

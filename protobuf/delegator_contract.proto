@@ -34,10 +34,14 @@ service DelegatorContract {
 
     // Certificate Management
     rpc CreateOrganizationCertificate (CreateOrganizationCertificateInput) returns (google.protobuf.Empty) { }
-    rpc CreateIndependentCertificate (CreateIndependentCertificateInput) returns (google.protobuf.Empty) { }
     rpc UpdateOrganizationCertificate (UpdateOrganizationCertificateInput) returns (google.protobuf.Empty) { }
+    rpc CreateIndependentCertificate (CreateIndependentCertificateInput) returns (google.protobuf.Empty) { }
     rpc UpdateIndependentCertificate (UpdateIndependentCertificateInput) returns (google.protobuf.Empty) { }
-    rpc DeleteCertificate (DeleteCertificateInput) returns (google.protobuf.Empty) { }
+    
+    // Independent Artist Management
+    rpc CreateIndependentArtist (CreateIndependentArtistInput) returns (google.protobuf.Empty) { }
+    rpc UpdateIndependentArtist (UpdateIndependentArtistInput) returns (google.protobuf.Empty) { }
+    rpc DisableIndependentArtist (DisableIndependentArtistInput) returns (google.protobuf.Empty) { }
 
     rpc IsPermittedAddress (IsPermittedAddressInput) returns (google.protobuf.BoolValue) {
         option (aelf.is_view) = true;
@@ -90,7 +94,8 @@ message UpdateRoleInput {
     string role_name = 2;
     bool enable = 3;
     string role_description = 4;
-    repeated string permission_list = 5;
+    repeated string enable_permission_list = 5;
+    repeated string disable_permission_list = 6;
 }
 message DisableRoleInput {
     string from_id = 1;
@@ -109,6 +114,7 @@ message CreateOrganizationUnitInput {
     string organization_name = 2;
     string role_name = 3;
     bool enable = 4;
+    bool is_approve = 5;
 }
 message UpdateOrganizationUnitInput {
     string from_id = 1;
@@ -127,11 +133,33 @@ message GetOrganizationUnitListInput {
     string organization_creator = 3;
 }
 
+message CreateIndependentArtistInput {
+    string from_id = 1;
+    string artist_user_name = 2;
+    bool enable = 3;
+    bool is_approve = 4;
+}
+message UpdateIndependentArtistInput {
+    string from_id = 1;
+    string name = 2;
+    bool enable = 3;
+}
+message DisableIndependentArtistInput {
+    string from_id = 1;
+    string name = 2;
+    bool enable = 3;
+}
+message GetIndependentArtistListInput {
+    string name = 1;
+    bool enabled = 2;
+}
+
 message CreateUserInput {
     string from_id = 1;
     string user_name = 2;
     string organization_name = 3;
     bool enable = 4;
+    bool is_admin = 5;
 }
 message UpdateUserInput {
     string from_id = 1;
@@ -190,6 +218,7 @@ message CreateIndependentCertificateInput {
     string location = 7;
     string description = 8;
     repeated string photo_ids = 9;
+    string user_name = 10;
 }
 message UpdateIndependentCertificateInput {
     string from_id = 1;
@@ -259,10 +288,23 @@ message OrganizationUnit {
     int32 user_count = 4;
     bool enabled = 5;
     google.protobuf.Timestamp create_time = 6;
+    bool is_approved = 7;
+    StringList admin_list = 8;
 }
 
 message OrganizationUnitList {
     repeated OrganizationUnit value = 1;
+}
+
+message IndependentArtist {
+    string name = 1;
+    google.protobuf.Timestamp create_time = 2;
+    bool enabled = 3;
+    string user_name = 4;
+}
+
+message IndependentArtistList {
+    repeated IndependentArtist value = 1;
 }
 
 message User {
@@ -271,6 +313,7 @@ message User {
     string organization_name = 3;
     google.protobuf.Timestamp create_time = 4;
     bool enabled = 5;
+    string user_creator_organization_name = 6;
 }
 
 message UserList {
@@ -291,6 +334,8 @@ message OrganizationCertificate {
     string organization_email = 11;
     string organization_description = 12;
     repeated string photo_ids = 13;
+    bool is_rejected = 14;
+    string applier = 15;
 }
 
 message IndependentCertificate {
@@ -303,6 +348,7 @@ message IndependentCertificate {
     string location = 7;
     string description = 8;
     repeated string photo_ids = 9;
+    string user_name = 10;
 }
 
 message Certificate {
@@ -331,85 +377,127 @@ message ForwardRecord {
 
 message RoleCreated {
     option (aelf.is_event) = true;
-    Role role = 1;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    Role role = 2;
 }
 
 message RoleUpdated {
     option (aelf.is_event) = true;
-    Role role = 1;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    Role role = 2;
 }
 
 message RoleDisabled {
     option (aelf.is_event) = true;
-    string role_name = 1 [(aelf.is_indexed) = true];
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string role_name = 2 [(aelf.is_indexed) = true];
 }
 
 message RoleEnabled {
     option (aelf.is_event) = true;
-    string role_name = 1 [(aelf.is_indexed) = true];
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string role_name = 2 [(aelf.is_indexed) = true];
 }
 
 message OrganizationUnitCreated {
     option (aelf.is_event) = true;
-    OrganizationUnit organization_unit = 1;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    OrganizationUnit organization_unit = 2;
 }
 
 message OrganizationUnitUpdated {
     option (aelf.is_event) = true;
-    OrganizationUnit organization_unit = 1;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    OrganizationUnit organization_unit = 2;
 }
 
 message OrganizationUnitEnabled {
     option (aelf.is_event) = true;
-    string organization_name = 1 [(aelf.is_indexed) = true];
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string organization_name = 2 [(aelf.is_indexed) = true];
 }
 
 message OrganizationUnitDisabled {
     option (aelf.is_event) = true;
-    string organization_name = 1 [(aelf.is_indexed) = true];
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string organization_name = 2 [(aelf.is_indexed) = true];
 }
 
 message UserCreated {
     option (aelf.is_event) = true;
-    User user = 1;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    User user = 2;
 }
 
 message UserUpdated {
     option (aelf.is_event) = true;
-    User user = 1;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    User user = 2;
 }
 
 message UserEnabled {
     option (aelf.is_event) = true;
-    string user_name = 1 [(aelf.is_indexed) = true];
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string user_name = 2 [(aelf.is_indexed) = true];
 }
 
 message UserDisabled {
     option (aelf.is_event) = true;
-    string user_name = 1 [(aelf.is_indexed) = true];
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string user_name = 2 [(aelf.is_indexed) = true];
 }
 
 message OrganizationCertificateCreated {
     option (aelf.is_event) = true;
-    OrganizationCertificate organization_certificate = 1;
+    string from_id = 1;
+    OrganizationCertificate organization_certificate = 2;
 }
 
 message OrganizationCertificateUpdated {
     option (aelf.is_event) = true;
-    OrganizationCertificate organization_certificate = 1;
+    string from_id = 1;
+    OrganizationCertificate organization_certificate = 2;
+}
+
+message OrganizationCertificateApproved {
+    option (aelf.is_event) = true;
+    string from_id = 1;
+    OrganizationUnit organization_unit = 2;
+}
+
+message OrganizationCertificateRejected {
+    option (aelf.is_event) = true;
+    string from_id = 1;
+    string organization_name = 2;
 }
 
 message IndependentCertificateCreated {
     option (aelf.is_event) = true;
-    IndependentCertificate independent_certificate = 1;
+    string from_id = 1;
+    IndependentCertificate independent_certificate = 2;
 }
 
 message IndependentCertificateUpdated {
     option (aelf.is_event) = true;
-    IndependentCertificate independent_certificate = 1;
+    string from_id = 1;
+    IndependentCertificate independent_certificate = 2;
+}
+
+message IndependentCertificateApproved {
+    option (aelf.is_event) = true;
+    string from_id = 1;
+    IndependentArtist independent_artist = 2;
+}
+
+message IndependentCertificateRejected {
+    option (aelf.is_event) = true;
+    string from_id = 1;
+    string artist_user_name = 2;
+    string artist_name = 3;
 }
 
 message CertificateDeleted {
     option (aelf.is_event) = true;
-    string name = 1;
+    string from_id = 1;
+    string name = 2;
 }

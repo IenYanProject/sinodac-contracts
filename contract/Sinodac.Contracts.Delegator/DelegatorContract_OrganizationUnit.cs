@@ -6,9 +6,102 @@ namespace Sinodac.Contracts.Delegator
 {
     public partial class DelegatorContract
     {
+        /// <summary>
+        /// 提交机构认证
+        /// 需要权限：Profile:Certificate:OrganizationUnit（默认角色）
+        /// 创建和存储OrganizationCertificate实例，key为机构名称（organizationName）
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public override Empty CreateOrganizationCertificate(CreateOrganizationCertificateInput input)
+        {
+            AssertPermission(input.FromId, false, Profile.CertificateOrganizationUnit);
+            Assert(
+                State.OrganizationCertificateMap[input.OrganizationName] == null,
+                $"机构 {input.OrganizationName} 已经提交过认证了");
+            var organizationCertificate = new OrganizationCertificate
+            {
+                CreateTime = Context.CurrentBlockTime,
+                OrganizationDescription = input.OrganizationDescription,
+                OrganizationEmail = input.OrganizationEmail,
+                OrganizationLevel = input.OrganizationLevel,
+                OrganizationLocation = input.OrganizationLocation,
+                OrganizationName = input.OrganizationName,
+                OrganizationType = input.OrganizationType,
+                OrganizationArtificialPerson = input.OrganizationArtificialPerson,
+                OrganizationCreditCode = input.OrganizationCreditCode,
+                OrganizationEstablishedTime = input.OrganizationEstablishedTime,
+                OrganizationPhoneNumber = input.OrganizationPhoneNumber,
+                RegistrationAuthority = input.RegistrationAuthority,
+                PhotoIds = { input.PhotoIds },
+                Applier = input.FromId
+            };
+            State.OrganizationCertificateMap[input.OrganizationName] = organizationCertificate;
+            Context.Fire(new OrganizationCertificateCreated
+            {
+                FromId = input.FromId,
+                OrganizationCertificate = organizationCertificate
+            });
+            return new Empty();
+        }
+
+        public override Empty UpdateOrganizationCertificate(UpdateOrganizationCertificateInput input)
+        {
+            AssertPermission(input.FromId, false, Profile.CertificateOrganizationUnit);
+            var organizationCertificate = State.OrganizationCertificateMap[input.OrganizationName];
+            if (organizationCertificate == null)
+            {
+                throw new AssertionException($"机构 {input.OrganizationName} 未曾提交过认证");
+            }
+
+            Assert(organizationCertificate.IsRejected, "当前无法更新认证信息");
+
+            State.OrganizationCertificateMap[input.OrganizationName] = new OrganizationCertificate
+            {
+                CreateTime = Context.CurrentBlockTime,
+                OrganizationDescription = input.OrganizationDescription,
+                OrganizationEmail = input.OrganizationEmail,
+                OrganizationLevel = input.OrganizationLevel,
+                OrganizationLocation = input.OrganizationLocation,
+                OrganizationName = input.OrganizationName,
+                OrganizationType = input.OrganizationType,
+                OrganizationArtificialPerson = input.OrganizationArtificialPerson,
+                OrganizationCreditCode = input.OrganizationCreditCode,
+                OrganizationEstablishedTime = input.OrganizationEstablishedTime,
+                OrganizationPhoneNumber = input.OrganizationPhoneNumber,
+                RegistrationAuthority = input.RegistrationAuthority,
+                PhotoIds = { input.PhotoIds },
+                Applier = input.FromId
+            };
+            return new Empty();
+        }
+
+        /// <summary>
+        /// 通过机构认证
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="AssertionException"></exception>
         public override Empty CreateOrganizationUnit(CreateOrganizationUnitInput input)
         {
-            CheckPermissions(input.FromId, Profile.CertificateOrganizationUnit, Permission.OrganizationUnit.Create);
+            AssertPermission(input.FromId, false, Permission.OrganizationUnit.Create);
+
+            var organizationCertificate = State.OrganizationCertificateMap[input.OrganizationName];
+            if (organizationCertificate == null)
+            {
+                throw new AssertionException($"机构 {input.OrganizationName} 未曾提交过认证");
+            }
+
+            if (!input.IsApprove)
+            {
+                State.OrganizationCertificateMap[input.OrganizationName].IsRejected = true;
+                Context.Fire(new OrganizationCertificateRejected
+                {
+                    FromId = input.FromId,
+                    OrganizationName = input.OrganizationName
+                });
+                return new Empty();
+            }
 
             var role = State.RoleMap[input.RoleName];
             if (role == null)
@@ -23,15 +116,20 @@ namespace Sinodac.Contracts.Delegator
             var organizationUnit = new OrganizationUnit
             {
                 OrganizationName = input.OrganizationName,
-                OrganizationCreator = input.FromId,
+                OrganizationCreator = organizationCertificate.Applier,
                 Enabled = input.Enable,
                 RoleName = input.RoleName,
-                CreateTime = Context.CurrentBlockTime
+                CreateTime = Context.CurrentBlockTime,
+                AdminList = new StringList
+                {
+                    Value = { organizationCertificate.Applier }
+                }
             };
             State.OrganizationUnitMap[input.OrganizationName] = organizationUnit;
 
             Context.Fire(new OrganizationUnitCreated
             {
+                FromId = input.FromId,
                 OrganizationUnit = organizationUnit
             });
             return new Empty();
@@ -39,7 +137,8 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty UpdateOrganizationUnit(UpdateOrganizationUnitInput input)
         {
-            CheckPermissions(input.FromId, Profile.CertificateOrganizationUnit, Permission.OrganizationUnit.Update);
+            AssertPermission(input.FromId, true,
+                Permission.OrganizationUnit.Update);
 
             var oldOrganizationUnit = State.OrganizationUnitMap[input.OrganizationName].Clone();
             Assert(oldOrganizationUnit.Enabled == input.Enable, "更新机构信息时无法禁用或启用机构");
@@ -57,6 +156,7 @@ namespace Sinodac.Contracts.Delegator
             State.OrganizationUnitMap[input.OrganizationName] = organizationUnit;
             Context.Fire(new OrganizationUnitUpdated
             {
+                FromId = input.FromId,
                 OrganizationUnit = organizationUnit
             });
             return new Empty();
@@ -64,7 +164,7 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty DisableOrganizationUnit(DisableOrganizationUnitInput input)
         {
-            CheckPermissions(input.FromId, Permission.OrganizationUnit.Disable);
+            AssertPermission(input.FromId, true, Permission.OrganizationUnit.Disable);
 
             var organizationUnit = State.OrganizationUnitMap[input.OrganizationName];
 
@@ -77,6 +177,7 @@ namespace Sinodac.Contracts.Delegator
                     State.RoleMap[organizationUnit.RoleName].OrganizationUnitCount.Add(1);
                 Context.Fire(new OrganizationUnitEnabled
                 {
+                    FromId = input.FromId,
                     OrganizationName = input.OrganizationName
                 });
                 return new Empty();
@@ -95,14 +196,20 @@ namespace Sinodac.Contracts.Delegator
 
             Context.Fire(new OrganizationUnitDisabled
             {
+                FromId = input.FromId,
                 OrganizationName = input.OrganizationName
             });
             return new Empty();
         }
-
+        
         public override OrganizationUnitList GetOrganizationUnitList(GetOrganizationUnitListInput input)
         {
             return base.GetOrganizationUnitList(input);
+        }
+
+        public override CertificateList GetCertificateList(GetCertificateListInput input)
+        {
+            return base.GetCertificateList(input);
         }
     }
 }

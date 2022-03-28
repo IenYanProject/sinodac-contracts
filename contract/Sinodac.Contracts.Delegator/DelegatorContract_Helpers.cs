@@ -6,20 +6,21 @@ namespace Sinodac.Contracts.Delegator
 {
     public partial class DelegatorContract
     {
-        private void CheckPermissions(string fromId, params string[] actionIds)
+        private void AssertPermission(string fromId, bool isNeedToBeOrganizationAdmin = false, params string[] actionIds)
         {
-            Assert(actionIds.Any(actionId => CheckPermission(fromId, actionId)),
+            Assert(actionIds.Any(actionId => CheckPermission(fromId, actionId, isNeedToBeOrganizationAdmin)),
                 $"用户{fromId}没有权限调用当前方法");
         }
 
         /// <summary>
-        /// Only CheckPermissions method should use this method.
+        /// Only AssertPermission method should use this method.
         /// </summary>
         /// <param name="fromId"></param>
         /// <param name="actionId"></param>
+        /// <param name="isNeedToBeOrganizationAdmin"></param>
         /// <returns></returns>
         /// <exception cref="AssertionException"></exception>
-        private bool CheckPermission(string fromId, string actionId)
+        private bool CheckPermission(string fromId, string actionId, bool isNeedToBeOrganizationAdmin)
         {
             var user = State.UserMap[fromId];
             if (user == null)
@@ -39,6 +40,11 @@ namespace Sinodac.Contracts.Delegator
             if (organizationUnit == null)
             {
                 throw new AssertionException($"机构 {user.OrganizationName} 不存在");
+            }
+
+            if (isNeedToBeOrganizationAdmin)
+            {
+                Assert(organizationUnit.AdminList.Value.Contains(fromId), $"{user} 不是 {user.OrganizationName} 的管理员");
             }
 
             Assert(organizationUnit.Enabled, $"机构 {organizationUnit.OrganizationName} 当前为禁用状态");
@@ -91,15 +97,17 @@ namespace Sinodac.Contracts.Delegator
                 Permission.User.Create,
                 Permission.User.Update,
                 Permission.User.Disable,
-                Permission.Certificate.CertificateDefault,
-                Permission.Certificate.Detail,
+                Permission.IndependentArtist.IndependentArtistDefault,
+                Permission.IndependentArtist.Create,
+                Permission.IndependentArtist.Update,
+                Permission.IndependentArtist.Disable,
 
                 Statistic.Default,
 
                 Profile.Default,
                 Profile.Information,
                 Profile.CertificateOrganizationUnit,
-                Profile.CertificateIndependent
+                Profile.CertificateIndependentArtist
             };
         }
     }

@@ -49,10 +49,12 @@ namespace Sinodac.Contracts.Delegator
             public const string Disable = UserDefault + ":Disable";
         }
 
-        public class Certificate
+        public class IndependentArtist
         {
-            public const string CertificateDefault = Default + ":Certificate";
-            public const string Detail = CertificateDefault + ":Detail";
+            public const string IndependentArtistDefault = Default + ":IndependentArtist";
+            public const string Create = IndependentArtistDefault + ":Create";
+            public const string Update = IndependentArtistDefault + ":Update";
+            public const string Disable = IndependentArtistDefault + ":Disable";
         }
     }
 
@@ -66,6 +68,6 @@ namespace Sinodac.Contracts.Delegator
         public const string Default = nameof(Profile);
         public const string Information = Default + ":Information";
         public const string CertificateOrganizationUnit = Default + ":Certificate:OrganizationUnit";
-        public const string CertificateIndependent = Default + ":Certificate:Independent";
+        public const string CertificateIndependentArtist = Default + ":Certificate:IndependentArtist";
     }
 }

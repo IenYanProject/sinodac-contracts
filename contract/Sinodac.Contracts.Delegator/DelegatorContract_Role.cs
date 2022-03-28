@@ -7,7 +7,13 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateRole(CreateRoleInput input)
         {
-            CheckPermissions(input.FromId, Permission.Role.Create);
+            AssertPermission(input.FromId, false, Permission.Role.Create);
+            PerformCreateRole(input);
+            return new Empty();
+        }
+
+        private void PerformCreateRole(CreateRoleInput input)
+        {
             var role = new Role
             {
                 RoleName = input.RoleName,
@@ -28,14 +34,14 @@ namespace Sinodac.Contracts.Delegator
 
             Context.Fire(new RoleCreated
             {
+                FromId = input.FromId,
                 Role = role
             });
-            return new Empty();
         }
 
         public override Empty UpdateRole(UpdateRoleInput input)
         {
-            CheckPermissions(input.FromId, Permission.Role.Update);
+            AssertPermission(input.FromId, false, Permission.Role.Update);
             var oldRole = State.RoleMap[input.RoleName].Clone();
             Assert(oldRole.Enabled == input.Enable, "更新角色信息时无法禁用或启用角色");
 
@@ -52,13 +58,18 @@ namespace Sinodac.Contracts.Delegator
                 UserCount = oldRole.UserCount
             };
             State.RoleMap[input.RoleName] = role;
-            foreach (var actionId in input.PermissionList)
+            foreach (var actionId in input.EnablePermissionList)
             {
                 State.RolePermissionMap[input.RoleName][actionId] = true;
+            }
+            foreach (var actionId in input.DisablePermissionList)
+            {
+                State.RolePermissionMap[input.RoleName].Remove(actionId);
             }
 
             Context.Fire(new RoleUpdated
             {
+                FromId = input.FromId,
                 Role = role
             });
             return new Empty();
@@ -66,13 +77,14 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty DisableRole(DisableRoleInput input)
         {
-            CheckPermissions(input.FromId, Permission.Role.Disable);
+            AssertPermission(input.FromId, false, Permission.Role.Disable);
 
             if (input.Enable)
             {
                 State.RoleMap[input.RoleName].Enabled = true;
                 Context.Fire(new RoleEnabled
                 {
+                    FromId = input.FromId,
                     RoleName = input.RoleName
                 });
                 return new Empty();
@@ -88,6 +100,7 @@ namespace Sinodac.Contracts.Delegator
             State.RoleMap[input.RoleName].Enabled = false;
             Context.Fire(new RoleDisabled
             {
+                FromId = input.FromId,
                 RoleName = input.RoleName
             });
             return new Empty();
