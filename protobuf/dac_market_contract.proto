@@ -13,9 +13,42 @@ service DACMarketContract {
     option (aelf.csharp_state) = "DACMarketContractState";
 
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
+
+    rpc CreateSeries (CreateSeriesInput) returns (google.protobuf.Empty) { }
+
+    rpc List (ListInput) returns (google.protobuf.Empty) { }
+    rpc Delist (DelistInput) returns (google.protobuf.Empty) { }
+    
+    rpc Buy (BuyInput) returns (google.protobuf.Empty) { }
+
 }
 
 message InitializeInput {
-    string Value = 1;
+    string delegator_contract_address = 1;
+    string credit_contract_address = 2;
+    string dac_contract_address = 3;
+    aelf.Address admin_address = 4;
+    int32 service_fee_rate = 5;
+    aelf.Address service_fee_receiver = 6;
+    int64 service_fee = 7;
 }
 
+message CreateSeriesInput {
+    
+}
+
+message ListInput {
+    string symbol = 1;
+    int64 token_id = 2;
+    Price price = 3;
+    int64 quantity = 4;
+    ListDuration duration = 5;
+    WhiteListAddressPriceList white_list_address_price_list = 6;
+    bool is_merge_to_previous_listed_info = 7;
+}
+
+message DelistInput {
+}
+
+message BuyInput {
+}

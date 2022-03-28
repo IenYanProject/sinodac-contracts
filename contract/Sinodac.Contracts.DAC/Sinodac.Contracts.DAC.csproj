@@ -11,6 +11,9 @@
         <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     </PropertyGroup>
     <ItemGroup>
+        <ContractReference Include="..\..\protobuf\delegator_contract.proto">
+            <Link>Protobuf\Proto\reference\delegator_contract.proto</Link>
+        </ContractReference>
         <ContractCode Include="..\..\protobuf\dac_contract.proto">
             <Link>Protobuf\Proto\dac_contract.proto</Link>
         </ContractCode>

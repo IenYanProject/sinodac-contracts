@@ -11,6 +11,7 @@ namespace AElf.Boilerplate.TestBase
         {
             var list = base.GetDeployContractNameList();
             list.Add(DAppSmartContractAddressNameProvider.Name);
+            list.Add(DelegatorSmartContractAddressNameProvider.Name);
             return list;
         }
     }
@@ -21,6 +22,7 @@ namespace AElf.Boilerplate.TestBase
         {
             var list = base.GetDeployContractNameList();
             list.Add(DAppSmartContractAddressNameProvider.Name);
+            list.Add(DelegatorSmartContractAddressNameProvider.Name);
             return list;
         }
     }

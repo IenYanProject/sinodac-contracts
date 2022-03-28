@@ -2,7 +2,7 @@ using AElf.Sdk.CSharp.State;
 
 namespace Sinodac.Contracts.DACMinter
 {
-    public class DACMinterContractState : ContractState
+    public partial class DACMinterContractState : ContractState
     {
     
     }

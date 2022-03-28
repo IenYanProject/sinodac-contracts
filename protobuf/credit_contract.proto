@@ -18,18 +18,19 @@ service CreditContract {
     rpc Transfer (TransferInput) returns (google.protobuf.Empty) { }
     rpc TransferFrom (TransferFromInput) returns (google.protobuf.Empty) { }
     rpc Approve (ApproveInput) returns (google.protobuf.Empty) { }
+    rpc UnApprove (UnApproveInput) returns (google.protobuf.Empty) { }
     rpc Burn (BurnInput) returns (google.protobuf.Empty) { }
 
     rpc GetCreditInfo (GetCreditInfoInput) returns (CreditInfo) {
         option (aelf.is_view) = true;
     }
-    rpc GetBalance (GetBalanceInput) returns (google.protobuf.Int64Value) {
+    rpc GetBalance (GetBalanceInput) returns (CreditBalance) {
         option (aelf.is_view) = true;
     }
-    rpc GetAllowance (GetAllowanceInput) returns (google.protobuf.Int64Value) {
+    rpc GetAllowance (GetAllowanceInput) returns (CreditAllowance) {
         option (aelf.is_view) = true;
     }
-    rpc IsInCreateTokenWhiteList (aelf.Address) returns (google.protobuf.BoolValue) {
+    rpc IsInCreateCreditWhiteList (aelf.Address) returns (google.protobuf.BoolValue) {
         option (aelf.is_view) = true;
     }
 }
@@ -39,6 +40,7 @@ service CreditContract {
 message InitializeInput {
     aelf.Address dac_contract_address = 1;
     aelf.Address admin_address = 2;
+    aelf.Address delegator_contract_address = 3;
 }
 
 message CreateInput {
@@ -49,9 +51,8 @@ message CreateInput {
     int32 decimals = 5;
     aelf.Address issuer = 6;
     bool is_burnable = 7;
-    int32 issue_chain_id = 8;
-    int64 issued = 9;
-    ExternalInfo external_info = 10;
+    int64 issued = 8;
+    ExternalInfo external_info = 9;
 }
 
 message ExternalInfo {
@@ -59,34 +60,138 @@ message ExternalInfo {
 }
 
 message IssueInput {
+    string symbol = 1;
+    int64 amount = 2;
+    string memo = 3;
+    aelf.Address to = 4;
 }
 
 message TransferInput {
+    aelf.Address to = 1;
+    string symbol = 2;
+    int64 amount = 3;
+    string memo = 4;
 }
 
 message TransferFromInput {
+    aelf.Address from = 1;
+    aelf.Address to = 2;
+    string symbol = 3;
+    int64 amount = 4;
+    string memo = 5;
 }
 
 message ApproveInput {
+    aelf.Address spender = 1;
+    string symbol = 2;
+    int64 amount = 3;
+}
+
+message UnApproveInput {
+    aelf.Address spender = 1;
+    string symbol = 2;
+    int64 amount = 3;
 }
 
 message BurnInput {
+    string symbol = 1;
+    int64 amount = 2;
 }
 
 message GetCreditInfoInput {
+    string symbol = 1;
 }
 
 message GetBalanceInput {
+    string symbol = 1;
+    aelf.Address owner = 2;
 }
 
 message GetAllowanceInput {
+    string symbol = 1;
+    aelf.Address owner = 2;
+    aelf.Address spender = 3;
 }
 
 message CreditInfo {
+    string symbol = 1;
+    string usage = 2;
+    int64 supply = 3;
+    int64 total_supply = 4;
+    int32 decimals = 5;
+    aelf.Address issuer = 6;
+    bool is_burnable = 7;
+    int64 issued = 8;
+    ExternalInfo external_info = 9;
 }
 
+message CreditBalance {
+    string symbol = 1;
+    aelf.Address owner = 2;
+    int64 balance = 3;
+}
+
+message CreditAllowance {
+    string symbol = 1;
+    aelf.Address owner = 2;
+    aelf.Address spender = 3;
+    int64 allowance = 4;
+}
+
+message CallbackInfo {
+    aelf.Address contract_address = 1;
+    string method_name = 2;
+}
 
 // Events
 message CreditCreated {
-    
+    option (aelf.is_event) = true;
+    string symbol = 1 [(aelf.is_indexed) = true];
+    CreditInfo credit_info = 2;
+}
+
+message ExternalInfoChanged {
+    option (aelf.is_event) = true;
+    string symbol = 1;
+    ExternalInfo external_info = 2;
+}
+
+message Issued {
+    option (aelf.is_event) = true;
+    string symbol = 1  [(aelf.is_indexed) = true];
+    int64 amount = 2  [(aelf.is_indexed) = true];
+    aelf.Address to = 3 [(aelf.is_indexed) = true];
+    string memo = 4;
+}
+
+message Transferred {
+    option (aelf.is_event) = true;
+    aelf.Address from = 1 [(aelf.is_indexed) = true];
+    aelf.Address to = 2 [(aelf.is_indexed) = true];
+    string symbol = 3 [(aelf.is_indexed) = true];
+    int64 amount = 4 [(aelf.is_indexed) = true];
+    string memo = 5;
+}
+
+message Approved {
+    option (aelf.is_event) = true;
+    aelf.Address owner = 1 [(aelf.is_indexed) = true];
+    aelf.Address spender = 2 [(aelf.is_indexed) = true];
+    string symbol = 3 [(aelf.is_indexed) = true];
+    int64 amount = 4;
+}
+
+message UnApproved {
+    option (aelf.is_event) = true;
+    aelf.Address owner = 1 [(aelf.is_indexed) = true];
+    aelf.Address spender = 2 [(aelf.is_indexed) = true];
+    string symbol = 3 [(aelf.is_indexed) = true];
+    int64 amount = 4;
+}
+
+message Burned {
+    option (aelf.is_event) = true;
+    aelf.Address burner = 1 [(aelf.is_indexed) = true];
+    string symbol = 2 [(aelf.is_indexed) = true];
+    int64 amount = 3;
 }

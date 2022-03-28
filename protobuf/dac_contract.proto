@@ -13,9 +13,271 @@ service DACContract {
     option (aelf.csharp_state) = "DACContractState";
 
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
+    rpc Create (CreateInput) returns (google.protobuf.Empty) { }
+    rpc Mint (MintInput) returns (google.protobuf.Empty) { }
+    rpc Transfer (TransferInput) returns (google.protobuf.Empty) { }
+    rpc TransferFrom (TransferFromInput) returns (google.protobuf.Empty) { }
+    rpc Approve (ApproveInput) returns (google.protobuf.Empty) { }
+    rpc UnApprove (UnApproveInput) returns (google.protobuf.Empty) { }
+    rpc ApproveCollection (ApproveCollectionInput) returns (google.protobuf.Empty) { }
+    rpc Burn (BurnInput) returns (google.protobuf.Empty) { }
+    rpc Assemble (AssembleInput) returns (aelf.Hash) { }
+    rpc Disassemble (DisassembleInput) returns (google.protobuf.Empty) { }
+    rpc Recast (RecastInput) returns (google.protobuf.Empty) { }
+
+    rpc AddMinters (AddMintersInput) returns (google.protobuf.Empty) { }
+    rpc RemoveMinters (RemoveMintersInput) returns (google.protobuf.Empty) { }
+    
+    rpc AddDACType (AddDACTypeInput) returns (google.protobuf.Empty) { }
+    rpc RemoveDACType (google.protobuf.StringValue) returns (google.protobuf.Empty) { }
+
+    rpc GetDACCollectionInfo (google.protobuf.StringValue) returns (DACCollectionInfo) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetDACInfo (GetDACInfoInput) returns (DACInfo) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetDACInfoByTokenHash (aelf.Hash) returns (DACInfo) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetBalance (GetBalanceInput) returns (DACBalance) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetBalanceByTokenHash (GetBalanceByTokenHashInput) returns (DACBalance) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetAllowance (GetAllowanceInput) returns (DACAllowance) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetAllowanceByTokenHash (GetAllowanceByTokenHashInput) returns (DACAllowance) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetMinterList (google.protobuf.StringValue) returns (MinterList) {
+        option (aelf.is_view) = true;
+    }
+    rpc CalculateTokenHash (CalculateTokenHashInput) returns (aelf.Hash) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetDACTypes (google.protobuf.Empty) returns (DACTypes) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetOperatorList (GetOperatorListInput) returns (AddressList) {
+        option (aelf.is_view) = true;
+    }
 }
 
 message InitializeInput {
-    string Value = 1;
+    aelf.Address delegator_contract_address = 1;
+    aelf.Address admin = 2;
 }
 
+message CreateInput {
+    string creator = 1;
+    string dac_name = 2;
+    string price = 3;
+    int64 circulation = 4;
+    string description_file_id = 5;
+    string dac_type = 6;
+    string dac_shape = 7;
+    Metadata metadata = 8;
+    bool is_created_by_organization = 9;
+}
+
+message MintInput {
+    string symbol = 1;
+    string dac_name = 2;
+    string price = 3;
+    string file_id = 4;
+    Metadata metadata = 5;
+    int64 from_token_id = 6;
+    int64 quantity = 7;
+}
+
+message TransferInput {
+    aelf.Address to = 1;
+    string symbol = 2;
+    int64 token_id = 3;
+    string memo = 4;
+    int64 amount = 5;
+}
+
+message TransferFromInput {
+    aelf.Address from = 1;
+    aelf.Address to = 2;
+    string symbol = 3;
+    int64 token_id = 4;
+    string memo = 5;
+    int64 amount = 6;
+}
+
+message ApproveInput {
+    aelf.Address spender = 1;
+    string symbol = 2;
+    int64 token_id = 3;
+    int64 amount = 4;
+}
+
+message UnApproveInput {
+    aelf.Address spender = 1;
+    string symbol = 2;
+    int64 token_id = 3;
+    int64 amount = 4;
+}
+
+message ApproveCollectionInput {
+    aelf.Address operator = 1;
+    string symbol = 2;
+    bool approved = 3;
+}
+
+message BurnInput {
+    string symbol = 1;
+    int64 token_id = 2;
+    int64 amount = 3;
+}
+
+message AssembleInput {
+    string symbol = 1;
+    aelf.Address owner = 2;
+    string uri = 3;
+    string alias = 4;
+    Metadata metadata = 5;
+    AssembledDacs assembled_dacs = 6;
+    AssembledCredits assembled_credits = 7;
+    int64 token_id = 8;
+}
+
+message AssembledDacs {
+    map<string, int64> value = 1;
+}
+
+message AssembledCredits {
+    map<string, int64> value = 1;
+}
+
+message DisassembleInput {
+    string symbol = 1;
+    int64 token_id = 2;
+    aelf.Address owner = 3;
+}
+
+message RecastInput {
+    string symbol = 1;
+    int64 token_id = 2;
+    string uri = 3;
+    string alias = 4;
+    Metadata metadata = 5;
+}
+
+message AddMintersInput {
+    MinterList minter_list = 1;
+    string symbol = 2;
+}
+
+message RemoveMintersInput {
+    MinterList minter_list = 1;
+    string symbol = 2;
+}
+
+message AddDACTypeInput {
+    string full_name = 1;
+    string short_name = 2;
+}
+
+message GetDACInfoInput {
+    string symbol = 1;
+    int64 token_id = 2;
+}
+
+message GetBalanceInput {
+    aelf.Address owner = 1;
+    string symbol = 2;
+    int64 token_id = 3;
+}
+
+message GetBalanceByTokenHashInput {
+    aelf.Address owner = 1;
+    aelf.Hash token_hash = 2;
+}
+
+message GetAllowanceInput {
+    string symbol = 1;
+    int64 token_id = 2;
+    aelf.Address owner = 3;
+    aelf.Address spender = 4;
+}
+
+message GetAllowanceByTokenHashInput {
+    aelf.Hash token_hash = 1;
+    aelf.Address owner = 2;
+    aelf.Address spender = 3;
+}
+
+message GetOperatorListInput {
+    string symbol = 1;
+    aelf.Address owner = 2;
+}
+
+message CalculateTokenHashInput {
+    string symbol = 1;
+    int64 token_id = 2;
+}
+
+message DACCollectionInfo {
+    string creator = 1;
+    string dac_name = 2;
+    string price = 3;
+    int64 circulation = 4;
+    string description_file_id = 5;
+    string dac_type = 6;
+    string dac_shape = 7;
+    Metadata metadata = 8;
+    bool is_created_by_organization = 9;
+    int64 sale = 10;
+    repeated FileInfo file_info_list = 11;
+}
+
+message DACInfo {
+    string creator = 1;
+    string dac_name = 2;
+    string price = 3;
+    FileInfo file_info = 4;
+    string dac_type = 5;
+    string dac_shape = 6;
+    Metadata metadata = 7;
+}
+
+message DACTypes {
+    map<string, string> value = 1;
+}
+
+message MinterList {
+    repeated aelf.Address value = 1;
+}
+
+message AddressList {
+    repeated aelf.Address value = 1;
+}
+
+message DACBalance {
+    aelf.Address owner = 1;
+    aelf.Hash token_hash = 2;
+    int64 balance = 3;
+}
+
+message DACAllowance {
+    string symbol = 1;
+    int64 token_id = 2;
+    aelf.Address owner = 3;
+    aelf.Address spender = 4;
+}
+
+message Metadata {
+    map<string, string> value = 1;
+}
+
+message FileInfo {
+    int64 from_token_id = 1;
+    int64 quantity = 2;
+    string file_id = 3;
+}

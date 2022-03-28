@@ -109,7 +109,6 @@ namespace Sinodac.Contracts.Delegator
                 State.RolePermissionMap[admin][actionId] = true;
             }
 
-
             return new Empty();
         }
 

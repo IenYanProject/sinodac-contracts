@@ -14,7 +14,6 @@ namespace Sinodac.Contracts.DAC
         [Fact]
         public async Task Test()
         {
-            // Get a stub for testing.
             var keyPair = SampleAccount.Accounts.First().KeyPair;
             var stub = GetDACContractStub(keyPair);
 
@@ -26,6 +25,19 @@ namespace Sinodac.Contracts.DAC
 
             // Or transaction result.
             // var transactionResult = (await stub.Hello.SendAsync(new Empty())).TransactionResult;
+        }
+
+        [Fact]
+        public async Task PermissionTest()
+        {
+            var keyPair = SampleAccount.Accounts.First().KeyPair;
+            var dacContractStub = GetDACContractStub(keyPair);
+            var delegatorContractStub = GetDelegatorContractStub(keyPair);
+            await delegatorContractStub.Initialize.SendAsync(new Delegator.InitializeInput
+            {
+                AdminAddress = SampleAccount.Accounts.First().Address
+            });
+            
         }
     }
 }

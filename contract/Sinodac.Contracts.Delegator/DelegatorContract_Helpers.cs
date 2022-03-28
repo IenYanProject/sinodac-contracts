@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
+using AElf;
 using AElf.Sdk.CSharp;
+using AElf.Types;
 
 namespace Sinodac.Contracts.Delegator
 {
     public partial class DelegatorContract
     {
-        private void AssertPermission(string fromId, bool isNeedToBeOrganizationAdmin = false, params string[] actionIds)
+        private void AssertPermission(string fromId, bool isNeedToBeOrganizationAdmin = false,
+            params string[] actionIds)
         {
             Assert(actionIds.Any(actionId => CheckPermission(fromId, actionId, isNeedToBeOrganizationAdmin)),
                 $"用户{fromId}没有权限调用当前方法");
@@ -109,6 +112,11 @@ namespace Sinodac.Contracts.Delegator
                 Profile.CertificateOrganizationUnit,
                 Profile.CertificateIndependentArtist
             };
+        }
+
+        private Address GetVirtualAddress(string fromId)
+        {
+            return Context.ConvertVirtualAddressToContractAddress(HashHelper.ComputeFrom(fromId));
         }
     }
 }
