@@ -8,5 +8,11 @@ namespace Sinodac.Contracts.DACMarket
         {
             return new Empty();
         }
+
+        public override Empty CreateSeries(CreateSeriesInput input)
+        {
+            
+            return new Empty();
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace Sinodac.Contracts.DAC
         public override Empty Initialize(InitializeInput input)
         {
             PerformRegisterPermissions(input);
+            InitialDACTypeNameMap();
             return new Empty();
         }
     }

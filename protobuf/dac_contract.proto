@@ -25,9 +25,6 @@ service DACContract {
     rpc Disassemble (DisassembleInput) returns (google.protobuf.Empty) { }
     rpc Recast (RecastInput) returns (google.protobuf.Empty) { }
 
-    rpc AddMinters (AddMintersInput) returns (google.protobuf.Empty) { }
-    rpc RemoveMinters (RemoveMintersInput) returns (google.protobuf.Empty) { }
-    
     rpc AddDACType (AddDACTypeInput) returns (google.protobuf.Empty) { }
     rpc RemoveDACType (google.protobuf.StringValue) returns (google.protobuf.Empty) { }
 
@@ -37,25 +34,22 @@ service DACContract {
     rpc GetDACInfo (GetDACInfoInput) returns (DACInfo) {
         option (aelf.is_view) = true;
     }
-    rpc GetDACInfoByTokenHash (aelf.Hash) returns (DACInfo) {
+    rpc GetDACInfoByDACHash (aelf.Hash) returns (DACInfo) {
         option (aelf.is_view) = true;
     }
     rpc GetBalance (GetBalanceInput) returns (DACBalance) {
         option (aelf.is_view) = true;
     }
-    rpc GetBalanceByTokenHash (GetBalanceByTokenHashInput) returns (DACBalance) {
+    rpc GetBalanceByDACHash (GetBalanceByDACHashInput) returns (DACBalance) {
         option (aelf.is_view) = true;
     }
     rpc GetAllowance (GetAllowanceInput) returns (DACAllowance) {
         option (aelf.is_view) = true;
     }
-    rpc GetAllowanceByTokenHash (GetAllowanceByTokenHashInput) returns (DACAllowance) {
+    rpc GetAllowanceByDACHash (GetAllowanceByDACHashInput) returns (DACAllowance) {
         option (aelf.is_view) = true;
     }
-    rpc GetMinterList (google.protobuf.StringValue) returns (MinterList) {
-        option (aelf.is_view) = true;
-    }
-    rpc CalculateTokenHash (CalculateTokenHashInput) returns (aelf.Hash) {
+    rpc CalculateDACHash (CalculateDACHashInput) returns (aelf.Hash) {
         option (aelf.is_view) = true;
     }
     rpc GetDACTypes (google.protobuf.Empty) returns (DACTypes) {
@@ -67,36 +61,43 @@ service DACContract {
 }
 
 message InitializeInput {
-    aelf.Address delegator_contract_address = 1;
-    aelf.Address admin = 2;
+    aelf.Address admin_address = 1;
+    aelf.Address delegator_contract_address = 2;
+    aelf.Address dac_market_contract_address = 3;
 }
 
 message CreateInput {
-    string creator = 1;
+    aelf.Address creator = 1;
     string dac_name = 2;
-    string price = 3;
+    int64 price = 3;
     int64 circulation = 4;
     string description_file_id = 5;
     string dac_type = 6;
     string dac_shape = 7;
     Metadata metadata = 8;
     bool is_created_by_organization = 9;
+    bool is_real = 10;
+    int64 real_circulation = 11;
+    int32 purchase_limit = 12;
+    string creator_name = 13;
+    string dac_description = 14;
+    repeated FileInfo file_info_list = 15;
 }
 
 message MintInput {
-    string symbol = 1;
+    aelf.Address owner = 1;
     string dac_name = 2;
-    string price = 3;
+    int64 actual_price = 3;
     string file_id = 4;
     Metadata metadata = 5;
-    int64 from_token_id = 6;
+    int64 from_dac_id = 6;
     int64 quantity = 7;
 }
 
 message TransferInput {
     aelf.Address to = 1;
-    string symbol = 2;
-    int64 token_id = 3;
+    string dac_name = 2;
+    int64 dac_id = 3;
     string memo = 4;
     int64 amount = 5;
 }
@@ -104,47 +105,47 @@ message TransferInput {
 message TransferFromInput {
     aelf.Address from = 1;
     aelf.Address to = 2;
-    string symbol = 3;
-    int64 token_id = 4;
+    string dac_name = 3;
+    int64 dac_id = 4;
     string memo = 5;
     int64 amount = 6;
 }
 
 message ApproveInput {
     aelf.Address spender = 1;
-    string symbol = 2;
-    int64 token_id = 3;
+    string dac_name = 2;
+    int64 dac_id = 3;
     int64 amount = 4;
 }
 
 message UnApproveInput {
     aelf.Address spender = 1;
-    string symbol = 2;
-    int64 token_id = 3;
+    string dac_name = 2;
+    int64 dac_id = 3;
     int64 amount = 4;
 }
 
 message ApproveCollectionInput {
     aelf.Address operator = 1;
-    string symbol = 2;
+    string dac_name = 2;
     bool approved = 3;
 }
 
 message BurnInput {
-    string symbol = 1;
-    int64 token_id = 2;
+    string dac_name = 1;
+    int64 dac_id = 2;
     int64 amount = 3;
 }
 
 message AssembleInput {
-    string symbol = 1;
+    string dac_name = 1;
     aelf.Address owner = 2;
     string uri = 3;
     string alias = 4;
     Metadata metadata = 5;
     AssembledDacs assembled_dacs = 6;
     AssembledCredits assembled_credits = 7;
-    int64 token_id = 8;
+    int64 dac_id = 8;
 }
 
 message AssembledDacs {
@@ -156,27 +157,17 @@ message AssembledCredits {
 }
 
 message DisassembleInput {
-    string symbol = 1;
-    int64 token_id = 2;
+    string dac_name = 1;
+    int64 dac_id = 2;
     aelf.Address owner = 3;
 }
 
 message RecastInput {
-    string symbol = 1;
-    int64 token_id = 2;
+    string dac_name = 1;
+    int64 dac_id = 2;
     string uri = 3;
     string alias = 4;
     Metadata metadata = 5;
-}
-
-message AddMintersInput {
-    MinterList minter_list = 1;
-    string symbol = 2;
-}
-
-message RemoveMintersInput {
-    MinterList minter_list = 1;
-    string symbol = 2;
 }
 
 message AddDACTypeInput {
@@ -185,63 +176,68 @@ message AddDACTypeInput {
 }
 
 message GetDACInfoInput {
-    string symbol = 1;
-    int64 token_id = 2;
+    string dac_name = 1;
+    int64 dac_id = 2;
 }
 
 message GetBalanceInput {
     aelf.Address owner = 1;
-    string symbol = 2;
-    int64 token_id = 3;
+    string dac_name = 2;
+    int64 dac_id = 3;
 }
 
-message GetBalanceByTokenHashInput {
+message GetBalanceByDACHashInput {
     aelf.Address owner = 1;
-    aelf.Hash token_hash = 2;
+    aelf.Hash dac_hash = 2;
 }
 
 message GetAllowanceInput {
-    string symbol = 1;
-    int64 token_id = 2;
+    string dac_name = 1;
+    int64 dac_id = 2;
     aelf.Address owner = 3;
     aelf.Address spender = 4;
 }
 
-message GetAllowanceByTokenHashInput {
-    aelf.Hash token_hash = 1;
+message GetAllowanceByDACHashInput {
+    aelf.Hash dac_hash = 1;
     aelf.Address owner = 2;
     aelf.Address spender = 3;
 }
 
 message GetOperatorListInput {
-    string symbol = 1;
+    string dac_name = 1;
     aelf.Address owner = 2;
 }
 
-message CalculateTokenHashInput {
-    string symbol = 1;
-    int64 token_id = 2;
+message CalculateDACHashInput {
+    string dac_name = 1;
+    int64 dac_id = 2;
 }
 
 message DACCollectionInfo {
-    string creator = 1;
+    aelf.Address creator = 1;
     string dac_name = 2;
-    string price = 3;
+    int64 price = 3;
     int64 circulation = 4;
     string description_file_id = 5;
     string dac_type = 6;
     string dac_shape = 7;
     Metadata metadata = 8;
     bool is_created_by_organization = 9;
-    int64 sale = 10;
-    repeated FileInfo file_info_list = 11;
+    bool is_real = 10;
+    int64 real_circulation = 11;
+    int32 purchase_limit = 12;
+    string creator_name = 13;
+    string dac_description = 14;
+    repeated FileInfo file_info_list = 15;
+    int64 minted = 16;
 }
 
 message DACInfo {
-    string creator = 1;
+    aelf.Address creator = 1;
     string dac_name = 2;
-    string price = 3;
-    FileInfo file_info = 4;
+    int64 price = 3;
+    string file_id = 4;
     string dac_type = 5;
     string dac_shape = 6;
     Metadata metadata = 7;
@@ -251,23 +247,19 @@ message DACTypes {
     map<string, string> value = 1;
 }
 
-message MinterList {
-    repeated aelf.Address value = 1;
-}
-
 message AddressList {
     repeated aelf.Address value = 1;
 }
 
 message DACBalance {
     aelf.Address owner = 1;
-    aelf.Hash token_hash = 2;
+    aelf.Hash dac_hash = 2;
     int64 balance = 3;
 }
 
 message DACAllowance {
-    string symbol = 1;
-    int64 token_id = 2;
+    string dac_name = 1;
+    int64 dac_id = 2;
     aelf.Address owner = 3;
     aelf.Address spender = 4;
 }
@@ -277,7 +269,27 @@ message Metadata {
 }
 
 message FileInfo {
-    int64 from_token_id = 1;
+    string dac_name = 1;
     int64 quantity = 2;
     string file_id = 3;
+}
+
+message Int64List {
+    repeated int64 value = 1;
+}
+
+// Events
+
+message DACCollectionCreated {
+    option (aelf.is_event) = true;
+    string dac_name = 1 [(aelf.is_indexed) = true];
+    DACCollectionInfo dac_collection_info = 2;
+}
+
+message DACMinted {
+    option (aelf.is_event) = true;
+    string dac_name = 1;
+    int64 from_dac_id = 2;
+    int64 quantity = 3;
+    DACInfo dac_info = 4;
 }
