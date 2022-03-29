@@ -26,9 +26,9 @@ service DACMarketContract {
 }
 
 message InitializeInput {
-    string delegator_contract_address = 1;
-    string credit_contract_address = 2;
-    string dac_contract_address = 3;
+    aelf.Address delegator_contract_address = 1;
+    aelf.Address credit_contract_address = 2;
+    aelf.Address dac_contract_address = 3;
     aelf.Address admin_address = 4;
     int32 service_fee_rate = 5;
     aelf.Address service_fee_receiver = 6;
@@ -36,14 +36,16 @@ message InitializeInput {
 }
 
 message AddCollectionInput {
-    string series_name = 1;
-    string dac_name = 2;
+    string from_id = 1;
+    string series_name = 2;
+    string dac_name = 3;
 }
 
 message ConfirmCopyrightInput {
-    string dac_name = 1;
-    bool is_confirm = 2;
-    
+    string from_id = 1;
+    string dac_name = 2;
+    bool is_confirm = 3;
+    string copyright_id = 4;
 }
 
 message CreateSeriesInput {
@@ -55,19 +57,29 @@ message CreateSeriesInput {
 }
 
 message ListInput {
-    string dac_name = 1;
-    google.protobuf.Timestamp public_time = 2;
+    string from_id = 1;
+    string dac_name = 2;
+    google.protobuf.Timestamp public_time = 3;
+    int32 use_file_info_index = 4;
 }
 
 message DelistInput {
+    string from_id = 1;
+    string dac_name = 2;
 }
 
 message BuyInput {
+    string dac_name = 1;
+    aelf.Address receiver_address = 2;
+    int64 quantity = 3;
+    int64 actual_price = 4;
 }
 
 message DACCopyright {
     string dac_name = 1;
     string copyright_id = 2;
+    bool is_confirmed = 3;
+    string from_id = 4;
 }
 
 message DACSeries {
@@ -83,4 +95,46 @@ message DACSeries {
 
 message CollectionList {
     repeated string value = 1;
+}
+
+message ListInfo {
+    google.protobuf.Timestamp public_time = 1;
+    string use_file_id = 2;
+}
+
+// Events
+
+message SeriesCreated {
+    option (aelf.is_event) = true;
+    string series_name = 1 [(aelf.is_indexed) = true];
+    string creator_organization = 2 [(aelf.is_indexed) = true];
+    aelf.Address creator = 3 [(aelf.is_indexed) = true];
+    DACSeries dac_series = 4;
+}
+
+message CollectionAdded {
+    option (aelf.is_event) = true;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string series_name = 2 [(aelf.is_indexed) = true];
+    string dac_name = 3 [(aelf.is_indexed) = true];
+}
+
+message DACListed {
+    option (aelf.is_event) = true;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string dac_name = 2 [(aelf.is_indexed) = true];
+    google.protobuf.Timestamp public_time = 3 [(aelf.is_indexed) = true];
+}
+
+message DACDelisted {
+    option (aelf.is_event) = true;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string dac_name = 2 [(aelf.is_indexed) = true];
+}
+
+message CopyrightConfirmed {
+    option (aelf.is_event) = true;
+    string from_id = 1 [(aelf.is_indexed) = true];
+    string dac_name = 2 [(aelf.is_indexed) = true];
+    string copyright_id = 3 [(aelf.is_indexed) = true];
 }

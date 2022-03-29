@@ -7,6 +7,7 @@ namespace Sinodac.Contracts.DAC
         public override Empty Initialize(InitializeInput input)
         {
             PerformRegisterPermissions(input);
+            State.DACMarketContractAddress.Value = input.DacMarketContractAddress;
             InitialDACTypeNameMap();
             return new Empty();
         }

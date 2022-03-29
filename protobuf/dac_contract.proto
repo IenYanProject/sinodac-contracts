@@ -288,8 +288,7 @@ message DACCollectionCreated {
 
 message DACMinted {
     option (aelf.is_event) = true;
-    string dac_name = 1;
-    int64 from_dac_id = 2;
-    int64 quantity = 3;
+    string dac_name = 1 [(aelf.is_indexed) = true];
+    int64 dac_id = 2 [(aelf.is_indexed) = true];
     DACInfo dac_info = 4;
 }

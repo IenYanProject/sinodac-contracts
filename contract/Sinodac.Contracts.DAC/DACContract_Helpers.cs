@@ -118,6 +118,13 @@ namespace Sinodac.Contracts.DAC
                 State.DACInfoMap[input.DacName][dacId] = newDac;
                 State.OwnDACListMap[input.DacName][input.Owner].Value.Add(dacId);
                 State.BalanceMap[dacHash][input.Owner] = State.BalanceMap[dacHash][input.Owner].Add(1);
+                
+                Context.Fire(new DACMinted
+                {
+                    DacName = input.DacName,
+                    DacId = dacId,
+                    DacInfo = newDac
+                });
             }
         }
 

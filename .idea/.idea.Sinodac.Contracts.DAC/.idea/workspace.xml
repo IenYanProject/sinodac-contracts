@@ -5,16 +5,17 @@
     <projectFile>src/AElf.Boilerplate.ContractPatcher/AElf.Boilerplate.ContractPatcher.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Finished Credit Contract.">
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractContants.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Views.cs" afterDir="false" />
+    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Create &amp; Mint method impl.">
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContractReferenceState.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract_Helpers.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractReferenceState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractReferenceState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Helpers.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Sinodac.Contracts.DAC.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Sinodac.Contracts.DAC.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContractState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/Sinodac.Contracts.DACMarket.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/Sinodac.Contracts.DACMarket.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/protobuf/dac_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/dac_contract.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/protobuf/dac_market_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/dac_market_contract.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" afterDir="false" />
@@ -109,7 +110,7 @@
       <workItem from="1647834848446" duration="14826000" />
       <workItem from="1647926236973" duration="12192000" />
       <workItem from="1648006044181" duration="16857000" />
-      <workItem from="1648094183141" duration="52190000" />
+      <workItem from="1648094183141" duration="57654000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
       <created>1647851255016</created>
@@ -153,7 +154,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648464679027</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Create &amp; Mint method impl.">
+      <created>1648546679647</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1648546679647</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -184,6 +192,7 @@
     <MESSAGE value="Tune logic of Delegator Contract." />
     <MESSAGE value="Finished design." />
     <MESSAGE value="Finished Credit Contract." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished Credit Contract." />
+    <MESSAGE value="Create &amp; Mint method impl." />
+    <option name="LAST_COMMIT_MESSAGE" value="Create &amp; Mint method impl." />
   </component>
 </project>
