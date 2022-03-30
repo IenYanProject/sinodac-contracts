@@ -4,6 +4,7 @@ using AElf.Boilerplate.TestBase;
 using AElf.ContractTestBase;
 using AElf.Kernel.SmartContract.Application;
 using Microsoft.Extensions.DependencyInjection;
+using Sinodac.Contracts.Delegator;
 using Volo.Abp;
 using Volo.Abp.Modularity;
 
@@ -15,17 +16,22 @@ namespace Sinodac.Contracts.DAC
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             context.Services.AddSingleton<IContractInitializationProvider, DACContractInitializationProvider>();
+            context.Services.AddSingleton<IContractInitializationProvider, DelegatorInitializationProvider>();
+            context.Services.AddSingleton<IContractDeploymentListProvider, MainChainDAppContractTestDeploymentListProvider>();
         }
 
         public override void OnPreApplicationInitialization(ApplicationInitializationContext context)
         {
             var contractCodeProvider = context.ServiceProvider.GetService<IContractCodeProvider>();
-            var contractDllLocation = typeof(DACContract).Assembly.Location;
             var contractCodes = new Dictionary<string, byte[]>(contractCodeProvider.Codes)
             {
                 {
                     new DACContractInitializationProvider().ContractCodeName,
-                    File.ReadAllBytes(contractDllLocation)
+                    File.ReadAllBytes(typeof(DACContract).Assembly.Location)
+                },
+                {
+                    new DelegatorInitializationProvider().ContractCodeName,
+                    File.ReadAllBytes(typeof(DelegatorContract).Assembly.Location)
                 }
             };
             contractCodeProvider.Codes = contractCodes;

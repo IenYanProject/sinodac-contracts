@@ -11,6 +11,27 @@ namespace Sinodac.Contracts.Delegator
         private void AssertPermission(string fromId, bool isNeedToBeOrganizationAdmin = false,
             params string[] actionIds)
         {
+            var user = State.UserMap[fromId];
+            if (user == null)
+            {
+                throw new AssertionException($"用户 {fromId} 不存在");
+            }
+
+            Assert(user.Enabled, $"用户 {fromId} 当前为禁用状态");
+            var organizationUnit = State.OrganizationUnitMap[user.OrganizationName];
+            if (organizationUnit == null)
+            {
+                throw new AssertionException($"机构 {user.OrganizationName} 不存在");
+            }
+
+            Assert(organizationUnit.Enabled, $"机构 {organizationUnit.OrganizationName} 当前为禁用状态");
+
+            if (organizationUnit.RoleName == DefaultRoleName)
+            {
+                // 管理员角色的成员可以做任何事情
+                return;
+            }
+
             Assert(actionIds.Any(actionId => CheckPermission(fromId, actionId, isNeedToBeOrganizationAdmin)),
                 $"用户{fromId}没有权限调用当前方法");
         }
@@ -26,13 +47,6 @@ namespace Sinodac.Contracts.Delegator
         private bool CheckPermission(string fromId, string actionId, bool isNeedToBeOrganizationAdmin)
         {
             var user = State.UserMap[fromId];
-            if (user == null)
-            {
-                throw new AssertionException($"用户 {fromId} 不存在");
-            }
-
-            Assert(user.Enabled, $"用户 {fromId} 当前为禁用状态");
-
             if (user.OrganizationName == null)
             {
                 // User isn't belongs to any organization unit.
@@ -40,17 +54,11 @@ namespace Sinodac.Contracts.Delegator
             }
 
             var organizationUnit = State.OrganizationUnitMap[user.OrganizationName];
-            if (organizationUnit == null)
-            {
-                throw new AssertionException($"机构 {user.OrganizationName} 不存在");
-            }
 
             if (isNeedToBeOrganizationAdmin)
             {
                 Assert(organizationUnit.AdminList.Value.Contains(fromId), $"{user} 不是 {user.OrganizationName} 的管理员");
             }
-
-            Assert(organizationUnit.Enabled, $"机构 {organizationUnit.OrganizationName} 当前为禁用状态");
 
             return State.RolePermissionMap[organizationUnit.RoleName][actionId];
         }
@@ -59,8 +67,8 @@ namespace Sinodac.Contracts.Delegator
         {
             var dacContractActionIds = new List<string>
             {
-                DAC.CreateProtocol,
                 DAC.CreateCollection,
+                DAC.CreateSeries,
                 DAC.CreateMysteryBox,
             };
             var dacMarketContractActionIds = new List<string>
@@ -80,8 +88,8 @@ namespace Sinodac.Contracts.Delegator
                 DAC.Default,
                 DAC.List,
                 DAC.Create,
-                DAC.CreateProtocol,
                 DAC.CreateCollection,
+                DAC.CreateSeries,
                 DAC.CreateMysteryBox,
                 DAC.Audit,
                 DAC.AuditDetail,
@@ -117,6 +125,14 @@ namespace Sinodac.Contracts.Delegator
         private Address GetVirtualAddress(string fromId)
         {
             return Context.ConvertVirtualAddressToContractAddress(HashHelper.ComputeFrom(fromId));
+        }
+
+        private void SetDefaultPermissionsToDefaultRole()
+        {
+            State.RolePermissionMap[DefaultRoleName][Profile.Default] = true;
+            State.RolePermissionMap[DefaultRoleName][Profile.Information] = true;
+            State.RolePermissionMap[DefaultRoleName][Profile.CertificateOrganizationUnit] = true;
+            State.RolePermissionMap[DefaultRoleName][Profile.CertificateIndependentArtist] = true;
         }
     }
 }

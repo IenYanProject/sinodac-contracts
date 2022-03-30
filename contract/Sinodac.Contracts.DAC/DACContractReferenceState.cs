@@ -1,4 +1,3 @@
-using AElf.Standards.ACS6;
 using Sinodac.Contracts.Credit;
 using Sinodac.Contracts.Delegator;
 

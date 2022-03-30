@@ -11,8 +11,8 @@ namespace Sinodac.Contracts.Delegator
         public const string Default = nameof(DAC);
         public const string List = Default + ":List";
         public const string Create = Default + ":Create";
-        public const string CreateProtocol = Create + ":Protocol";
         public const string CreateCollection = Create + ":Collection";
+        public const string CreateSeries = Create + ":Series";
         public const string CreateMysteryBox = Create + ":MysteryBox";
 
         public const string Audit = Default + ":Audit";

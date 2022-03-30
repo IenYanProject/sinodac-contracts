@@ -50,6 +50,8 @@ namespace Sinodac.Contracts.Delegator
         /// </summary>
         public MappedState<string, OrganizationUnit> OrganizationUnitMap { get; set; }
 
+        public MappedState<string, IndependentArtist> IndependentArtistMap { get; set; }
+
         /// <summary>
         /// Role Name -> Organization Unit List.
         /// </summary>

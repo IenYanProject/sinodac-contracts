@@ -43,7 +43,6 @@ namespace Sinodac.Contracts.Delegator
         {
             AssertPermission(input.FromId, false, Permission.Role.Update);
             var oldRole = State.RoleMap[input.RoleName].Clone();
-            Assert(oldRole.Enabled == input.Enable, "更新角色信息时无法禁用或启用角色");
 
             var role = new Role
             {

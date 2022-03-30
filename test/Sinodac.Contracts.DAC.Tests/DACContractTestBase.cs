@@ -9,6 +9,12 @@ namespace Sinodac.Contracts.DAC
     {
         internal Address DelegatorContractAddress => GetAddress(DelegatorSmartContractAddressNameProvider.StringName);
 
+
+        public DACContractTestBase()
+        {
+            
+        }
+        
         internal DACContractContainer.DACContractStub GetDACContractStub(ECKeyPair senderKeyPair)
         {
             return GetTester<DACContractContainer.DACContractStub>(DAppContractAddress, senderKeyPair);

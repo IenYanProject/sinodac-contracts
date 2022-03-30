@@ -73,7 +73,7 @@ namespace Sinodac.Contracts.DACMarket
             AssertSenderIsDelegatorContract();
             var publicTime = input.PublicTime ?? Context.CurrentBlockTime;
             var dacCollection = AssertPermission(input.FromId, input.DacName);
-            Assert(dacCollection.FileInfoList.Count > input.UseFileInfoIndex, "数组越界");
+            Assert(dacCollection.FileInfoList.Count > input.UseFileInfoIndex, "FileInfoList数组下标越界");
             State.ListInfoMap[input.DacName] = new ListInfo
             {
                 PublicTime = input.PublicTime,
@@ -136,6 +136,8 @@ namespace Sinodac.Contracts.DACMarket
             {
                 throw new AssertionException($"查无此DAC：{input.DacName}");
             }
+
+            Assert(input.ReceiverAddress.Value.Any(), "无效的DAC的接受地址");
 
             var quantity = Math.Min(input.Quantity, dacCollection.PurchaseLimit);
             var fromDacId = dacCollection.Minted.Add(1);

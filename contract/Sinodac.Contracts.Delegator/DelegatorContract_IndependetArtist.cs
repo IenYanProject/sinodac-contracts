@@ -23,10 +23,9 @@ namespace Sinodac.Contracts.Delegator
                 Id = input.Id,
                 Location = input.Location,
                 Name = input.Name,
-                OrganizationName = input.OrganizationName,
                 PhoneNumber = input.PhoneNumber,
                 PhotoIds = { input.PhotoIds },
-                UserName = input.UserName
+                UserName = input.FromId
             };
             State.IndependentCertificateMap[input.FromId] = independentCertificate;
             Context.Fire(new IndependentCertificateCreated
@@ -38,9 +37,9 @@ namespace Sinodac.Contracts.Delegator
         }
 
         /// <summary>
-        /// 通过个人艺术家认证
+        /// 通过或驳回个人艺术家认证
         /// 需要权限Permission:IndependentArtist:Create（管理员角色）
-        /// 创建和存储IndependentArtist实例，key为个人艺术家的账户名
+        /// 创建和存储IndependentArtist实例，key为个人艺术家的账户名（不是姓名，防止重复）
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -53,6 +52,17 @@ namespace Sinodac.Contracts.Delegator
                 throw new AssertionException($"用户名为 {input.ArtistUserName} 的个人艺术家未提交认证");
             }
 
+            var independentArtist = new IndependentArtist
+            {
+                Name = input.ArtistUserName,
+                CreateTime = Context.CurrentBlockTime,
+                UserName = independentCertificate.Name,
+                IsRejected = !input.IsApprove,
+                Enabled = input.Enable
+            };
+
+            State.IndependentArtistMap[input.ArtistUserName] = independentArtist;
+
             if (!input.IsApprove)
             {
                 Context.Fire(new IndependentCertificateRejected
@@ -61,38 +71,104 @@ namespace Sinodac.Contracts.Delegator
                     ArtistUserName = input.ArtistUserName,
                     ArtistName = independentCertificate.Name
                 });
-                return new Empty();
+            }
+            else
+            {
+                Context.Fire(new IndependentCertificateApproved
+                {
+                    FromId = input.FromId,
+                    IndependentArtist = independentArtist
+                });
+                if (input.Enable)
+                {
+                    Context.Fire(new IndependentArtistEnabled
+                    {
+                        FromId = input.FromId,
+                        ArtistUserName = independentCertificate.UserName,
+                        ArtistName = independentCertificate.Name
+                    });
+                }
+                else
+                {
+                    Context.Fire(new IndependentArtistDisabled
+                    {
+                        FromId = input.FromId,
+                        ArtistUserName = independentCertificate.UserName,
+                        ArtistName = independentCertificate.Name
+                    });
+                }
             }
 
-            var independentArtist = new IndependentArtist
+            return new Empty();
+        }
+
+        /// <summary>
+        /// 当个人艺术家认证被驳回后，通过这个方法修改认证信息
+        /// 需要权限Permission:IndependentArtist:Create（管理员角色）
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="AssertionException"></exception>
+        public override Empty UpdateIndependentCertificate(UpdateIndependentCertificateInput input)
+        {
+            AssertPermission(input.FromId, false, Profile.CertificateIndependentArtist);
+            var independentCertificate = State.IndependentCertificateMap[input.FromId];
+            if (independentCertificate == null)
             {
-                Name = input.ArtistUserName,
-                CreateTime = Context.CurrentBlockTime,
-                Enabled = input.Enable,
-                UserName = independentCertificate.Name
+                throw new AssertionException($"个人艺术家 {input.Name} 未曾提交过认证");
+            }
+
+            Assert(independentCertificate.IsRejected, "被驳回后才可以更新认证信息");
+
+            State.IndependentCertificateMap[input.FromId] = new IndependentCertificate
+            {
+                CreateTime = independentCertificate.CreateTime,
+                Description = input.Description,
+                Email = input.Email,
+                Id = input.Id,
+                Location = input.Location,
+                Name = input.Name,
+                PhoneNumber = input.PhoneNumber,
+                PhotoIds = { input.PhotoIds },
+                UserName = input.FromId,
+                LatestEditTime = Context.CurrentBlockTime
             };
-            Context.Fire(new IndependentCertificateApproved
+
+            Context.Fire(new IndependentCertificateUpdated
             {
                 FromId = input.FromId,
-                IndependentArtist = independentArtist
+                IndependentCertificate = State.IndependentCertificateMap[input.FromId]
             });
             return new Empty();
         }
 
-        public override Empty UpdateIndependentCertificate(UpdateIndependentCertificateInput input)
-        {
-            AssertPermission(input.FromId, false, Profile.CertificateOrganizationUnit);
-            throw new AssertionException("暂不支持");
-        }
-
+        /// <summary>
+        /// 管理员修改个人艺术家认证信息
+        /// 需要权限Permission:IndependentArtist:Update（管理员角色）
+        /// 其实目前而言只能改改艺术家名字ArtistName
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public override Empty UpdateIndependentArtist(UpdateIndependentArtistInput input)
         {
-            return base.UpdateIndependentArtist(input);
-        }
+            AssertPermission(input.FromId, false, Permission.IndependentArtist.Update);
+            var independentArtist = State.IndependentArtistMap[input.ArtistUserName];
+            if (independentArtist == null)
+            {
+                throw new AssertionException($"账号 {input.ArtistUserName} 未认证个人艺术家或未审核");
+            }
 
-        public override Empty DisableIndependentArtist(DisableIndependentArtistInput input)
-        {
-            return base.DisableIndependentArtist(input);
+            Assert(!independentArtist.IsRejected, $"账号 {input.ArtistUserName} 的个人艺术家认证被驳回");
+
+            State.IndependentArtistMap[input.ArtistUserName] = new IndependentArtist
+            {
+                UserName = input.ArtistUserName,
+                Name = input.ArtistName,
+                LatestEditTime = Context.CurrentBlockTime,
+                // Stay old values.
+                CreateTime = independentArtist.CreateTime
+            };
+            return new Empty();
         }
     }
 }

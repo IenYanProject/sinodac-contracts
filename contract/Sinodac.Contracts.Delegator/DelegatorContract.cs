@@ -13,100 +13,101 @@ namespace Sinodac.Contracts.Delegator
 
             State.Admin.Value = input.AdminAddress ?? Context.Sender;
 
-            const string admin = "管理员";
-            const string defaultOrganizationName = "默认机构";
-            const string defaultRoleName = "默认";
-            const string system = "系统";
-
             var roleAdmin = new Role
             {
-                RoleName = admin,
-                RoleCreator = system,
+                RoleName = Admin,
+                RoleCreator = System,
                 CreateTime = Context.CurrentBlockTime,
                 Enabled = true,
-                RoleDescription = $"{admin} can do anything.",
+                RoleDescription = $"{Admin} can do anything.",
+                OrganizationUnitCount = 1,
+                UserCount = 1
             };
-            State.RoleMap[admin] = roleAdmin;
+            State.RoleMap[Admin] = roleAdmin;
             Context.Fire(new RoleCreated
             {
-                FromId = system,
+                FromId = System,
                 Role = roleAdmin
             });
-            // 管理员组织没有OrganizationCertificate
+            // 管理员组织没有OrganizationCertificate（比较特殊算是）
             var organizationUnitAdmin = new OrganizationUnit
             {
-                OrganizationName = admin,
+                OrganizationName = Admin,
                 CreateTime = Context.CurrentBlockTime,
                 Enabled = true,
-                OrganizationCreator = system,
-                RoleName = admin,
+                OrganizationCreator = System,
+                RoleName = Admin,
                 AdminList = new StringList
                 {
-                    Value = { admin }
-                }
+                    Value = { Admin }
+                },
+                UserCount = 1
             };
-            State.OrganizationUnitMap[admin] = organizationUnitAdmin;
-            State.RoleOrganizationUnitListMap[admin] = new StringList
+            State.OrganizationUnitMap[Admin] = organizationUnitAdmin;
+            State.RoleOrganizationUnitListMap[Admin] = new StringList
             {
-                Value = { admin }
+                Value = { Admin }
             };
             Context.Fire(new OrganizationUnitCreated
             {
-                FromId = system,
+                FromId = System,
                 OrganizationUnit = organizationUnitAdmin
             });
+            var adminUserName = nameof(Admin).ToLower();
             var userAdmin = new User
             {
                 CreateTime = Context.CurrentBlockTime,
                 Enabled = true,
-                OrganizationName = admin,
-                UserCreator = system,
-                UserName = nameof(admin)
+                OrganizationName = Admin,
+                UserCreator = System,
+                UserName = adminUserName
             };
-            State.UserMap[nameof(admin)] = userAdmin;
+            State.UserMap[adminUserName] = userAdmin;
             Context.Fire(new UserCreated
             {
-                FromId = system,
+                FromId = System,
                 User = userAdmin
             });
 
             var roleDefault = new Role
             {
-                RoleName = defaultRoleName,
-                RoleCreator = system,
+                RoleName = DefaultRoleName,
+                RoleCreator = System,
                 CreateTime = Context.CurrentBlockTime,
                 Enabled = true,
                 RoleDescription = "新建用户的默认角色",
-                OrganizationUnitCount = 1,
+                OrganizationUnitCount = 1
             };
-            State.RoleMap[defaultRoleName] = roleDefault;
+            State.RoleMap[DefaultRoleName] = roleDefault;
             Context.Fire(new RoleCreated
             {
-                FromId = system,
+                FromId = System,
                 Role = roleDefault
             });
+            // 默认组织也没有OrganizationCertificate
             var organizationUnitDefault = new OrganizationUnit
             {
-                OrganizationName = defaultOrganizationName,
+                OrganizationName = DefaultOrganizationName,
                 CreateTime = Context.CurrentBlockTime,
                 Enabled = true,
-                OrganizationCreator = system,
-                RoleName = defaultRoleName,
+                OrganizationCreator = System,
+                RoleName = DefaultRoleName,
             };
-            State.OrganizationUnitMap[defaultOrganizationName] = organizationUnitDefault;
-            State.RoleOrganizationUnitListMap[defaultRoleName] = new StringList
+            State.OrganizationUnitMap[DefaultOrganizationName] = organizationUnitDefault;
+            State.RoleOrganizationUnitListMap[DefaultRoleName] = new StringList
             {
-                Value = { defaultOrganizationName }
+                Value = { DefaultOrganizationName }
             };
+            SetDefaultPermissionsToDefaultRole();
             Context.Fire(new OrganizationUnitCreated
             {
-                FromId = system,
+                FromId = System,
                 OrganizationUnit = organizationUnitDefault
             });
 
             foreach (var actionId in GetAllActionIds())
             {
-                State.RolePermissionMap[admin][actionId] = true;
+                State.RolePermissionMap[Admin][actionId] = true;
             }
 
             return new Empty();

@@ -6,14 +6,14 @@ using Volo.Abp.DependencyInjection;
 
 namespace Sinodac.Contracts.DAC
 {
-    public class DACContractInitializationProvider : IContractInitializationProvider
+    public class DelegatorInitializationProvider : IContractInitializationProvider
     {
         public List<ContractInitializationMethodCall> GetInitializeMethodList(byte[] contractCode)
         {
             return new List<ContractInitializationMethodCall>();
         }
 
-        public Hash SystemSmartContractName { get; } = DAppSmartContractAddressNameProvider.Name;
-        public string ContractCodeName { get; } = "Sinodac.Contracts.DAC";
+        public Hash SystemSmartContractName { get; } = DelegatorSmartContractAddressNameProvider.Name;
+        public string ContractCodeName { get; } = "Sinodac.Contracts.Delegator";
     }
 }

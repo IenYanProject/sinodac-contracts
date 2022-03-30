@@ -8,12 +8,23 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateUser(CreateUserInput input)
         {
-            AssertPermission(input.FromId, true, Permission.User.Create);
+            AssertPermission(input.FromId, false, Permission.User.Create);
+
+            if (string.IsNullOrEmpty(input.OrganizationName))
+            {
+                input.OrganizationName = DefaultOrganizationName;
+            }
 
             var organizationUnit = State.OrganizationUnitMap[input.OrganizationName];
             if (organizationUnit == null)
             {
                 throw new AssertionException($"机构 {input.OrganizationName} 不存在");
+            }
+
+            if (input.OrganizationName != DefaultOrganizationName)
+            {
+                Assert(organizationUnit.AdminList.Value.Contains(input.FromId),
+                    $"用户 {input.FromId} 不是机构 {input.OrganizationName} 的管理员");
             }
 
             Assert(organizationUnit.Enabled, $"机构 {input.OrganizationName} 当前被禁用");

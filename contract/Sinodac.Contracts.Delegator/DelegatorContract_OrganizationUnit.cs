@@ -45,20 +45,28 @@ namespace Sinodac.Contracts.Delegator
             return new Empty();
         }
 
+        /// <summary>
+        /// 机构认证被驳回后，申请人可修改认证信息
+        /// 需要权限：Profile.CertificateOrganizationUnit，但需要是这个组织的管理员
+        /// 可以用来修改各种机构认证的信息，除了创建时间
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="AssertionException"></exception>
         public override Empty UpdateOrganizationCertificate(UpdateOrganizationCertificateInput input)
         {
-            AssertPermission(input.FromId, false, Profile.CertificateOrganizationUnit);
+            AssertPermission(input.FromId, true, Profile.CertificateOrganizationUnit);
             var organizationCertificate = State.OrganizationCertificateMap[input.OrganizationName];
             if (organizationCertificate == null)
             {
                 throw new AssertionException($"机构 {input.OrganizationName} 未曾提交过认证");
             }
 
-            Assert(organizationCertificate.IsRejected, "当前无法更新认证信息");
+            Assert(organizationCertificate.IsRejected, "被驳回后才可以更新认证信息");
 
             State.OrganizationCertificateMap[input.OrganizationName] = new OrganizationCertificate
             {
-                CreateTime = Context.CurrentBlockTime,
+                CreateTime = organizationCertificate.CreateTime,
                 OrganizationDescription = input.OrganizationDescription,
                 OrganizationEmail = input.OrganizationEmail,
                 OrganizationLevel = input.OrganizationLevel,
@@ -71,13 +79,15 @@ namespace Sinodac.Contracts.Delegator
                 OrganizationPhoneNumber = input.OrganizationPhoneNumber,
                 RegistrationAuthority = input.RegistrationAuthority,
                 PhotoIds = { input.PhotoIds },
-                Applier = input.FromId
+                Applier = input.FromId,
+                LatestEditTime = Context.CurrentBlockTime
             };
             return new Empty();
         }
 
         /// <summary>
-        /// 通过机构认证
+        /// 通过或驳回机构认证
+        /// 需要权限：Permission.OrganizationUnit.Create（管理员角色）
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -126,6 +136,7 @@ namespace Sinodac.Contracts.Delegator
                 }
             };
             State.OrganizationUnitMap[input.OrganizationName] = organizationUnit;
+            
 
             Context.Fire(new OrganizationUnitCreated
             {
@@ -141,7 +152,6 @@ namespace Sinodac.Contracts.Delegator
                 Permission.OrganizationUnit.Update);
 
             var oldOrganizationUnit = State.OrganizationUnitMap[input.OrganizationName].Clone();
-            Assert(oldOrganizationUnit.Enabled == input.Enable, "更新机构信息时无法禁用或启用机构");
 
             var organizationUnit = new OrganizationUnit
             {
@@ -205,11 +215,6 @@ namespace Sinodac.Contracts.Delegator
         public override OrganizationUnitList GetOrganizationUnitList(GetOrganizationUnitListInput input)
         {
             return base.GetOrganizationUnitList(input);
-        }
-
-        public override CertificateList GetCertificateList(GetCertificateListInput input)
-        {
-            return base.GetCertificateList(input);
         }
     }
 }
