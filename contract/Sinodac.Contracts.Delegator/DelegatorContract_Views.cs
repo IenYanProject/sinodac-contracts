@@ -37,12 +37,14 @@ namespace Sinodac.Contracts.Delegator
 
         public override StringList GetRolePermissionList(StringValue input)
         {
-            return State.RoleActionIdListMap[input.Value];
+            return State.RolePermissionListMap[input.Value];
         }
 
-        public override StringList GetOrganizationGroupPermissionList(GetOrganizationGroupPermissionListInput input)
+        public override StringList GetOrganizationDepartmentPermissionList(
+            GetOrganizationDepartmentPermissionListInput input)
         {
-            return State.GroupActionIdListMap[GetOrganizationGroupKey(input.OrganizationName, input.GroupName)];
+            return State.OrganizationDepartmentPermissionListMap[
+                GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName)];
         }
     }
 }

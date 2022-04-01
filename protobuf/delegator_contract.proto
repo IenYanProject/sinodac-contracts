@@ -26,9 +26,9 @@ service DelegatorContract {
     rpc CreateOrganizationUnit (CreateOrganizationUnitInput) returns (google.protobuf.Empty) { }
     rpc UpdateOrganizationUnit (UpdateOrganizationUnitInput) returns (google.protobuf.Empty) { }
     rpc DisableOrganizationUnit (DisableOrganizationUnitInput) returns (google.protobuf.Empty) { }
-    rpc CreateGroup (CreateGroupInput) returns (google.protobuf.Empty) { }
-    rpc UpdateGroup (UpdateGroupInput) returns (google.protobuf.Empty) { }
-    rpc DeleteGroup (DeleteGroupInput) returns (google.protobuf.Empty) { }
+    rpc CreateDepartment (CreateDepartmentInput) returns (google.protobuf.Empty) { }
+    rpc UpdateDepartment (UpdateDepartmentInput) returns (google.protobuf.Empty) { }
+    rpc DeleteDepartment (DeleteDepartmentInput) returns (google.protobuf.Empty) { }
 
     // Users Management
     rpc CreateUser (CreateUserInput) returns (google.protobuf.Empty) { }
@@ -85,7 +85,7 @@ service DelegatorContract {
     rpc GetRolePermissionList (google.protobuf.StringValue) returns (StringList) {
         option (aelf.is_view) = true;
     }
-    rpc GetOrganizationGroupPermissionList (GetOrganizationGroupPermissionListInput) returns (StringList) {
+    rpc GetOrganizationDepartmentPermissionList (GetOrganizationDepartmentPermissionListInput) returns (StringList) {
         option (aelf.is_view) = true;
     }
     rpc GetUserPermissionList (google.protobuf.StringValue) returns (StringList) {
@@ -185,14 +185,14 @@ message CreateUserInput {
     string organization_name = 3;
     bool enable = 4;
     bool is_admin = 5;
-    string group_name = 6;
+    string department_name = 6;
 }
 message UpdateUserInput {
     string from_id = 1;
     string user_name = 2;
     string organization_name = 3;
     bool enable = 4;
-    string organization_group_name = 5;
+    string organization_department_name = 5;
 }
 message DisableUserInput {
     string from_id = 1;
@@ -308,8 +308,7 @@ message OrganizationUnit {
     bool enabled = 5;
     google.protobuf.Timestamp create_time = 6;
     bool is_approved = 7;
-    StringList admin_list = 8;
-    StringList group_list = 9;
+    StringList department_list = 8;
 }
 
 message OrganizationUnitList {
@@ -336,7 +335,7 @@ message User {
     google.protobuf.Timestamp create_time = 4;
     bool enabled = 5;
     string user_creator_organization_name = 6;
-    string organization_group_name = 7;
+    string organization_department_name = 7;
 }
 
 message UserList {
@@ -385,36 +384,36 @@ message ForwardRecord {
     bytes parameter = 6;
 }
 
-message GetOrganizationGroupPermissionListInput {
+message GetOrganizationDepartmentPermissionListInput {
     string from_id = 1;
     string organization_name = 2;
-    string group_name = 3;
+    string department_name = 3;
 }
 
-message CreateGroupInput {
+message CreateDepartmentInput {
     string from_id = 1;
     string organization_name = 2;
-    string group_name = 3;
-    StringList group_permission_list = 4;
+    string department_name = 3;
+    StringList department_permission_list = 4;
 }
 
-message UpdateGroupInput {
+message UpdateDepartmentInput {
     string from_id = 1;
     string organization_name = 2;
-    string group_name = 3;
-    StringList enable_group_permission_list = 4;
-    StringList disable_group_permission_list = 5;
+    string department_name = 3;
+    StringList enable_department_permission_list = 4;
+    StringList disable_department_permission_list = 5;
 }
 
-message DeleteGroupInput {
+message DeleteDepartmentInput {
     string from_id = 1;
     string organization_name = 2;
-    string group_name = 3;
+    string department_name = 3;
 }
 
-message OrganizationGroup {
+message OrganizationDepartment {
     string organization_name = 1;
-    string group_name = 2;
+    string department_name = 2;
     StringList member_list = 3;
 }
 
@@ -448,8 +447,6 @@ message OrganizationUnitCreated {
     option (aelf.is_event) = true;
     string from_id = 1 [(aelf.is_indexed) = true];
     OrganizationUnit organization_unit = 2;
-    StringList admin_permission_list = 3;
-    StringList member_permission_list = 4;
 }
 
 message OrganizationUnitUpdated {
@@ -557,23 +554,36 @@ message IndependentArtistDisabled {
     string artist_name = 3 [(aelf.is_indexed) = true];
 }
 
-message OrganizationGroupCreated {
+message OrganizationDepartmentCreated {
     option (aelf.is_event) = true;
     string from_id = 1 [(aelf.is_indexed) = true];
-    OrganizationGroup OrganizationGroup = 2;
+    OrganizationDepartment OrganizationDepartment = 2;
 }
 
-message OrganizationGroupUpdated {
+message OrganizationDepartmentUpdated {
     option (aelf.is_event) = true;
     string from_id = 1 [(aelf.is_indexed) = true];
     string organization_name = 2 [(aelf.is_indexed) = true];
-    string group_name = 3 [(aelf.is_indexed) = true];
+    string department_name = 3 [(aelf.is_indexed) = true];
     StringList updated_permission_list = 4;
 }
 
-message OrganizationGroupDeleted {
+message OrganizationDepartmentDeleted {
     option (aelf.is_event) = true;
     string from_id = 1 [(aelf.is_indexed) = true];
     string organization_name = 2 [(aelf.is_indexed) = true];
-    string group_name = 3 [(aelf.is_indexed) = true];
+    string department_name = 3 [(aelf.is_indexed) = true];
+}
+
+message RolePermissionChanged {
+    option (aelf.is_event) = true;
+    string role_name = 1 [(aelf.is_indexed) = true];
+    StringList permission_list = 2;
+}
+
+message DepartmentPermissionChanged {
+    option (aelf.is_event) = true;
+    string organization_name = 1 [(aelf.is_indexed) = true];
+    string department_name = 2 [(aelf.is_indexed) = true];
+    StringList permission_list = 3;
 }

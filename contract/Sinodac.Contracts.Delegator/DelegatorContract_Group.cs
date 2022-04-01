@@ -5,49 +5,49 @@ namespace Sinodac.Contracts.Delegator
 {
     public partial class DelegatorContract
     {
-        public override Empty CreateGroup(CreateGroupInput input)
+        public override Empty CreateDepartment(CreateDepartmentInput input)
         {
             AssertPermission(input.FromId, true, Permission.OrganizationGroup.Create);
             var organizationUnit = State.OrganizationUnitMap[State.UserMap[input.FromId].OrganizationName];
             Assert(organizationUnit.OrganizationName == input.OrganizationName, "不能创建其他机构的权限组");
-            var groupKey = GetOrganizationGroupKey(input.OrganizationName, input.GroupName);
-            foreach (var actionId in input.GroupPermissionList.Value)
+            var departmentKey = GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName);
+            foreach (var actionId in input.DepartmentPermissionList.Value)
             {
                 Assert(State.RolePermissionMap[organizationUnit.RoleName][actionId], $"无法授予权限：{actionId}");
             }
 
-            State.GroupActionIdListMap[groupKey] = input.GroupPermissionList;
+            State.OrganizationDepartmentPermissionListMap[departmentKey] = input.DepartmentPermissionList;
 
-            var organizationGroup = new OrganizationGroup
+            var organizationDepartment = new OrganizationDepartment
             {
                 OrganizationName = input.OrganizationName,
-                GroupName = input.GroupName,
-                MemberList = input.GroupPermissionList
+                DepartmentName = input.DepartmentName,
+                MemberList = input.DepartmentPermissionList
             };
-            State.OrganizationGroupMap[groupKey] = organizationGroup;
+            State.OrganizationDepartmentMap[departmentKey] = organizationDepartment;
 
-            Context.Fire(new OrganizationGroupCreated
+            Context.Fire(new OrganizationDepartmentCreated
             {
                 FromId = input.FromId,
-                OrganizationGroup = organizationGroup
+                OrganizationDepartment = organizationDepartment
             });
             return new Empty();
         }
 
-        public override Empty UpdateGroup(UpdateGroupInput input)
+        public override Empty UpdateDepartment(UpdateDepartmentInput input)
         {
             AssertPermission(input.FromId, true, Permission.OrganizationGroup.Update);
             var organizationUnit = State.OrganizationUnitMap[State.UserMap[input.FromId].OrganizationName];
             Assert(organizationUnit.OrganizationName == input.OrganizationName, "不能创建其他机构的权限组");
-            var groupKey = GetOrganizationGroupKey(input.OrganizationName, input.GroupName);
-            var permissionList = State.GroupActionIdListMap[groupKey];
-            foreach (var actionId in input.EnableGroupPermissionList.Value)
+            var departmentKey = GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName);
+            var permissionList = State.OrganizationDepartmentPermissionListMap[departmentKey];
+            foreach (var actionId in input.EnableDepartmentPermissionList.Value)
             {
                 permissionList.Value.Add(actionId);
                 Assert(State.RolePermissionMap[organizationUnit.RoleName][actionId], $"无法授予权限：{actionId}");
             }
 
-            foreach (var actionId in input.DisableGroupPermissionList.Value)
+            foreach (var actionId in input.DisableDepartmentPermissionList.Value)
             {
                 if (permissionList.Value.Contains(actionId))
                 {
@@ -55,33 +55,33 @@ namespace Sinodac.Contracts.Delegator
                 }
             }
 
-            State.GroupActionIdListMap[groupKey] = permissionList;
+            State.OrganizationDepartmentPermissionListMap[departmentKey] = permissionList;
 
-            Context.Fire(new OrganizationGroupUpdated
+            Context.Fire(new OrganizationDepartmentUpdated()
             {
                 FromId = input.FromId,
                 OrganizationName = input.OrganizationName,
-                GroupName = input.GroupName,
+                DepartmentName = input.DepartmentName,
                 UpdatedPermissionList = permissionList
             });
 
             return new Empty();
         }
 
-        public override Empty DeleteGroup(DeleteGroupInput input)
+        public override Empty DeleteDepartment(DeleteDepartmentInput input)
         {
             AssertPermission(input.FromId, true, Permission.OrganizationGroup.Delete);
             var organizationUnit = State.OrganizationUnitMap[State.UserMap[input.FromId].OrganizationName];
             Assert(organizationUnit.OrganizationName == input.OrganizationName, "不能创建其他机构的权限组");
-            var groupKey = GetOrganizationGroupKey(input.OrganizationName, input.GroupName);
-            State.GroupActionIdListMap.Remove(groupKey);
-            State.OrganizationGroupMap.Remove(groupKey);
+            var departmentKey = GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName);
+            State.OrganizationDepartmentPermissionListMap.Remove(departmentKey);
+            State.OrganizationDepartmentMap.Remove(departmentKey);
 
-            Context.Fire(new OrganizationGroupDeleted
+            Context.Fire(new OrganizationDepartmentDeleted
             {
                 FromId = input.FromId,
                 OrganizationName = input.OrganizationName,
-                GroupName = input.GroupName
+                DepartmentName = input.DepartmentName
             });
             return new Empty();
         }

@@ -49,7 +49,7 @@ namespace Sinodac.Contracts.DAC
                     {
                         Value = "管理员"
                     });
-                organization.AdminList.Value.Count.ShouldBe(1);
+                organization.DepartmentList.Value.Count.ShouldBe(2);
                 organization.RoleName.ShouldBe("管理员");
                 organization.UserCount.ShouldBe(1);
             }
@@ -60,7 +60,7 @@ namespace Sinodac.Contracts.DAC
                     {
                         Value = "默认机构"
                     });
-                organization.AdminList.ShouldBeNull();
+                organization.DepartmentList.Value.Count.ShouldBe(2);
                 organization.RoleName.ShouldBe("默认");
                 organization.UserCount.ShouldBe(0);
             }
@@ -145,7 +145,6 @@ namespace Sinodac.Contracts.DAC
                 {
                     Value = "Alice博物馆"
                 });
-                organizationUnit.AdminList.Value.ShouldContain("alice");
             }
 
             // Alice博物馆成立以后，alice账户被挪出默认机构，进入Alice博物馆

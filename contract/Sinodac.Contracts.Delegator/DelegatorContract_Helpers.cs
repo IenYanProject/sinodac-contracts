@@ -3,6 +3,7 @@ using System.Linq;
 using AElf;
 using AElf.Sdk.CSharp;
 using AElf.Types;
+using Sinodac.Contracts.Delegator.Helpers;
 
 namespace Sinodac.Contracts.Delegator
 {
@@ -57,7 +58,11 @@ namespace Sinodac.Contracts.Delegator
 
             if (isNeedToBeOrganizationAdmin)
             {
-                Assert(organizationUnit.AdminList.Value.Contains(fromId), $"{user} 不是 {user.OrganizationName} 的管理员");
+                Assert(
+                    State.OrganizationDepartmentMap[
+                        KeyHelper.GetOrganizationDepartmentKey(organizationUnit.OrganizationName,
+                            DelegatorContractConstants.Admin)].MemberList.Value.Contains(fromId),
+                    $"{user} 不是 {user.OrganizationName} 的管理员");
             }
 
             return State.RolePermissionMap[organizationUnit.RoleName][actionId];
@@ -129,7 +134,7 @@ namespace Sinodac.Contracts.Delegator
 
         private void SetDefaultPermissionsToDefaultRole()
         {
-            State.RoleActionIdListMap[DefaultRoleName] = new StringList
+            State.RolePermissionListMap[DefaultRoleName] = new StringList
             {
                 Value =
                 {
@@ -139,7 +144,7 @@ namespace Sinodac.Contracts.Delegator
                     Profile.CertificateIndependentArtist
                 }
             };
-            foreach (var actionId in State.RoleActionIdListMap[DefaultRoleName].Value)
+            foreach (var actionId in State.RolePermissionListMap[DefaultRoleName].Value)
             {
                 State.RolePermissionMap[DefaultRoleName][actionId] = true;
             }
@@ -155,7 +160,7 @@ namespace Sinodac.Contracts.Delegator
             return $"{organizationName}-员工";
         }
 
-        private string GetOrganizationGroupKey(string organizationName, string groupName)
+        private string GetOrganizationDepartmentKey(string organizationName, string groupName)
         {
             return $"{organizationName}-{groupName}";
         }

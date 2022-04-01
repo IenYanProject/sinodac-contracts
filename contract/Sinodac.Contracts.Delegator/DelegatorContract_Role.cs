@@ -1,5 +1,6 @@
 using AElf.Sdk.CSharp;
 using Google.Protobuf.WellKnownTypes;
+using Sinodac.Contracts.Delegator.Managers;
 
 namespace Sinodac.Contracts.Delegator
 {
@@ -8,35 +9,14 @@ namespace Sinodac.Contracts.Delegator
         public override Empty CreateRole(CreateRoleInput input)
         {
             AssertPermission(input.FromId, false, Permission.Role.Create);
-            PerformCreateRole(input);
-            return new Empty();
-        }
-
-        private void PerformCreateRole(CreateRoleInput input)
-        {
-            var role = new Role
+            GetRoleManager().AddRole(new Role
             {
                 RoleName = input.RoleName,
                 RoleCreator = input.FromId,
-                CreateTime = Context.CurrentBlockTime,
                 Enabled = input.Enable,
                 RoleDescription = input.RoleDescription
-            };
-            State.RoleMap[input.RoleName] = role;
-            var actionIdList = new StringList();
-            foreach (var actionId in input.PermissionList)
-            {
-                State.RolePermissionMap[input.RoleName][actionId] = true;
-                actionIdList.Value.Add(actionId);
-            }
-
-            State.RoleActionIdListMap[input.RoleName] = actionIdList;
-
-            Context.Fire(new RoleCreated
-            {
-                FromId = input.FromId,
-                Role = role
             });
+            return new Empty();
         }
 
         public override Empty UpdateRole(UpdateRoleInput input)
@@ -57,7 +37,7 @@ namespace Sinodac.Contracts.Delegator
                 UserCount = oldRole.UserCount
             };
             State.RoleMap[input.RoleName] = role;
-            var previewsActionIdList = State.RoleActionIdListMap[input.RoleName];
+            var previewsActionIdList = State.RolePermissionListMap[input.RoleName];
             foreach (var actionId in input.EnablePermissionList)
             {
                 State.RolePermissionMap[input.RoleName][actionId] = true;
@@ -75,7 +55,7 @@ namespace Sinodac.Contracts.Delegator
                 }
             }
 
-            State.RoleActionIdListMap[input.RoleName] = previewsActionIdList;
+            State.RolePermissionListMap[input.RoleName] = previewsActionIdList;
 
             Context.Fire(new RoleUpdated
             {
@@ -100,8 +80,7 @@ namespace Sinodac.Contracts.Delegator
                 return new Empty();
             }
 
-            var organizationUnitList = State.RoleOrganizationUnitListMap[input.RoleName];
-            foreach (var organizationUnit in organizationUnitList.Value)
+            foreach (var organizationUnit in State.RoleOrganizationUnitListMap[input.RoleName].Value)
             {
                 Assert(!State.OrganizationUnitMap[organizationUnit].Enabled,
                     $"当前角色下存在【启用】状态机构 {organizationUnit} ，请先禁用该机构后再禁用当前角色");

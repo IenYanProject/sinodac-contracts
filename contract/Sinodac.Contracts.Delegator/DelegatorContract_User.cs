@@ -1,6 +1,7 @@
 using AElf.CSharp.Core;
 using AElf.Sdk.CSharp;
 using Google.Protobuf.WellKnownTypes;
+using Sinodac.Contracts.Delegator.Helpers;
 
 namespace Sinodac.Contracts.Delegator
 {
@@ -23,15 +24,20 @@ namespace Sinodac.Contracts.Delegator
 
             if (input.OrganizationName != DefaultOrganizationName)
             {
-                Assert(organizationUnit.AdminList.Value.Contains(input.FromId),
-                    $"用户 {input.FromId} 不是机构 {input.OrganizationName} 的管理员，没有权限创建用户");
+                Assert(
+                    State.OrganizationDepartmentMap[
+                        KeyHelper.GetOrganizationDepartmentKey(organizationUnit.OrganizationName,
+                            DelegatorContractConstants.Admin)].MemberList.Value.Contains(input.FromId),
+                    $"{input.FromId} 不是 {input.OrganizationName} 的管理员");
             }
 
             Assert(organizationUnit.Enabled, $"机构 {input.OrganizationName} 当前被禁用");
 
             if (input.IsAdmin)
             {
-                State.OrganizationUnitMap[input.OrganizationName].AdminList.Value.Add(input.UserName);
+                State.OrganizationDepartmentMap[
+                    KeyHelper.GetOrganizationDepartmentKey(organizationUnit.OrganizationName,
+                        DelegatorContractConstants.Admin)].MemberList.Value.Add(input.UserName);
             }
 
             if (input.Enable)
@@ -41,9 +47,7 @@ namespace Sinodac.Contracts.Delegator
                     State.RoleMap[organizationUnit.RoleName].UserCount.Add(1);
             }
 
-            var groupName = input.IsAdmin ? Admin : input.GroupName ?? Member;
-            Assert(State.OrganizationGroupMap[GetOrganizationGroupKey(input.OrganizationName, groupName)] != null,
-                $"机构 {input.OrganizationName} 不存在 {input.GroupName} 组");
+            var departmentName = input.IsAdmin ? Admin : string.IsNullOrEmpty(input.DepartmentName) ? Member : input.DepartmentName;
 
             var creatorUserInfo = State.UserMap[input.FromId];
 
@@ -53,16 +57,10 @@ namespace Sinodac.Contracts.Delegator
                 UserName = input.UserName,
                 Enabled = input.Enable,
                 OrganizationName = input.OrganizationName,
-                CreateTime = Context.CurrentBlockTime,
                 UserCreatorOrganizationName = creatorUserInfo.OrganizationName,
-                OrganizationGroupName = groupName
+                OrganizationDepartmentName = departmentName
             };
-            State.UserMap[input.UserName] = user;
-            Context.Fire(new UserCreated
-            {
-                FromId = input.FromId,
-                User = user
-            });
+            GetUserManager().AddUser(user);
             return new Empty();
         }
 
@@ -71,21 +69,25 @@ namespace Sinodac.Contracts.Delegator
             AssertPermission(input.FromId, true, Permission.User.Update);
             Assert(State.UserMap[input.UserName].Enabled == input.Enable, "更新用户信息时无法禁用或启用用户");
 
-            if (input.OrganizationGroupName == Admin &&
-                !State.OrganizationUnitMap[input.OrganizationName].AdminList.Value.Contains(input.UserName))
+            if (input.OrganizationDepartmentName == Admin &&
+                !State.OrganizationDepartmentMap[
+                    KeyHelper.GetOrganizationDepartmentKey(input.OrganizationName,
+                        DelegatorContractConstants.Admin)].MemberList.Value.Contains(input.UserName))
             {
-                State.OrganizationUnitMap[input.OrganizationName].AdminList.Value.Add(input.UserName);
+                State.OrganizationDepartmentMap[
+                    KeyHelper.GetOrganizationDepartmentKey(input.OrganizationName,
+                        DelegatorContractConstants.Admin)].MemberList.Value.Add(input.UserName);
             }
 
-            TransferGroup(input.UserName, input.OrganizationName, State.UserMap[input.UserName].OrganizationGroupName,
-                input.OrganizationGroupName);
+            TransferGroup(input.UserName, input.OrganizationName, State.UserMap[input.UserName].OrganizationDepartmentName,
+                input.OrganizationDepartmentName);
 
             var user = new User
             {
                 UserCreator = input.FromId,
                 UserName = input.UserName,
                 OrganizationName = input.OrganizationName,
-                OrganizationGroupName = input.OrganizationGroupName,
+                OrganizationDepartmentName = input.OrganizationDepartmentName,
                 // Stay old values.
                 Enabled = State.UserMap[input.UserName].Enabled,
                 CreateTime = State.UserMap[input.UserName].CreateTime,

@@ -130,17 +130,27 @@ namespace Sinodac.Contracts.Delegator
                 Enabled = input.Enable,
                 RoleName = input.RoleName,
                 CreateTime = Context.CurrentBlockTime,
-                AdminList = new StringList
-                {
-                    Value = { organizationCertificate.Applier }
-                },
-                GroupList = new StringList
+                DepartmentList = new StringList
                 {
                     Value = { Admin, Member }
                 }
             };
             State.OrganizationUnitMap[input.OrganizationName] = organizationUnit;
-            
+            State.OrganizationDepartmentMap[GetOrganizationAdminKey(input.OrganizationName)] = new OrganizationDepartment
+            {
+                OrganizationName = input.OrganizationName,
+                DepartmentName = GetOrganizationAdminKey(input.OrganizationName),
+                MemberList = new StringList
+                {
+                    Value = { organizationCertificate.Applier }
+                }
+            };
+            State.OrganizationDepartmentMap[GetOrganizationMemberKey(input.OrganizationName)] = new OrganizationDepartment
+            {
+                OrganizationName = input.OrganizationName,
+                DepartmentName = GetOrganizationMemberKey(input.OrganizationName),
+            };
+
             // Transfer Creator's profile to the new organization unit.
             var previewsOrganizationName = State.UserMap[organizationCertificate.Applier].OrganizationName;
             var previewsRoleName = State.OrganizationUnitMap[previewsOrganizationName].RoleName;
@@ -150,21 +160,19 @@ namespace Sinodac.Contracts.Delegator
             State.RoleMap[previewsRoleName].UserCount =
                 State.RoleMap[previewsRoleName].UserCount.Sub(1);
 
-            var adminPermissionList = State.RoleActionIdListMap[input.RoleName];
-            State.GroupActionIdListMap[GetOrganizationAdminKey(input.OrganizationName)] = adminPermissionList;
+            var adminPermissionList = State.RolePermissionListMap[input.RoleName];
+            State.OrganizationDepartmentPermissionListMap[GetOrganizationAdminKey(input.OrganizationName)] = adminPermissionList;
             var memberPermissionList = adminPermissionList.Clone();
             if (memberPermissionList.Value.Contains(Permission.User.Create))
             {
                 memberPermissionList.Value.Remove(Permission.User.Create);
             }
-            State.GroupActionIdListMap[GetOrganizationMemberKey(input.OrganizationName)] = memberPermissionList;
+            State.OrganizationDepartmentPermissionListMap[GetOrganizationMemberKey(input.OrganizationName)] = memberPermissionList;
 
             Context.Fire(new OrganizationUnitCreated
             {
                 FromId = input.FromId,
-                OrganizationUnit = organizationUnit,
-                AdminPermissionList = adminPermissionList,
-                MemberPermissionList = memberPermissionList
+                OrganizationUnit = organizationUnit
             });
             return new Empty();
         }

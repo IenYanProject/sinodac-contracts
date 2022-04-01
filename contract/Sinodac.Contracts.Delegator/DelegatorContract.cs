@@ -10,106 +10,13 @@ namespace Sinodac.Contracts.Delegator
         public override Empty Initialize(InitializeInput input)
         {
             Assert(State.Admin.Value == null, "合约已经完成过初始化了");
-
             State.Admin.Value = input.AdminAddress ?? Context.Sender;
-
-            var roleAdmin = new Role
-            {
-                RoleName = Admin,
-                RoleCreator = System,
-                CreateTime = Context.CurrentBlockTime,
-                Enabled = true,
-                RoleDescription = $"{Admin} can do anything.",
-                OrganizationUnitCount = 1,
-                UserCount = 1
-            };
-            State.RoleMap[Admin] = roleAdmin;
-            Context.Fire(new RoleCreated
-            {
-                FromId = System,
-                Role = roleAdmin
-            });
-            // 管理员组织没有OrganizationCertificate（比较特殊算是）
-            var organizationUnitAdmin = new OrganizationUnit
-            {
-                OrganizationName = Admin,
-                CreateTime = Context.CurrentBlockTime,
-                Enabled = true,
-                OrganizationCreator = System,
-                RoleName = Admin,
-                AdminList = new StringList
-                {
-                    Value = { Admin }
-                },
-                UserCount = 1
-            };
-            State.OrganizationUnitMap[Admin] = organizationUnitAdmin;
-            State.RoleOrganizationUnitListMap[Admin] = new StringList
-            {
-                Value = { Admin }
-            };
-            Context.Fire(new OrganizationUnitCreated
-            {
-                FromId = System,
-                OrganizationUnit = organizationUnitAdmin
-            });
-            var adminUserName = nameof(Admin).ToLower();
-            var userAdmin = new User
-            {
-                CreateTime = Context.CurrentBlockTime,
-                Enabled = true,
-                OrganizationName = Admin,
-                UserCreator = System,
-                UserName = adminUserName
-            };
-            State.UserMap[adminUserName] = userAdmin;
-            Context.Fire(new UserCreated
-            {
-                FromId = System,
-                User = userAdmin
-            });
-
-            var roleDefault = new Role
-            {
-                RoleName = DefaultRoleName,
-                RoleCreator = System,
-                CreateTime = Context.CurrentBlockTime,
-                Enabled = true,
-                RoleDescription = "新建用户的默认角色",
-                OrganizationUnitCount = 1
-            };
-            State.RoleMap[DefaultRoleName] = roleDefault;
-            Context.Fire(new RoleCreated
-            {
-                FromId = System,
-                Role = roleDefault
-            });
-            // 默认组织也没有OrganizationCertificate
-            var organizationUnitDefault = new OrganizationUnit
-            {
-                OrganizationName = DefaultOrganizationName,
-                CreateTime = Context.CurrentBlockTime,
-                Enabled = true,
-                OrganizationCreator = System,
-                RoleName = DefaultRoleName,
-            };
-            State.OrganizationUnitMap[DefaultOrganizationName] = organizationUnitDefault;
-            State.RoleOrganizationUnitListMap[DefaultRoleName] = new StringList
-            {
-                Value = { DefaultOrganizationName }
-            };
-            SetDefaultPermissionsToDefaultRole();
-            Context.Fire(new OrganizationUnitCreated
-            {
-                FromId = System,
-                OrganizationUnit = organizationUnitDefault
-            });
-
-            foreach (var actionId in GetAllActionIds())
-            {
-                State.RolePermissionMap[Admin][actionId] = true;
-            }
-
+            var roleManager = GetRoleManager();
+            roleManager.Initialize();
+            var organizationUnitManager = GetOrganizationUnitManager(roleManager);
+            organizationUnitManager.Initialize();
+            var userManager = GetUserManager(roleManager, organizationUnitManager);
+            userManager.Initialize();
             return new Empty();
         }
 
