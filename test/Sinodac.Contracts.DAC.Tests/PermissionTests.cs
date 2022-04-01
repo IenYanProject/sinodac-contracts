@@ -5,43 +5,59 @@ using AElf.Kernel;
 using Google.Protobuf.WellKnownTypes;
 using Shouldly;
 using Sinodac.Contracts.Delegator;
+using Sinodac.Contracts.Delegator.Helpers;
 using Xunit;
 
 namespace Sinodac.Contracts.DAC
 {
-    public class DACContractTests : DACContractTestBase
+    public partial class DACContractTests : DACContractTestBase
     {
-        [Fact]
-        public async Task Test()
-        {
-            var keyPair = SampleAccount.Accounts.First().KeyPair;
-            var stub = GetDACContractStub(keyPair);
-
-            // Use CallAsync or SendAsync method of this stub to test.
-            // await stub.Hello.SendAsync(new Empty())
-
-            // Or maybe you want to get its return value.
-            // var output = (await stub.Hello.SendAsync(new Empty())).Output;
-
-            // Or transaction result.
-            // var transactionResult = (await stub.Hello.SendAsync(new Empty())).TransactionResult;
-        }
-
-        private async Task<DelegatorContractContainer.DelegatorContractStub> InitializeAsync()
-        {
-            var adminAccount = SampleAccount.Accounts.First();
-            var delegatorContractStub = GetDelegatorContractStub(adminAccount.KeyPair);
-            await delegatorContractStub.Initialize.SendAsync(new Delegator.InitializeInput
-            {
-                AdminAddress = adminAccount.Address
-            });
-            return delegatorContractStub;
-        }
-
+        /// <summary>
+        /// 完成初始化后，预期：
+        /// - 有两个角色：管理员 & 默认
+        /// - 管理员角色拥有所有权限；默认角色拥有Profile相关权限
+        /// - 有两个机构：管理员 & 默认机构
+        /// - 每个机构都有两个部门：管理员 & 员工
+        /// - 管理员部门拥有机构对应角色的所有权限；员工部门拥有比管理员部门少了User相关权限
+        /// - 有一个用户：admin，是管理员机构的管理员
+        /// </summary>
         [Fact]
         public async Task Permission_InitializeTest()
         {
             var delegatorContractStub = await InitializeAsync();
+
+            {
+                var role = await delegatorContractStub.GetRole.CallAsync(new StringValue
+                {
+                    Value = "管理员"
+                });
+                role.RoleName.ShouldBe("管理员");
+                role.RoleCreator.ShouldBe("系统");
+                role.OrganizationUnitCount.ShouldBe(1);
+                role.UserCount.ShouldBe(1);
+
+                var rolePermissionList = await delegatorContractStub.GetRolePermissionList.CallAsync(new StringValue
+                {
+                    Value = "管理员"
+                });
+                rolePermissionList.Value.Count.ShouldBeGreaterThan(10);
+            }
+
+            {
+                var role = await delegatorContractStub.GetRole.CallAsync(new StringValue
+                {
+                    Value = "默认"
+                });
+                role.RoleName.ShouldBe("默认");
+                role.RoleCreator.ShouldBe("系统");
+                role.OrganizationUnitCount.ShouldBe(1);
+                
+                var rolePermissionList = await delegatorContractStub.GetRolePermissionList.CallAsync(new StringValue
+                {
+                    Value = "默认"
+                });
+                rolePermissionList.Value.Count.ShouldBe(4);
+            }
 
             {
                 var organization = await delegatorContractStub.GetOrganizationUnit.CallAsync(
@@ -49,9 +65,47 @@ namespace Sinodac.Contracts.DAC
                     {
                         Value = "管理员"
                     });
+                organization.OrganizationName.ShouldBe("管理员");
                 organization.DepartmentList.Value.Count.ShouldBe(2);
                 organization.RoleName.ShouldBe("管理员");
                 organization.UserCount.ShouldBe(1);
+            }
+
+            {
+                var department = await delegatorContractStub.GetOrganizationDepartment.CallAsync(new StringValue
+                {
+                    Value = KeyHelper.GetOrganizationDepartmentKey("管理员", "管理员")
+                });
+                department.OrganizationName.ShouldBe("管理员");
+                department.DepartmentName.ShouldBe("管理员");
+                department.MemberList.Value.Count.ShouldBe(1);
+                department.MemberList.Value.First().ShouldBe("admin");
+                var departmentPermissionList =
+                    await delegatorContractStub.GetOrganizationDepartmentPermissionList.CallAsync(
+                        new GetOrganizationDepartmentPermissionListInput
+                        {
+                            OrganizationName = "管理员",
+                            DepartmentName = "管理员"
+                        });
+                departmentPermissionList.Value.Count.ShouldBeGreaterThan(30);
+            }
+            
+            {
+                var department = await delegatorContractStub.GetOrganizationDepartment.CallAsync(new StringValue
+                {
+                    Value = KeyHelper.GetOrganizationDepartmentKey("管理员", "员工")
+                });
+                department.OrganizationName.ShouldBe("管理员");
+                department.DepartmentName.ShouldBe("员工");
+                department.MemberList.Value.Count.ShouldBe(0);
+                var departmentPermissionList =
+                    await delegatorContractStub.GetOrganizationDepartmentPermissionList.CallAsync(
+                        new GetOrganizationDepartmentPermissionListInput
+                        {
+                            OrganizationName = "管理员",
+                            DepartmentName = "员工"
+                        });
+                departmentPermissionList.Value.Count.ShouldBeGreaterThan(30);
             }
 
             {
@@ -60,9 +114,44 @@ namespace Sinodac.Contracts.DAC
                     {
                         Value = "默认机构"
                     });
+                organization.OrganizationName.ShouldBe("默认机构");
                 organization.DepartmentList.Value.Count.ShouldBe(2);
                 organization.RoleName.ShouldBe("默认");
                 organization.UserCount.ShouldBe(0);
+            }
+
+            {
+                var department = await delegatorContractStub.GetOrganizationDepartment.CallAsync(new StringValue
+                {
+                    Value = KeyHelper.GetOrganizationDepartmentKey("默认机构", "管理员")
+                });
+                department.OrganizationName.ShouldBe("默认机构");
+                department.DepartmentName.ShouldBe("管理员");
+                var departmentPermissionList =
+                    await delegatorContractStub.GetOrganizationDepartmentPermissionList.CallAsync(
+                        new GetOrganizationDepartmentPermissionListInput
+                        {
+                            OrganizationName = "默认机构",
+                            DepartmentName = "管理员"
+                        });
+                departmentPermissionList.Value.Count.ShouldBe(4);
+            }
+
+            {
+                var department = await delegatorContractStub.GetOrganizationDepartment.CallAsync(new StringValue
+                {
+                    Value = KeyHelper.GetOrganizationDepartmentKey("默认机构", "员工")
+                });
+                department.OrganizationName.ShouldBe("默认机构");
+                department.DepartmentName.ShouldBe("员工");
+                var departmentPermissionList =
+                    await delegatorContractStub.GetOrganizationDepartmentPermissionList.CallAsync(
+                        new GetOrganizationDepartmentPermissionListInput
+                        {
+                            OrganizationName = "默认机构",
+                            DepartmentName = "员工"
+                        });
+                departmentPermissionList.Value.Count.ShouldBe(4);
             }
 
             {
@@ -72,6 +161,7 @@ namespace Sinodac.Contracts.DAC
                 });
                 user.UserName.ShouldBe("admin");
                 user.OrganizationName.ShouldBe("管理员");
+                user.OrganizationDepartmentName.ShouldBe("管理员");
                 user.UserCreator.ShouldBe("系统");
             }
         }
@@ -262,7 +352,7 @@ namespace Sinodac.Contracts.DAC
                 dartCertificate.Name.ShouldBe("毛线");
                 dartCertificate.Description.ShouldBe("艺术带师");
             }
-            
+
             // 而bob自己无法提交机构和个人认证
             {
                 var executionResult = await delegatorContractStub.CreateOrganizationCertificate.SendWithExceptionAsync(
@@ -280,7 +370,7 @@ namespace Sinodac.Contracts.DAC
                     });
                 executionResult.TransactionResult.Error.ShouldContain("没有权限调用当前方法");
             }
-            
+
             // admin通过mao的个人艺术家认证
             await delegatorContractStub.CreateIndependentArtist.SendAsync(new CreateIndependentArtistInput
             {
@@ -289,8 +379,19 @@ namespace Sinodac.Contracts.DAC
                 Enable = true,
                 IsApprove = true
             });
-            
-            
+
+
+        }
+
+        private async Task<DelegatorContractContainer.DelegatorContractStub> InitializeAsync()
+        {
+            var adminAccount = SampleAccount.Accounts.First();
+            var delegatorContractStub = GetDelegatorContractStub(adminAccount.KeyPair);
+            await delegatorContractStub.Initialize.SendAsync(new Delegator.InitializeInput
+            {
+                AdminAddress = adminAccount.Address
+            });
+            return delegatorContractStub;
         }
     }
 }

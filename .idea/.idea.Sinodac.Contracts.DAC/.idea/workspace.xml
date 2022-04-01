@@ -5,32 +5,13 @@
     <projectFile>src/AElf.Boilerplate.ContractPatcher/AElf.Boilerplate.ContractPatcher.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Add OrganizationGroup">
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState_Permission.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_ComponentRoots.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Helpers/KeyHelper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Helpers/PermissionHelper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/IndependentArtistManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/OrganizationUnitManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/RoleManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/UserManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Services/PermissionService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Strategies/AdminPermissionSetStrategy.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Strategies/IPermissionSetStrategy.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Strategies/MemberPermissionStrategy.cs" afterDir="false" />
+    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Refactor Initialize method.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractConstants.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractConstants.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Group.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Group.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Helpers.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_OrganizationUnit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_OrganizationUnit.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Role.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Role.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Views.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Views.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/OrganizationUnitManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/OrganizationUnitManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/protobuf/delegator_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/delegator_contract.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/PermissionTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" beforeDir="false" afterPath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -124,7 +105,7 @@
       <workItem from="1647926236973" duration="12192000" />
       <workItem from="1648006044181" duration="16857000" />
       <workItem from="1648094183141" duration="77002000" />
-      <workItem from="1648703274193" duration="27469000" />
+      <workItem from="1648703274193" duration="30779000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
       <created>1647851255016</created>
@@ -196,7 +177,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648778676266</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Refactor Initialize method.">
+      <created>1648797345316</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1648797345316</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -231,49 +219,37 @@
     <MESSAGE value="More methods of DAC Market Contract." />
     <MESSAGE value="Ready for coding unit tests." />
     <MESSAGE value="Add OrganizationGroup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add OrganizationGroup" />
+    <MESSAGE value="Refactor Initialize method." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor Initialize method." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs</url>
+          <url>file://$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/PermissionTests.cs</url>
           <line>273</line>
           <properties documentPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs" initialLine="274" containingFunctionPresentation="method 'Permission_CreateTest'">
             <startOffsets>
-              <option value="9583" />
+              <option value="13827" />
             </startOffsets>
             <endOffsets>
-              <option value="9651" />
+              <option value="13895" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/OrganizationUnitManager.cs</url>
-          <line>74</line>
-          <properties documentPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/OrganizationUnitManager.cs" initialLine="74" containingFunctionPresentation="method 'AddOrganizationUnit'">
+          <line>84</line>
+          <properties documentPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/OrganizationUnitManager.cs" initialLine="84" containingFunctionPresentation="method 'AddOrganizationDepartment'">
             <startOffsets>
-              <option value="3431" />
+              <option value="3894" />
             </startOffsets>
             <endOffsets>
-              <option value="3506" />
+              <option value="4187" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/OrganizationUnitManager.cs</url>
-          <line>98</line>
-          <properties documentPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Managers/OrganizationUnitManager.cs" initialLine="98" containingFunctionPresentation="method 'AddOrganizationDepartment'">
-            <startOffsets>
-              <option value="4522" />
-            </startOffsets>
-            <endOffsets>
-              <option value="4665" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="6" />
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

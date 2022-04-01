@@ -46,5 +46,10 @@ namespace Sinodac.Contracts.Delegator
             return State.OrganizationDepartmentPermissionListMap[
                 GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName)];
         }
+
+        public override OrganizationDepartment GetOrganizationDepartment(StringValue input)
+        {
+            return State.OrganizationDepartmentMap[input.Value];
+        }
     }
 }

@@ -34,34 +34,24 @@ namespace Sinodac.Contracts.Delegator.Managers
         public void Initialize()
         {
             // 添加管理员机构
-            var organizationUnitAdmin = new OrganizationUnit
+            AddOrganizationUnit(new OrganizationUnit
             {
                 OrganizationName = DelegatorContractConstants.Admin,
                 CreateTime = _context.CurrentBlockTime,
                 OrganizationCreator = DelegatorContractConstants.System,
                 RoleName = DelegatorContractConstants.Admin,
                 Enabled = true,
-            };
-            AddOrganizationUnit(organizationUnitAdmin);
-            _roleManager.AddOrganizationUnit(organizationUnitAdmin);
-
-            // 为管理员机构添加两个默认部门
-            AddDefaultDepartmentsForOrganization(DelegatorContractConstants.Admin);
+            });
 
             // 添加默认机构
-            var organizationUnitDefault = new OrganizationUnit
+            AddOrganizationUnit(new OrganizationUnit
             {
                 OrganizationName = DelegatorContractConstants.DefaultOrganizationName,
                 CreateTime = _context.CurrentBlockTime,
                 OrganizationCreator = DelegatorContractConstants.System,
                 RoleName = DelegatorContractConstants.DefaultRoleName,
                 Enabled = true
-            };
-            _roleManager.AddOrganizationUnit(organizationUnitDefault);
-            AddOrganizationUnit(organizationUnitDefault);
-
-            // 为默认机构添加两个默认部门
-            AddDefaultDepartmentsForOrganization(DelegatorContractConstants.DefaultOrganizationName);
+            });
         }
 
         public void AddOrganizationCertificate()
@@ -74,7 +64,7 @@ namespace Sinodac.Contracts.Delegator.Managers
             organizationUnit.DepartmentList = new StringList();
             _roleManager.AddOrganizationUnit(organizationUnit);
             _organizationUnitMap[organizationUnit.OrganizationName] = organizationUnit;
-
+            AddDefaultDepartmentsForOrganization(organizationUnit.OrganizationName);
             _context.Fire(new OrganizationUnitCreated
             {
                 FromId = organizationUnit.OrganizationCreator,
@@ -95,10 +85,14 @@ namespace Sinodac.Contracts.Delegator.Managers
             _organizationDepartmentMap[departmentKey] = new OrganizationDepartment
             {
                 OrganizationName = organizationDepartment.OrganizationName,
-                DepartmentName = organizationDepartment.DepartmentName
+                DepartmentName = organizationDepartment.DepartmentName,
+                MemberList = new StringList()
             };
             _organizationUnitMap[organizationDepartment.OrganizationName].DepartmentList.Value
                 .Add(organizationDepartment.DepartmentName);
+            
+            InheritPermissionListFromRole(organizationDepartment.OrganizationName, organizationDepartment.DepartmentName,
+                new AdminPermissionSetStrategy());
         }
 
         public void AddDefaultDepartmentsForOrganization(string organizationName)
@@ -108,15 +102,12 @@ namespace Sinodac.Contracts.Delegator.Managers
                 OrganizationName = organizationName,
                 DepartmentName = DelegatorContractConstants.Admin
             });
-            InheritPermissionListFromRole(organizationName, DelegatorContractConstants.Admin,
-                new AdminPermissionSetStrategy());
+
             AddOrganizationDepartment(new OrganizationDepartment
             {
                 OrganizationName = organizationName,
                 DepartmentName = DelegatorContractConstants.Member
             });
-            InheritPermissionListFromRole(organizationName, DelegatorContractConstants.Admin,
-                new MemberPermissionStrategy());
         }
 
         public void AddUser(User user)
@@ -125,6 +116,9 @@ namespace Sinodac.Contracts.Delegator.Managers
             IsOrganizationDepartmentExists(user.OrganizationName, user.OrganizationDepartmentName);
             _organizationUnitMap[user.OrganizationName].UserCount++;
             _roleManager.AddUser(_organizationUnitMap[user.OrganizationName].RoleName);
+            var departmentKey =
+                KeyHelper.GetOrganizationDepartmentKey(user.OrganizationName, user.OrganizationDepartmentName);
+            _organizationDepartmentMap[departmentKey].MemberList.Value.Add(user.UserName);
         }
 
         public OrganizationCertificate GetOrganizationCertificate(string organizationName)
@@ -169,18 +163,18 @@ namespace Sinodac.Contracts.Delegator.Managers
         {
             IsOrganizationUnitExists(organizationName);
             IsOrganizationDepartmentExists(organizationName, departmentName);
-            var permissionList =
-                permissionSetStrategy.ExtractPermissionList(
-                    _roleManager.GetRolePermissionList(GetOrganizationUnit(organizationName).RoleName));
+            var rolePermissionList = _roleManager.GetRolePermissionList(GetOrganizationUnit(organizationName).RoleName);
+            var departmentPermissionList =
+                permissionSetStrategy.ExtractPermissionList(rolePermissionList);
             var departmentKey = KeyHelper.GetOrganizationDepartmentKey(organizationName, departmentName);
-            foreach (var permissionId in permissionList)
+            foreach (var permissionId in departmentPermissionList)
             {
                 _organizationDepartmentPermissionMap[departmentKey][permissionId] = true;
             }
 
             _organizationDepartmentPermissionListMap[departmentKey] = new StringList
             {
-                Value = { permissionList }
+                Value = { departmentPermissionList }
             };
         }
     }
