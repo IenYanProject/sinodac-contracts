@@ -24,14 +24,27 @@ namespace Sinodac.Contracts.Delegator
             if (input.OrganizationName != DefaultOrganizationName)
             {
                 Assert(organizationUnit.AdminList.Value.Contains(input.FromId),
-                    $"用户 {input.FromId} 不是机构 {input.OrganizationName} 的管理员");
+                    $"用户 {input.FromId} 不是机构 {input.OrganizationName} 的管理员，没有权限创建用户");
             }
 
             Assert(organizationUnit.Enabled, $"机构 {input.OrganizationName} 当前被禁用");
 
-            State.OrganizationUnitMap[input.OrganizationName].UserCount = organizationUnit.UserCount.Add(1);
-            State.RoleMap[organizationUnit.RoleName].UserCount =
-                State.RoleMap[organizationUnit.RoleName].UserCount.Add(1);
+            if (input.IsAdmin)
+            {
+                State.OrganizationUnitMap[input.OrganizationName].AdminList.Value.Add(input.UserName);
+            }
+
+            if (input.Enable)
+            {
+                State.OrganizationUnitMap[input.OrganizationName].UserCount = organizationUnit.UserCount.Add(1);
+                State.RoleMap[organizationUnit.RoleName].UserCount =
+                    State.RoleMap[organizationUnit.RoleName].UserCount.Add(1);
+            }
+
+            var groupName = input.IsAdmin ? Admin : input.GroupName ?? Member;
+            Assert(State.OrganizationGroupMap[GetOrganizationGroupKey(input.OrganizationName, groupName)] != null,
+                $"机构 {input.OrganizationName} 不存在 {input.GroupName} 组");
+
             var creatorUserInfo = State.UserMap[input.FromId];
 
             var user = new User
@@ -41,7 +54,8 @@ namespace Sinodac.Contracts.Delegator
                 Enabled = input.Enable,
                 OrganizationName = input.OrganizationName,
                 CreateTime = Context.CurrentBlockTime,
-                UserCreatorOrganizationName = creatorUserInfo.OrganizationName
+                UserCreatorOrganizationName = creatorUserInfo.OrganizationName,
+                OrganizationGroupName = groupName
             };
             State.UserMap[input.UserName] = user;
             Context.Fire(new UserCreated
@@ -57,14 +71,25 @@ namespace Sinodac.Contracts.Delegator
             AssertPermission(input.FromId, true, Permission.User.Update);
             Assert(State.UserMap[input.UserName].Enabled == input.Enable, "更新用户信息时无法禁用或启用用户");
 
+            if (input.OrganizationGroupName == Admin &&
+                !State.OrganizationUnitMap[input.OrganizationName].AdminList.Value.Contains(input.UserName))
+            {
+                State.OrganizationUnitMap[input.OrganizationName].AdminList.Value.Add(input.UserName);
+            }
+
+            TransferGroup(input.UserName, input.OrganizationName, State.UserMap[input.UserName].OrganizationGroupName,
+                input.OrganizationGroupName);
+
             var user = new User
             {
                 UserCreator = input.FromId,
                 UserName = input.UserName,
                 OrganizationName = input.OrganizationName,
+                OrganizationGroupName = input.OrganizationGroupName,
                 // Stay old values.
                 Enabled = State.UserMap[input.UserName].Enabled,
-                CreateTime = State.UserMap[input.UserName].CreateTime
+                CreateTime = State.UserMap[input.UserName].CreateTime,
+                UserCreatorOrganizationName = State.UserMap[input.UserName].UserCreatorOrganizationName
             };
             State.UserMap[input.UserName] = user;
             Context.Fire(new UserUpdated
@@ -73,6 +98,11 @@ namespace Sinodac.Contracts.Delegator
                 User = user
             });
             return new Empty();
+        }
+
+        private void TransferGroup(string userName, string organizationName, string oldGroupName, string newGroupName)
+        {
+            
         }
 
         public override Empty DisableUser(DisableUserInput input)

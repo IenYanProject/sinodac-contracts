@@ -62,6 +62,7 @@ namespace Sinodac.Contracts.DAC
                     });
                 organization.AdminList.ShouldBeNull();
                 organization.RoleName.ShouldBe("默认");
+                organization.UserCount.ShouldBe(0);
             }
 
             {
@@ -139,11 +140,158 @@ namespace Sinodac.Contracts.DAC
                 RoleName = "博物馆"
             });
 
-            var organizationUnit = await delegatorContractStub.GetOrganizationUnit.CallAsync(new StringValue
             {
-                Value = "Alice博物馆"
+                var organizationUnit = await delegatorContractStub.GetOrganizationUnit.CallAsync(new StringValue
+                {
+                    Value = "Alice博物馆"
+                });
+                organizationUnit.AdminList.Value.ShouldContain("alice");
+            }
+
+            // Alice博物馆成立以后，alice账户被挪出默认机构，进入Alice博物馆
+            {
+                var organizationUnit = await delegatorContractStub.GetOrganizationUnit.CallAsync(new StringValue
+                {
+                    Value = "默认机构"
+                });
+                organizationUnit.UserCount.ShouldBe(0);
+
+                var role = await delegatorContractStub.GetRole.CallAsync(new StringValue
+                {
+                    Value = "默认"
+                });
+                role.UserCount.ShouldBe(0);
+
+                var alice = await delegatorContractStub.GetUser.CallAsync(new StringValue
+                {
+                    Value = "alice"
+                });
+                alice.OrganizationName.ShouldBe("Alice博物馆");
+            }
+
+            // alice创建用户：机构管理员bob
+            await delegatorContractStub.CreateUser.SendAsync(new CreateUserInput
+            {
+                OrganizationName = "Alice博物馆",
+                FromId = "alice",
+                UserName = "bob",
+                Enable = true,
+                IsAdmin = true
             });
-            organizationUnit.AdminList.Value.ShouldContain("alice");
+
+            {
+                var user = await delegatorContractStub.GetUser.CallAsync(new StringValue
+                {
+                    Value = "bob"
+                });
+                user.Enabled.ShouldBeTrue();
+            }
+
+            // bob创建用户：机构员工clare
+            await delegatorContractStub.CreateUser.SendAsync(new CreateUserInput
+            {
+                OrganizationName = "Alice博物馆",
+                FromId = "bob",
+                UserName = "clare",
+                Enable = true
+            });
+
+            {
+                var user = await delegatorContractStub.GetUser.CallAsync(new StringValue
+                {
+                    Value = "clare"
+                });
+                user.Enabled.ShouldBeTrue();
+            }
+
+            // clare就不能继续创建其他用户了
+            {
+                var executionResult = await delegatorContractStub.CreateUser.SendWithExceptionAsync(new CreateUserInput
+                {
+                    OrganizationName = "Alice博物馆",
+                    FromId = "clare",
+                    UserName = "dart",
+                    Enable = true
+                });
+                executionResult.TransactionResult.Error.ShouldContain("没有权限创建用户");
+            }
+
+            {
+                var user = await delegatorContractStub.GetUser.CallAsync(new StringValue
+                {
+                    Value = "dart"
+                });
+                user.Enabled.ShouldBeFalse();
+            }
+
+            // bob创建用户：非本机构员工mao
+            await delegatorContractStub.CreateUser.SendAsync(new CreateUserInput
+            {
+                FromId = "bob",
+                UserName = "mao",
+                Enable = true
+            });
+
+            // mao会进入默认机构
+            {
+                var dart = await delegatorContractStub.GetUser.CallAsync(new StringValue
+                {
+                    Value = "mao"
+                });
+                dart.OrganizationName.ShouldBe("默认机构");
+            }
+
+            // mao提交个人艺术家认证
+            await delegatorContractStub.CreateIndependentCertificate.SendAsync(new CreateIndependentCertificateInput
+            {
+                FromId = "mao",
+                Id = "PRETENDING_TO_BE_AN_ID_NUMBER",
+                Description = "艺术带师",
+                Email = "PRETENDING_TO_BE_AN_EMAIL_ADDRESS",
+                Location = "火星",
+                Name = "毛线",
+                PhoneNumber = "13188888888",
+                PhotoIds = { "run", "tu", "ci", "cha" }
+            });
+
+            {
+                var dartCertificate = await delegatorContractStub.GetIndependentCertificate.CallAsync(
+                    new StringValue
+                    {
+                        Value = "mao"
+                    });
+                dartCertificate.Name.ShouldBe("毛线");
+                dartCertificate.Description.ShouldBe("艺术带师");
+            }
+            
+            // 而bob自己无法提交机构和个人认证
+            {
+                var executionResult = await delegatorContractStub.CreateOrganizationCertificate.SendWithExceptionAsync(
+                    new CreateOrganizationCertificateInput
+                    {
+                        FromId = "bob",
+                        OrganizationName = "Bob的博物馆"
+                    });
+                executionResult.TransactionResult.Error.ShouldContain("没有权限调用当前方法");
+                executionResult = await delegatorContractStub.CreateIndependentCertificate.SendWithExceptionAsync(
+                    new CreateIndependentCertificateInput
+                    {
+                        FromId = "bob",
+                        Name = "鲍博",
+                    });
+                executionResult.TransactionResult.Error.ShouldContain("没有权限调用当前方法");
+            }
+            
+            // admin通过mao的个人艺术家认证
+            await delegatorContractStub.CreateIndependentArtist.SendAsync(new CreateIndependentArtistInput
+            {
+                ArtistUserName = "mao",
+                FromId = "admin",
+                Enable = true,
+                IsApprove = true
+            });
+            
+            
         }
     }
 }

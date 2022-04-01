@@ -26,7 +26,7 @@ namespace Sinodac.Contracts.Delegator
 
             Assert(organizationUnit.Enabled, $"机构 {organizationUnit.OrganizationName} 当前为禁用状态");
 
-            if (organizationUnit.RoleName == DefaultRoleName)
+            if (organizationUnit.RoleName == Admin)
             {
                 // 管理员角色的成员可以做任何事情
                 return;
@@ -129,10 +129,35 @@ namespace Sinodac.Contracts.Delegator
 
         private void SetDefaultPermissionsToDefaultRole()
         {
-            State.RolePermissionMap[DefaultRoleName][Profile.Default] = true;
-            State.RolePermissionMap[DefaultRoleName][Profile.Information] = true;
-            State.RolePermissionMap[DefaultRoleName][Profile.CertificateOrganizationUnit] = true;
-            State.RolePermissionMap[DefaultRoleName][Profile.CertificateIndependentArtist] = true;
+            State.RoleActionIdListMap[DefaultRoleName] = new StringList
+            {
+                Value =
+                {
+                    Profile.Default,
+                    Profile.Information,
+                    Profile.CertificateOrganizationUnit,
+                    Profile.CertificateIndependentArtist
+                }
+            };
+            foreach (var actionId in State.RoleActionIdListMap[DefaultRoleName].Value)
+            {
+                State.RolePermissionMap[DefaultRoleName][actionId] = true;
+            }
+        }
+
+        private string GetOrganizationAdminKey(string organizationName)
+        {
+            return $"{organizationName}-管理员";
+        }
+
+        private string GetOrganizationMemberKey(string organizationName)
+        {
+            return $"{organizationName}-员工";
+        }
+
+        private string GetOrganizationGroupKey(string organizationName, string groupName)
+        {
+            return $"{organizationName}-{groupName}";
         }
     }
 }

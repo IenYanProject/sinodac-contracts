@@ -41,9 +41,17 @@ namespace Sinodac.Contracts.Delegator
             public const string Disable = OrganizationUnitDefault + ":Disable";
         }
 
+        public class OrganizationGroup
+        {
+            public const string OrganizationGroupDefault = Default + ":OrganizationGroup";
+            public const string Create = OrganizationGroupDefault + ":Create";
+            public const string Update = OrganizationGroupDefault + ":Update";
+            public const string Delete = OrganizationGroupDefault + ":Delete";
+        }
+
         public class User
         {
-            public const string UserDefault = nameof(User);
+            public const string UserDefault = Default + ":User";
             public const string Create = UserDefault + ":Create";
             public const string Update = UserDefault + ":Update";
             public const string Disable = UserDefault + ":Disable";

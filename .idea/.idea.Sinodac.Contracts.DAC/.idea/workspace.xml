@@ -5,27 +5,19 @@
     <projectFile>src/AElf.Boilerplate.ContractPatcher/AElf.Boilerplate.ContractPatcher.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Views.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DAppContractTestDeploymentListProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DelegatorInitializationProvider.cs" afterDir="false" />
+    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Ready for coding unit tests.">
+      <change afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Group.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractReferenceState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractReferenceState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractConstants.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractConstants.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContractState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Helpers.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_IndependetArtist.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_IndependetArtist.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_OrganizationUnit.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_OrganizationUnit.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Role.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Role.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Views.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_Views.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/PermissionConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/PermissionConfig.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/protobuf/delegator_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/delegator_contract.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractInitializationProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractInitializationProvider.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestModule.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" beforeDir="false" afterPath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" afterDir="false" />
     </list>
@@ -46,10 +38,9 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///Users/eanzhao/Code/sinodac-contracts/contract/Sinodac.Contracts.Delegator/DelegatorContract_Certificate.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.3.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0ee42911820846bc8efeb7a996f4fa3f6a00/d6/08d12787/CSharpSmartContractAbstract.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1f9cf4ebfe9e417f9dcf06761033b34f25000/ac/1cf76262/IContractInitializationProvider.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/eanzhao/Code/sinodac-contracts/contract/Sinodac.Contracts.Delegator/DelegatorContract.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/Protobuf/Generated/Acs7.g.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -120,7 +111,8 @@
       <workItem from="1647834848446" duration="14826000" />
       <workItem from="1647926236973" duration="12192000" />
       <workItem from="1648006044181" duration="16857000" />
-      <workItem from="1648094183141" duration="72595000" />
+      <workItem from="1648094183141" duration="77002000" />
+      <workItem from="1648703274193" duration="11993000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
       <created>1647851255016</created>
@@ -178,7 +170,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648552886004</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Ready for coding unit tests.">
+      <created>1648641060328</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1648641060328</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -211,23 +210,24 @@
     <MESSAGE value="Finished Credit Contract." />
     <MESSAGE value="Create &amp; Mint method impl." />
     <MESSAGE value="More methods of DAC Market Contract." />
-    <option name="LAST_COMMIT_MESSAGE" value="More methods of DAC Market Contract." />
+    <MESSAGE value="Ready for coding unit tests." />
+    <option name="LAST_COMMIT_MESSAGE" value="Ready for coding unit tests." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs</url>
-          <line>17</line>
-          <properties documentPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_User.cs" initialLine="12" containingFunctionPresentation="method 'CreateUser'">
+          <url>file://$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs</url>
+          <line>274</line>
+          <properties documentPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTests.cs" initialLine="274" containingFunctionPresentation="method 'Permission_CreateTest'">
             <startOffsets>
-              <option value="494" />
+              <option value="9637" />
             </startOffsets>
             <endOffsets>
-              <option value="567" />
+              <option value="9705" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="2" />
+          <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

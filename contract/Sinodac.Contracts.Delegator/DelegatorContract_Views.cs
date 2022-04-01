@@ -34,5 +34,15 @@ namespace Sinodac.Contracts.Delegator
         {
             return State.IndependentCertificateMap[input.Value];
         }
+
+        public override StringList GetRolePermissionList(StringValue input)
+        {
+            return State.RoleActionIdListMap[input.Value];
+        }
+
+        public override StringList GetOrganizationGroupPermissionList(GetOrganizationGroupPermissionListInput input)
+        {
+            return State.GroupActionIdListMap[GetOrganizationGroupKey(input.OrganizationName, input.GroupName)];
+        }
     }
 }

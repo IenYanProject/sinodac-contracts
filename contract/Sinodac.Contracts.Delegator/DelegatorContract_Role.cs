@@ -57,14 +57,25 @@ namespace Sinodac.Contracts.Delegator
                 UserCount = oldRole.UserCount
             };
             State.RoleMap[input.RoleName] = role;
+            var previewsActionIdList = State.RoleActionIdListMap[input.RoleName];
             foreach (var actionId in input.EnablePermissionList)
             {
                 State.RolePermissionMap[input.RoleName][actionId] = true;
+                if (!previewsActionIdList.Value.Contains(actionId))
+                {
+                    previewsActionIdList.Value.Add(actionId);
+                }
             }
             foreach (var actionId in input.DisablePermissionList)
             {
                 State.RolePermissionMap[input.RoleName].Remove(actionId);
+                if (previewsActionIdList.Value.Contains(actionId))
+                {
+                    previewsActionIdList.Value.Remove(actionId);
+                }
             }
+
+            State.RoleActionIdListMap[input.RoleName] = previewsActionIdList;
 
             Context.Fire(new RoleUpdated
             {

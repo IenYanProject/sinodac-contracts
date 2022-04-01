@@ -133,15 +133,38 @@ namespace Sinodac.Contracts.Delegator
                 AdminList = new StringList
                 {
                     Value = { organizationCertificate.Applier }
+                },
+                GroupList = new StringList
+                {
+                    Value = { Admin, Member }
                 }
             };
             State.OrganizationUnitMap[input.OrganizationName] = organizationUnit;
             
+            // Transfer Creator's profile to the new organization unit.
+            var previewsOrganizationName = State.UserMap[organizationCertificate.Applier].OrganizationName;
+            var previewsRoleName = State.OrganizationUnitMap[previewsOrganizationName].RoleName;
+            State.UserMap[organizationCertificate.Applier].OrganizationName = input.OrganizationName;
+            State.OrganizationUnitMap[previewsOrganizationName].UserCount =
+                State.OrganizationUnitMap[previewsOrganizationName].UserCount.Sub(1);
+            State.RoleMap[previewsRoleName].UserCount =
+                State.RoleMap[previewsRoleName].UserCount.Sub(1);
+
+            var adminPermissionList = State.RoleActionIdListMap[input.RoleName];
+            State.GroupActionIdListMap[GetOrganizationAdminKey(input.OrganizationName)] = adminPermissionList;
+            var memberPermissionList = adminPermissionList.Clone();
+            if (memberPermissionList.Value.Contains(Permission.User.Create))
+            {
+                memberPermissionList.Value.Remove(Permission.User.Create);
+            }
+            State.GroupActionIdListMap[GetOrganizationMemberKey(input.OrganizationName)] = memberPermissionList;
 
             Context.Fire(new OrganizationUnitCreated
             {
                 FromId = input.FromId,
-                OrganizationUnit = organizationUnit
+                OrganizationUnit = organizationUnit,
+                AdminPermissionList = adminPermissionList,
+                MemberPermissionList = memberPermissionList
             });
             return new Empty();
         }
