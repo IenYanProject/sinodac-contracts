@@ -68,20 +68,26 @@ namespace Sinodac.Contracts.Delegator.Managers
 
         public void AddOrganizationUnit(OrganizationUnit organizationUnit)
         {
-            IsRoleExists(organizationUnit.RoleName);
+            AssertRoleExists(organizationUnit.RoleName);
             _roleMap[organizationUnit.RoleName].OrganizationUnitCount++;
             _roleOrganizationUnitListMap[organizationUnit.RoleName].Value.Add(organizationUnit.OrganizationName);
         }
 
-        public void AddUser(string roleName)
+        public void AddUserCount(string roleName)
         {
-            IsRoleExists(roleName);
+            AssertRoleExists(roleName);
             _roleMap[roleName].UserCount++;
+        }
+
+        public void SubUserCount(string roleName)
+        {
+            AssertRoleExists(roleName);
+            _roleMap[roleName].UserCount--;
         }
 
         public void InitialPermissionListToRole(string roleName, List<string> permissionList)
         {
-            IsRoleExists(roleName);
+            AssertRoleExists(roleName);
             foreach (var permissionId in permissionList)
             {
                 _rolePermissionMap[roleName][permissionId] = true;
@@ -95,11 +101,11 @@ namespace Sinodac.Contracts.Delegator.Managers
 
         public Role GetRole(string roleName)
         {
-            IsRoleExists(roleName);
+            AssertRoleExists(roleName);
             return _roleMap[roleName];
         }
 
-        public void IsRoleExists(string roleName)
+        public void AssertRoleExists(string roleName)
         {
             if (_roleMap[roleName] == null)
             {

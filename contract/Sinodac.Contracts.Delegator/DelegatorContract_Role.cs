@@ -1,6 +1,6 @@
+using System.Linq;
 using AElf.Sdk.CSharp;
 using Google.Protobuf.WellKnownTypes;
-using Sinodac.Contracts.Delegator.Managers;
 
 namespace Sinodac.Contracts.Delegator
 {
@@ -8,20 +8,21 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateRole(CreateRoleInput input)
         {
-            AssertPermission(input.FromId, false, Permission.Role.Create);
-            GetRoleManager().AddRole(new Role
+            var managerList = AssertPermission(input.FromId, Permission.Role.Create);
+            managerList.RoleManager.AddRole(new Role
             {
                 RoleName = input.RoleName,
                 RoleCreator = input.FromId,
                 Enabled = input.Enable,
                 RoleDescription = input.RoleDescription
             });
+            managerList.RoleManager.InitialPermissionListToRole(input.RoleName, input.PermissionList.ToList());
             return new Empty();
         }
 
         public override Empty UpdateRole(UpdateRoleInput input)
         {
-            AssertPermission(input.FromId, false, Permission.Role.Update);
+            AssertPermission(input.FromId, Permission.Role.Update);
             var oldRole = State.RoleMap[input.RoleName].Clone();
 
             var role = new Role
@@ -67,7 +68,7 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty DisableRole(DisableRoleInput input)
         {
-            AssertPermission(input.FromId, false, Permission.Role.Disable);
+            AssertPermission(input.FromId, Permission.Role.Disable);
 
             if (input.Enable)
             {

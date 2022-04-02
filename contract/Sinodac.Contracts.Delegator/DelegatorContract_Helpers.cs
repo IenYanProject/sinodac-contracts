@@ -4,68 +4,58 @@ using AElf;
 using AElf.Sdk.CSharp;
 using AElf.Types;
 using Sinodac.Contracts.Delegator.Helpers;
+using Sinodac.Contracts.Delegator.Managers;
 
 namespace Sinodac.Contracts.Delegator
 {
     public partial class DelegatorContract
     {
-        private void AssertPermission(string fromId, bool isNeedToBeOrganizationAdmin = false,
-            params string[] actionIds)
+        private class ManagerList
         {
-            var user = State.UserMap[fromId];
-            if (user == null)
-            {
-                throw new AssertionException($"用户 {fromId} 不存在");
-            }
+            public RoleManager RoleManager { get; set; }
+            public OrganizationUnitManager OrganizationUnitManager { get; set; }
+            public UserManager UserManager { get; set; }
+        }
+
+        private ManagerList AssertPermission(string fromId, params string[] actionIds)
+        {
+            var organizationUnitManager = GetOrganizationUnitManager();
+            var roleManager = GetRoleManager();
+            var userManager = GetUserManager(roleManager, organizationUnitManager);
+            var user = userManager.GetUser(fromId);
+            var organizationUnit = organizationUnitManager.GetOrganizationUnit(user.OrganizationName);
 
             Assert(user.Enabled, $"用户 {fromId} 当前为禁用状态");
-            var organizationUnit = State.OrganizationUnitMap[user.OrganizationName];
-            if (organizationUnit == null)
+            Assert(actionIds.Any(actionId => CheckPermission(user, organizationUnit.RoleName, actionId)),
+                $"用户 {fromId} 没有权限调用当前方法");
+
+            return new ManagerList
             {
-                throw new AssertionException($"机构 {user.OrganizationName} 不存在");
-            }
-
-            Assert(organizationUnit.Enabled, $"机构 {organizationUnit.OrganizationName} 当前为禁用状态");
-
-            if (organizationUnit.RoleName == Admin)
-            {
-                // 管理员角色的成员可以做任何事情
-                return;
-            }
-
-            Assert(actionIds.Any(actionId => CheckPermission(fromId, actionId, isNeedToBeOrganizationAdmin)),
-                $"用户{fromId}没有权限调用当前方法");
+                RoleManager = roleManager,
+                OrganizationUnitManager = organizationUnitManager,
+                UserManager = userManager
+            };
         }
 
         /// <summary>
-        /// Only AssertPermission method should use this method.
+        /// Only AssertPermission method should call this method.
         /// </summary>
-        /// <param name="fromId"></param>
+        /// <param name="user"></param>
+        /// <param name="roleName"></param>
         /// <param name="actionId"></param>
-        /// <param name="isNeedToBeOrganizationAdmin"></param>
         /// <returns></returns>
         /// <exception cref="AssertionException"></exception>
-        private bool CheckPermission(string fromId, string actionId, bool isNeedToBeOrganizationAdmin)
+        private bool CheckPermission(User user, string roleName, string actionId)
         {
-            var user = State.UserMap[fromId];
-            if (user.OrganizationName == null)
-            {
-                // User isn't belongs to any organization unit.
-                throw new AssertionException($"用户 {fromId} 不属于任何机构");
-            }
-
-            var organizationUnit = State.OrganizationUnitMap[user.OrganizationName];
-
-            if (isNeedToBeOrganizationAdmin)
-            {
-                Assert(
-                    State.OrganizationDepartmentMap[
-                        KeyHelper.GetOrganizationDepartmentKey(organizationUnit.OrganizationName,
-                            DelegatorContractConstants.Admin)].MemberList.Value.Contains(fromId),
-                    $"{user} 不是 {user.OrganizationName} 的管理员");
-            }
-
-            return State.RolePermissionMap[organizationUnit.RoleName][actionId];
+            var departmentKey =
+                KeyHelper.GetOrganizationDepartmentKey(user.OrganizationName, user.OrganizationDepartmentName);
+            Assert(
+                State.OrganizationDepartmentPermissionMap[departmentKey][actionId],
+                $"{user.UserName} 所属部门 {departmentKey} 无权调用当前方法：无 {actionId} 权限");
+            Assert(
+                State.RolePermissionMap[roleName][actionId],
+                $"{user.UserName} 所属机构的角色 {roleName} 无权调用当前方法：无 {actionId} 权限");
+            return true;
         }
 
         private void TransferPermissionToForwardPermission(List<string> actionIds)

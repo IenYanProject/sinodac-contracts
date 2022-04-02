@@ -187,8 +187,7 @@ message CreateUserInput {
     string user_name = 2;
     string organization_name = 3;
     bool enable = 4;
-    bool is_admin = 5;
-    string department_name = 6;
+    string department_name = 5;
 }
 message UpdateUserInput {
     string from_id = 1;

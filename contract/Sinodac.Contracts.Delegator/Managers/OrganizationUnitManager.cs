@@ -54,9 +54,22 @@ namespace Sinodac.Contracts.Delegator.Managers
             });
         }
 
-        public void AddOrganizationCertificate()
+        public void AddOrganizationCertificate(OrganizationCertificate organizationCertificate)
         {
+            if (_organizationCertificateMap[organizationCertificate.OrganizationName] != null)
+            {
+                throw new AssertionException($"机构 {organizationCertificate.OrganizationName} 已经提交过认证了");
+            }
 
+            organizationCertificate.CreateTime = _context.CurrentBlockTime;
+            organizationCertificate.LatestEditTime = _context.CurrentBlockTime;
+            _organizationCertificateMap[organizationCertificate.OrganizationName] = organizationCertificate;
+
+            _context.Fire(new OrganizationCertificateCreated
+            {
+                FromId = organizationCertificate.Applier,
+                OrganizationCertificate = organizationCertificate
+            });
         }
 
         public void AddOrganizationUnit(OrganizationUnit organizationUnit)
@@ -65,6 +78,7 @@ namespace Sinodac.Contracts.Delegator.Managers
             _roleManager.AddOrganizationUnit(organizationUnit);
             _organizationUnitMap[organizationUnit.OrganizationName] = organizationUnit;
             AddDefaultDepartmentsForOrganization(organizationUnit.OrganizationName);
+
             _context.Fire(new OrganizationUnitCreated
             {
                 FromId = organizationUnit.OrganizationCreator,
@@ -112,44 +126,57 @@ namespace Sinodac.Contracts.Delegator.Managers
 
         public void AddUser(User user)
         {
-            IsOrganizationUnitExists(user.OrganizationName);
-            IsOrganizationDepartmentExists(user.OrganizationName, user.OrganizationDepartmentName);
-            _organizationUnitMap[user.OrganizationName].UserCount++;
-            _roleManager.AddUser(_organizationUnitMap[user.OrganizationName].RoleName);
+            AssertOrganizationUnitExists(user.OrganizationName);
+            AssertOrganizationDepartmentExists(user.OrganizationName, user.OrganizationDepartmentName);
             var departmentKey =
                 KeyHelper.GetOrganizationDepartmentKey(user.OrganizationName, user.OrganizationDepartmentName);
             _organizationDepartmentMap[departmentKey].MemberList.Value.Add(user.UserName);
+
+            if (user.Enabled)
+            {
+                _organizationUnitMap[user.OrganizationName].UserCount++;
+                _roleManager.AddUserCount(_organizationUnitMap[user.OrganizationName].RoleName);
+            }
+        }
+
+        public void SubUserCount(string organizationName)
+        {
+            AssertOrganizationUnitExists(organizationName);
+
+            _organizationUnitMap[organizationName].UserCount--;
+
+            _roleManager.SubUserCount(_organizationUnitMap[organizationName].RoleName);
         }
 
         public OrganizationCertificate GetOrganizationCertificate(string organizationName)
         {
-            IsOrganizationCertificateExists(organizationName);
+            AssertOrganizationCertificateExists(organizationName);
             return _organizationCertificateMap[organizationName];
         }
 
-        public void IsOrganizationCertificateExists(string organizationName)
+        public void AssertOrganizationCertificateExists(string organizationName)
         {
             if (_organizationCertificateMap[organizationName] == null)
             {
-                throw new AssertionException($"{organizationName} 的机构认证不存在");
+                throw new AssertionException($"{organizationName} 的机构认证未提交");
             }
         }
 
         public OrganizationUnit GetOrganizationUnit(string organizationName)
         {
-            IsOrganizationUnitExists(organizationName);
+            AssertOrganizationUnitExists(organizationName);
             return _organizationUnitMap[organizationName];
         }
 
-        public void IsOrganizationUnitExists(string organizationName)
+        public void AssertOrganizationUnitExists(string organizationName)
         {
             if (_organizationUnitMap[organizationName] == null)
             {
-                throw new AssertionException($"{organizationName} 的机构认证不存在");
+                throw new AssertionException($"机构 {organizationName} 不存在");
             }
         }
 
-        public void IsOrganizationDepartmentExists(string organizationName, string departmentName)
+        public void AssertOrganizationDepartmentExists(string organizationName, string departmentName)
         {
             if (_organizationDepartmentMap[KeyHelper.GetOrganizationDepartmentKey(organizationName, departmentName)] ==
                 null)
@@ -161,8 +188,8 @@ namespace Sinodac.Contracts.Delegator.Managers
         private void InheritPermissionListFromRole(string organizationName, string departmentName,
             IPermissionSetStrategy permissionSetStrategy)
         {
-            IsOrganizationUnitExists(organizationName);
-            IsOrganizationDepartmentExists(organizationName, departmentName);
+            AssertOrganizationUnitExists(organizationName);
+            AssertOrganizationDepartmentExists(organizationName, departmentName);
             var rolePermissionList = _roleManager.GetRolePermissionList(GetOrganizationUnit(organizationName).RoleName);
             var departmentPermissionList =
                 permissionSetStrategy.ExtractPermissionList(rolePermissionList);
@@ -177,5 +204,7 @@ namespace Sinodac.Contracts.Delegator.Managers
                 Value = { departmentPermissionList }
             };
         }
+
+
     }
 }

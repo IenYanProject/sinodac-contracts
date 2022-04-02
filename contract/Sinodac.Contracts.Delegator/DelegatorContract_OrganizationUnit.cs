@@ -15,13 +15,12 @@ namespace Sinodac.Contracts.Delegator
         /// <returns></returns>
         public override Empty CreateOrganizationCertificate(CreateOrganizationCertificateInput input)
         {
-            AssertPermission(input.FromId, false, Profile.CertificateOrganizationUnit);
+            var managerList = AssertPermission(input.FromId, Profile.CertificateOrganizationUnit);
             Assert(
                 State.OrganizationCertificateMap[input.OrganizationName] == null,
                 $"机构 {input.OrganizationName} 已经提交过认证了");
-            var organizationCertificate = new OrganizationCertificate
+            managerList.OrganizationUnitManager.AddOrganizationCertificate(new OrganizationCertificate
             {
-                CreateTime = Context.CurrentBlockTime,
                 OrganizationDescription = input.OrganizationDescription,
                 OrganizationEmail = input.OrganizationEmail,
                 OrganizationLevel = input.OrganizationLevel,
@@ -35,12 +34,6 @@ namespace Sinodac.Contracts.Delegator
                 RegistrationAuthority = input.RegistrationAuthority,
                 PhotoIds = { input.PhotoIds },
                 Applier = input.FromId
-            };
-            State.OrganizationCertificateMap[input.OrganizationName] = organizationCertificate;
-            Context.Fire(new OrganizationCertificateCreated
-            {
-                FromId = input.FromId,
-                OrganizationCertificate = organizationCertificate
             });
             return new Empty();
         }
@@ -55,7 +48,7 @@ namespace Sinodac.Contracts.Delegator
         /// <exception cref="AssertionException"></exception>
         public override Empty UpdateOrganizationCertificate(UpdateOrganizationCertificateInput input)
         {
-            AssertPermission(input.FromId, true, Profile.CertificateOrganizationUnit);
+            AssertPermission(input.FromId, Profile.CertificateOrganizationUnit);
             var organizationCertificate = State.OrganizationCertificateMap[input.OrganizationName];
             if (organizationCertificate == null)
             {
@@ -94,7 +87,7 @@ namespace Sinodac.Contracts.Delegator
         /// <exception cref="AssertionException"></exception>
         public override Empty CreateOrganizationUnit(CreateOrganizationUnitInput input)
         {
-            AssertPermission(input.FromId, false, Permission.OrganizationUnit.Create);
+            var managerList = AssertPermission(input.FromId, Permission.OrganizationUnit.Create);
 
             var organizationCertificate = State.OrganizationCertificateMap[input.OrganizationName];
             if (organizationCertificate == null)
@@ -113,15 +106,8 @@ namespace Sinodac.Contracts.Delegator
                 return new Empty();
             }
 
-            var role = State.RoleMap[input.RoleName];
-            if (role == null)
-            {
-                throw new AssertionException($"角色 {input.RoleName} 不存在");
-            }
-
+            var role = managerList.RoleManager.GetRole(input.RoleName);
             Assert(role.Enabled, $"角色 {input.RoleName} 当前被禁用");
-
-            State.RoleMap[input.RoleName].OrganizationUnitCount = role.OrganizationUnitCount.Add(1);
 
             var organizationUnit = new OrganizationUnit
             {
@@ -129,58 +115,20 @@ namespace Sinodac.Contracts.Delegator
                 OrganizationCreator = organizationCertificate.Applier,
                 Enabled = input.Enable,
                 RoleName = input.RoleName,
-                CreateTime = Context.CurrentBlockTime,
-                DepartmentList = new StringList
-                {
-                    Value = { Admin, Member }
-                }
+                IsApproved = true
             };
-            State.OrganizationUnitMap[input.OrganizationName] = organizationUnit;
-            State.OrganizationDepartmentMap[GetOrganizationAdminKey(input.OrganizationName)] = new OrganizationDepartment
-            {
-                OrganizationName = input.OrganizationName,
-                DepartmentName = GetOrganizationAdminKey(input.OrganizationName),
-                MemberList = new StringList
-                {
-                    Value = { organizationCertificate.Applier }
-                }
-            };
-            State.OrganizationDepartmentMap[GetOrganizationMemberKey(input.OrganizationName)] = new OrganizationDepartment
-            {
-                OrganizationName = input.OrganizationName,
-                DepartmentName = GetOrganizationMemberKey(input.OrganizationName),
-            };
+            managerList.OrganizationUnitManager.AddOrganizationUnit(organizationUnit);
+            var applier = managerList.UserManager.GetUser(organizationCertificate.Applier).Clone();
+            applier.OrganizationName = input.OrganizationName;
+            applier.OrganizationDepartmentName = Admin;
+            managerList.UserManager.UpdateUser(applier);
 
-            // Transfer Creator's profile to the new organization unit.
-            var previewsOrganizationName = State.UserMap[organizationCertificate.Applier].OrganizationName;
-            var previewsRoleName = State.OrganizationUnitMap[previewsOrganizationName].RoleName;
-            State.UserMap[organizationCertificate.Applier].OrganizationName = input.OrganizationName;
-            State.OrganizationUnitMap[previewsOrganizationName].UserCount =
-                State.OrganizationUnitMap[previewsOrganizationName].UserCount.Sub(1);
-            State.RoleMap[previewsRoleName].UserCount =
-                State.RoleMap[previewsRoleName].UserCount.Sub(1);
-
-            var adminPermissionList = State.RolePermissionListMap[input.RoleName];
-            State.OrganizationDepartmentPermissionListMap[GetOrganizationAdminKey(input.OrganizationName)] = adminPermissionList;
-            var memberPermissionList = adminPermissionList.Clone();
-            if (memberPermissionList.Value.Contains(Permission.User.Create))
-            {
-                memberPermissionList.Value.Remove(Permission.User.Create);
-            }
-            State.OrganizationDepartmentPermissionListMap[GetOrganizationMemberKey(input.OrganizationName)] = memberPermissionList;
-
-            Context.Fire(new OrganizationUnitCreated
-            {
-                FromId = input.FromId,
-                OrganizationUnit = organizationUnit
-            });
             return new Empty();
         }
 
         public override Empty UpdateOrganizationUnit(UpdateOrganizationUnitInput input)
         {
-            AssertPermission(input.FromId, true,
-                Permission.OrganizationUnit.Update);
+            AssertPermission(input.FromId, Permission.OrganizationUnit.Update);
 
             var oldOrganizationUnit = State.OrganizationUnitMap[input.OrganizationName].Clone();
 
@@ -205,7 +153,7 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty DisableOrganizationUnit(DisableOrganizationUnitInput input)
         {
-            AssertPermission(input.FromId, true, Permission.OrganizationUnit.Disable);
+            AssertPermission(input.FromId, Permission.OrganizationUnit.Disable);
 
             var organizationUnit = State.OrganizationUnitMap[input.OrganizationName];
 
@@ -242,7 +190,7 @@ namespace Sinodac.Contracts.Delegator
             });
             return new Empty();
         }
-        
+
         public override OrganizationUnitList GetOrganizationUnitList(GetOrganizationUnitListInput input)
         {
             return base.GetOrganizationUnitList(input);

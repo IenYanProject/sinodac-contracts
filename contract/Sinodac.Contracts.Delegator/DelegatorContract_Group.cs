@@ -7,7 +7,7 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateDepartment(CreateDepartmentInput input)
         {
-            AssertPermission(input.FromId, true, Permission.OrganizationGroup.Create);
+            AssertPermission(input.FromId, Permission.OrganizationGroup.Create);
             var organizationUnit = State.OrganizationUnitMap[State.UserMap[input.FromId].OrganizationName];
             Assert(organizationUnit.OrganizationName == input.OrganizationName, "不能创建其他机构的权限组");
             var departmentKey = GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName);
@@ -36,7 +36,7 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty UpdateDepartment(UpdateDepartmentInput input)
         {
-            AssertPermission(input.FromId, true, Permission.OrganizationGroup.Update);
+            AssertPermission(input.FromId, Permission.OrganizationGroup.Update);
             var organizationUnit = State.OrganizationUnitMap[State.UserMap[input.FromId].OrganizationName];
             Assert(organizationUnit.OrganizationName == input.OrganizationName, "不能创建其他机构的权限组");
             var departmentKey = GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName);
@@ -70,7 +70,7 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty DeleteDepartment(DeleteDepartmentInput input)
         {
-            AssertPermission(input.FromId, true, Permission.OrganizationGroup.Delete);
+            AssertPermission(input.FromId, Permission.OrganizationGroup.Delete);
             var organizationUnit = State.OrganizationUnitMap[State.UserMap[input.FromId].OrganizationName];
             Assert(organizationUnit.OrganizationName == input.OrganizationName, "不能创建其他机构的权限组");
             var departmentKey = GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName);

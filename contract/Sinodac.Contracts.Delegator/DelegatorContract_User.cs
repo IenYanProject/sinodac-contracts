@@ -9,64 +9,43 @@ namespace Sinodac.Contracts.Delegator
     {
         public override Empty CreateUser(CreateUserInput input)
         {
-            AssertPermission(input.FromId, false, Permission.User.Create);
+            var managerList = AssertPermission(input.FromId, Permission.User.Create);
 
             if (string.IsNullOrEmpty(input.OrganizationName))
             {
                 input.OrganizationName = DefaultOrganizationName;
             }
 
-            var organizationUnit = State.OrganizationUnitMap[input.OrganizationName];
-            if (organizationUnit == null)
+            if (string.IsNullOrEmpty(input.DepartmentName))
             {
-                throw new AssertionException($"机构 {input.OrganizationName} 不存在");
+                input.DepartmentName = Member;
             }
 
-            if (input.OrganizationName != DefaultOrganizationName)
-            {
-                Assert(
-                    State.OrganizationDepartmentMap[
-                        KeyHelper.GetOrganizationDepartmentKey(organizationUnit.OrganizationName,
-                            DelegatorContractConstants.Admin)].MemberList.Value.Contains(input.FromId),
-                    $"{input.FromId} 不是 {input.OrganizationName} 的管理员");
-            }
+            // 管理员可创建自己机构的用户，也可以创建默认机构的用户
+            var creator = managerList.UserManager.GetUser(input.FromId);
+            Assert(
+                input.OrganizationName == creator.OrganizationName || input.OrganizationName == DefaultOrganizationName,
+                $"用户 {input.FromId} 无法创建机构 {input.OrganizationName} 的新用户");
 
+            var organizationUnit = managerList.OrganizationUnitManager.GetOrganizationUnit(input.OrganizationName);
+            // 只有默认机构被禁用了才会失败
             Assert(organizationUnit.Enabled, $"机构 {input.OrganizationName} 当前被禁用");
 
-            if (input.IsAdmin)
-            {
-                State.OrganizationDepartmentMap[
-                    KeyHelper.GetOrganizationDepartmentKey(organizationUnit.OrganizationName,
-                        DelegatorContractConstants.Admin)].MemberList.Value.Add(input.UserName);
-            }
-
-            if (input.Enable)
-            {
-                State.OrganizationUnitMap[input.OrganizationName].UserCount = organizationUnit.UserCount.Add(1);
-                State.RoleMap[organizationUnit.RoleName].UserCount =
-                    State.RoleMap[organizationUnit.RoleName].UserCount.Add(1);
-            }
-
-            var departmentName = input.IsAdmin ? Admin : string.IsNullOrEmpty(input.DepartmentName) ? Member : input.DepartmentName;
-
-            var creatorUserInfo = State.UserMap[input.FromId];
-
-            var user = new User
+            managerList.UserManager.AddUser(new User
             {
                 UserCreator = input.FromId,
                 UserName = input.UserName,
                 Enabled = input.Enable,
                 OrganizationName = input.OrganizationName,
-                UserCreatorOrganizationName = creatorUserInfo.OrganizationName,
-                OrganizationDepartmentName = departmentName
-            };
-            GetUserManager().AddUser(user);
+                UserCreatorOrganizationName = creator.OrganizationName,
+                OrganizationDepartmentName = input.DepartmentName
+            });
             return new Empty();
         }
 
         public override Empty UpdateUser(UpdateUserInput input)
         {
-            AssertPermission(input.FromId, true, Permission.User.Update);
+            AssertPermission(input.FromId, Permission.User.Update);
             Assert(State.UserMap[input.UserName].Enabled == input.Enable, "更新用户信息时无法禁用或启用用户");
 
             if (input.OrganizationDepartmentName == Admin &&
@@ -109,7 +88,7 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty DisableUser(DisableUserInput input)
         {
-            AssertPermission(input.FromId, true, Permission.User.Disable);
+            AssertPermission(input.FromId, Permission.User.Disable);
             var user = State.UserMap[input.UserName];
             var organizationUnit = State.OrganizationUnitMap[user.OrganizationName];
 

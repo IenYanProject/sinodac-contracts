@@ -72,5 +72,35 @@ namespace Sinodac.Contracts.Delegator.Helpers
                 Permission.User.Disable
             };
         }
+
+        public static List<string> GetMuseumPermissionIdList()
+        {
+            return new List<string>
+            {
+                HomePage.Default,
+
+                DAC.Default,
+                DAC.List,
+                DAC.Create,
+                DAC.CreateCollection,
+                DAC.CreateSeries,
+                DAC.CreateMysteryBox,
+
+                Permission.Default,
+                Permission.OrganizationGroup.OrganizationGroupDefault,
+                Permission.OrganizationGroup.Create,
+                Permission.OrganizationGroup.Update,
+                Permission.OrganizationGroup.Delete,
+                Permission.User.UserDefault,
+                Permission.User.Create,
+                Permission.User.Update,
+                Permission.User.Disable,
+
+                Statistic.Default,
+
+                Profile.Default,
+                Profile.Information
+            };
+        }
     }
 }

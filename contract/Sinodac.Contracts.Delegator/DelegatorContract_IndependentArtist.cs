@@ -14,7 +14,7 @@ namespace Sinodac.Contracts.Delegator
         /// <returns></returns>
         public override Empty CreateIndependentCertificate(CreateIndependentCertificateInput input)
         {
-            AssertPermission(input.FromId, false, Profile.CertificateIndependentArtist);
+            AssertPermission(input.FromId, Profile.CertificateIndependentArtist);
             var independentCertificate = new IndependentCertificate
             {
                 CreateTime = Context.CurrentBlockTime,
@@ -45,7 +45,7 @@ namespace Sinodac.Contracts.Delegator
         /// <returns></returns>
         public override Empty CreateIndependentArtist(CreateIndependentArtistInput input)
         {
-            AssertPermission(input.FromId, false, Permission.IndependentArtist.Create);
+            AssertPermission(input.FromId, Permission.IndependentArtist.Create);
             var independentCertificate = State.IndependentCertificateMap[input.ArtistUserName];
             if (independentCertificate == null)
             {
@@ -111,7 +111,7 @@ namespace Sinodac.Contracts.Delegator
         /// <exception cref="AssertionException"></exception>
         public override Empty UpdateIndependentCertificate(UpdateIndependentCertificateInput input)
         {
-            AssertPermission(input.FromId, false, Profile.CertificateIndependentArtist);
+            AssertPermission(input.FromId, Profile.CertificateIndependentArtist);
             var independentCertificate = State.IndependentCertificateMap[input.FromId];
             if (independentCertificate == null)
             {
@@ -151,7 +151,7 @@ namespace Sinodac.Contracts.Delegator
         /// <returns></returns>
         public override Empty UpdateIndependentArtist(UpdateIndependentArtistInput input)
         {
-            AssertPermission(input.FromId, false, Permission.IndependentArtist.Update);
+            AssertPermission(input.FromId, Permission.IndependentArtist.Update);
             var independentArtist = State.IndependentArtistMap[input.ArtistUserName];
             if (independentArtist == null)
             {
