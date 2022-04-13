@@ -11,6 +11,9 @@
         <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     </PropertyGroup>
     <ItemGroup>
+        <ContractBase Include="..\..\protobuf\acs2.proto">
+            <Link>Protobuf\Proto\acs2.proto</Link>
+        </ContractBase>
         <ContractReference Include="..\..\protobuf\credit_contract.proto">
             <Link>Protobuf\Proto\reference\credit_contract.proto</Link>
         </ContractReference>

@@ -38,7 +38,8 @@ namespace Sinodac.Contracts.Delegator
                 Enabled = input.Enable,
                 OrganizationName = input.OrganizationName,
                 UserCreatorOrganizationName = creator.OrganizationName,
-                OrganizationDepartmentName = input.DepartmentName
+                OrganizationDepartmentName = input.DepartmentName,
+                RoleName = organizationUnit.RoleName
             });
             return new Empty();
         }
@@ -58,9 +59,6 @@ namespace Sinodac.Contracts.Delegator
                         DelegatorContractConstants.Admin)].MemberList.Value.Add(input.UserName);
             }
 
-            TransferGroup(input.UserName, input.OrganizationName, State.UserMap[input.UserName].OrganizationDepartmentName,
-                input.OrganizationDepartmentName);
-
             var user = new User
             {
                 UserCreator = input.FromId,
@@ -79,11 +77,6 @@ namespace Sinodac.Contracts.Delegator
                 User = user
             });
             return new Empty();
-        }
-
-        private void TransferGroup(string userName, string organizationName, string oldGroupName, string newGroupName)
-        {
-            
         }
 
         public override Empty DisableUser(DisableUserInput input)
@@ -124,9 +117,5 @@ namespace Sinodac.Contracts.Delegator
             return new Empty();
         }
 
-        public override UserList GetUserList(GetUserListInput input)
-        {
-            return base.GetUserList(input);
-        }
     }
 }

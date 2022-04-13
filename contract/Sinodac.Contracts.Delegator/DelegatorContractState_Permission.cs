@@ -50,17 +50,23 @@ namespace Sinodac.Contracts.Delegator
         public MappedState<string, OrganizationDepartment> OrganizationDepartmentMap { get; set; }
 
         /// <summary>
-        /// Department Key -> Action Id -> Is Permitted.
+        /// Department Key -> Ignored Permission List
         /// </summary>
-        public MappedState<string, string, bool> OrganizationDepartmentPermissionMap { get; set; }
-
-        /// <summary>
-        /// Department Key -> Permission List
-        /// </summary>
-        public MappedState<string, StringList> OrganizationDepartmentPermissionListMap { get; set; }
+        public MappedState<string, StringList> OrganizationDepartmentIgnoredPermissionListMap { get; set; }
 
         #endregion
 
+        #region Independent Artist
+        
+        public MappedState<string, IndependentArtist> IndependentArtistMap { get; set; }
+
+
+        /// <summary>
+        /// Independent Artist Name -> IndependentCertificate.
+        /// </summary>
+        public MappedState<string, IndependentCertificate> IndependentCertificateMap { get; set; }
+
+        #endregion
 
 
         #region User
@@ -70,6 +76,7 @@ namespace Sinodac.Contracts.Delegator
         /// </summary>
         public MappedState<string, User> UserMap { get; set; }
 
+        public MappedState<string, StringList> OrganizationUnitUserListMap { get; set; }
 
         #endregion
     }

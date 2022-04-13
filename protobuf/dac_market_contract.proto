@@ -16,7 +16,7 @@ service DACMarketContract {
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
 
     rpc CreateSeries (CreateSeriesInput) returns (google.protobuf.Empty) { }
-    rpc AddCollection (AddCollectionInput) returns (google.protobuf.Empty) { }
+    rpc AddProtocol (AddProtocolInput) returns (google.protobuf.Empty) { }
 
     rpc ConfirmCopyright (ConfirmCopyrightInput) returns (google.protobuf.Empty) { }
     rpc List (ListInput) returns (google.protobuf.Empty) { }
@@ -35,7 +35,7 @@ message InitializeInput {
     int64 service_fee = 7;
 }
 
-message AddCollectionInput {
+message AddProtocolInput {
     string from_id = 1;
     string series_name = 2;
     string dac_name = 3;
@@ -70,8 +70,8 @@ message DelistInput {
 
 message BuyInput {
     string dac_name = 1;
-    aelf.Address receiver_address = 2;
-    int64 quantity = 3;
+    int64 dac_id = 2;
+    aelf.Address to = 3;
     int64 actual_price = 4;
 }
 

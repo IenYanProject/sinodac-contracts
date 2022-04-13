@@ -43,7 +43,7 @@ namespace Sinodac.Contracts.Delegator
         public override StringList GetOrganizationDepartmentPermissionList(
             GetOrganizationDepartmentPermissionListInput input)
         {
-            return State.OrganizationDepartmentPermissionListMap[
+            return State.OrganizationDepartmentIgnoredPermissionListMap[
                 GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName)];
         }
 

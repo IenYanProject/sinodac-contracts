@@ -15,6 +15,7 @@ namespace Sinodac.Contracts.Delegator
             public RoleManager RoleManager { get; set; }
             public OrganizationUnitManager OrganizationUnitManager { get; set; }
             public UserManager UserManager { get; set; }
+            public IndependentArtistManager IndependentArtistManager { get; set; }
         }
 
         private ManagerList AssertPermission(string fromId, params string[] actionIds)
@@ -33,7 +34,8 @@ namespace Sinodac.Contracts.Delegator
             {
                 RoleManager = roleManager,
                 OrganizationUnitManager = organizationUnitManager,
-                UserManager = userManager
+                UserManager = userManager,
+                IndependentArtistManager = GetIndependentArtistManager()
             };
         }
 
@@ -50,7 +52,7 @@ namespace Sinodac.Contracts.Delegator
             var departmentKey =
                 KeyHelper.GetOrganizationDepartmentKey(user.OrganizationName, user.OrganizationDepartmentName);
             Assert(
-                State.OrganizationDepartmentPermissionMap[departmentKey][actionId],
+                !State.OrganizationDepartmentIgnoredPermissionListMap[departmentKey].Value.Contains(actionId),
                 $"{user.UserName} 所属部门 {departmentKey} 无权调用当前方法：无 {actionId} 权限");
             Assert(
                 State.RolePermissionMap[roleName][actionId],

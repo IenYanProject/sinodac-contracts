@@ -1,5 +1,6 @@
 using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
+using Sinodac.Contracts.DAC.Helpers;
 
 namespace Sinodac.Contracts.DAC
 {
@@ -7,17 +8,17 @@ namespace Sinodac.Contracts.DAC
     {
         public override DACBalance GetBalance(GetBalanceInput input)
         {
-            return base.GetBalance(input);
-        }
-
-        public override DACAllowance GetAllowance(GetAllowanceInput input)
-        {
-            return base.GetAllowance(input);
+            return new DACBalance
+            {
+                DacName = input.DacName,
+                Owner = input.Owner,
+                Balance = State.BalanceMap[input.DacName][input.Owner]
+            };
         }
 
         public override Hash CalculateDACHash(CalculateDACHashInput input)
         {
-            return base.CalculateDACHash(input);
+            return DACHelper.CalculateDACHash(input.DacName, input.DacId);
         }
     }
 }

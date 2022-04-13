@@ -17,20 +17,11 @@ namespace Sinodac.Contracts.Delegator
         /// </summary>
         public MappedState<Address, string, string, bool> IsPermittedMethodNameMap { get; set; }
 
+        public MappedState<Hash, bool> TemporaryTxIdMap { get; set; }
+
         /// <summary>
         /// Tx Id -> ForwardRecord.
         /// </summary>
         public MappedState<Hash, ForwardRecord> ForwardRecordMap { get; set; }
-
-        public MappedState<Hash, bool> TemporaryTxIdMap { get; set; }
-
-        public MappedState<string, IndependentArtist> IndependentArtistMap { get; set; }
-
-        public MappedState<string, StringList> OrganizationUnitUserListMap { get; set; }
-
-        /// <summary>
-        /// Independent Artist Name -> IndependentCertificate.
-        /// </summary>
-        public MappedState<string, IndependentCertificate> IndependentCertificateMap { get; set; }
     }
 }

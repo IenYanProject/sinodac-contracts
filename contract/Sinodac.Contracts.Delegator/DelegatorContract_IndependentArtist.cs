@@ -14,8 +14,8 @@ namespace Sinodac.Contracts.Delegator
         /// <returns></returns>
         public override Empty CreateIndependentCertificate(CreateIndependentCertificateInput input)
         {
-            AssertPermission(input.FromId, Profile.CertificateIndependentArtist);
-            var independentCertificate = new IndependentCertificate
+            var managerList = AssertPermission(input.FromId, Profile.CertificateIndependentArtist);
+            managerList.IndependentArtistManager.AddIndependentCertificate(new IndependentCertificate
             {
                 CreateTime = Context.CurrentBlockTime,
                 Description = input.Description,
@@ -26,12 +26,6 @@ namespace Sinodac.Contracts.Delegator
                 PhoneNumber = input.PhoneNumber,
                 PhotoIds = { input.PhotoIds },
                 UserName = input.FromId
-            };
-            State.IndependentCertificateMap[input.FromId] = independentCertificate;
-            Context.Fire(new IndependentCertificateCreated
-            {
-                FromId = input.FromId,
-                IndependentCertificate = independentCertificate
             });
             return new Empty();
         }
@@ -45,60 +39,16 @@ namespace Sinodac.Contracts.Delegator
         /// <returns></returns>
         public override Empty CreateIndependentArtist(CreateIndependentArtistInput input)
         {
-            AssertPermission(input.FromId, Permission.IndependentArtist.Create);
-            var independentCertificate = State.IndependentCertificateMap[input.ArtistUserName];
-            if (independentCertificate == null)
-            {
-                throw new AssertionException($"用户名为 {input.ArtistUserName} 的个人艺术家未提交认证");
-            }
-
-            var independentArtist = new IndependentArtist
+            var managerList = AssertPermission(input.FromId, Permission.IndependentArtist.Create);
+            managerList.IndependentArtistManager.AddIndependentArtist(new IndependentArtist
             {
                 Name = input.ArtistUserName,
                 CreateTime = Context.CurrentBlockTime,
-                UserName = independentCertificate.Name,
+                UserName = input.ArtistUserName,
                 IsRejected = !input.IsApprove,
-                Enabled = input.Enable
-            };
-
-            State.IndependentArtistMap[input.ArtistUserName] = independentArtist;
-
-            if (!input.IsApprove)
-            {
-                Context.Fire(new IndependentCertificateRejected
-                {
-                    FromId = input.FromId,
-                    ArtistUserName = input.ArtistUserName,
-                    ArtistName = independentCertificate.Name
-                });
-            }
-            else
-            {
-                Context.Fire(new IndependentCertificateApproved
-                {
-                    FromId = input.FromId,
-                    IndependentArtist = independentArtist
-                });
-                if (input.Enable)
-                {
-                    Context.Fire(new IndependentArtistEnabled
-                    {
-                        FromId = input.FromId,
-                        ArtistUserName = independentCertificate.UserName,
-                        ArtistName = independentCertificate.Name
-                    });
-                }
-                else
-                {
-                    Context.Fire(new IndependentArtistDisabled
-                    {
-                        FromId = input.FromId,
-                        ArtistUserName = independentCertificate.UserName,
-                        ArtistName = independentCertificate.Name
-                    });
-                }
-            }
-
+                Enabled = input.Enable,
+                Auditor = input.FromId
+            }, input.Enable, input.IsApprove);
             return new Empty();
         }
 
@@ -111,18 +61,9 @@ namespace Sinodac.Contracts.Delegator
         /// <exception cref="AssertionException"></exception>
         public override Empty UpdateIndependentCertificate(UpdateIndependentCertificateInput input)
         {
-            AssertPermission(input.FromId, Profile.CertificateIndependentArtist);
-            var independentCertificate = State.IndependentCertificateMap[input.FromId];
-            if (independentCertificate == null)
+            var managerList = AssertPermission(input.FromId, Profile.CertificateIndependentArtist);
+            managerList.IndependentArtistManager.UpdateIndependentCertificate(new IndependentCertificate
             {
-                throw new AssertionException($"个人艺术家 {input.Name} 未曾提交过认证");
-            }
-
-            Assert(independentCertificate.IsRejected, "被驳回后才可以更新认证信息");
-
-            State.IndependentCertificateMap[input.FromId] = new IndependentCertificate
-            {
-                CreateTime = independentCertificate.CreateTime,
                 Description = input.Description,
                 Email = input.Email,
                 Id = input.Id,
@@ -132,12 +73,6 @@ namespace Sinodac.Contracts.Delegator
                 PhotoIds = { input.PhotoIds },
                 UserName = input.FromId,
                 LatestEditTime = Context.CurrentBlockTime
-            };
-
-            Context.Fire(new IndependentCertificateUpdated
-            {
-                FromId = input.FromId,
-                IndependentCertificate = State.IndependentCertificateMap[input.FromId]
             });
             return new Empty();
         }

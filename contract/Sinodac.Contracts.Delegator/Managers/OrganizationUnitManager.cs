@@ -12,23 +12,20 @@ namespace Sinodac.Contracts.Delegator.Managers
         private readonly MappedState<string, OrganizationCertificate> _organizationCertificateMap;
         private readonly MappedState<string, OrganizationUnit> _organizationUnitMap;
         private readonly MappedState<string, OrganizationDepartment> _organizationDepartmentMap;
-        private readonly MappedState<string, string, bool> _organizationDepartmentPermissionMap;
-        private readonly MappedState<string, StringList> _organizationDepartmentPermissionListMap;
+        private readonly MappedState<string, StringList> _organizationDepartmentIgnoredPermissionListMap;
 
         public OrganizationUnitManager(CSharpSmartContractContext context, RoleManager roleManager,
             MappedState<string, OrganizationCertificate> organizationCertificateMap,
             MappedState<string, OrganizationUnit> organizationUnitMap,
             MappedState<string, OrganizationDepartment> organizationDepartmentMap,
-            MappedState<string, string, bool> organizationDepartmentPermissionMap,
-            MappedState<string, StringList> organizationDepartmentPermissionListMap)
+            MappedState<string, StringList> organizationDepartmentIgnoredPermissionListMap)
         {
             _context = context;
             _roleManager = roleManager;
             _organizationCertificateMap = organizationCertificateMap;
             _organizationUnitMap = organizationUnitMap;
             _organizationDepartmentMap = organizationDepartmentMap;
-            _organizationDepartmentPermissionMap = organizationDepartmentPermissionMap;
-            _organizationDepartmentPermissionListMap = organizationDepartmentPermissionListMap;
+            _organizationDepartmentIgnoredPermissionListMap = organizationDepartmentIgnoredPermissionListMap;
         }
 
         public void Initialize()
@@ -86,7 +83,8 @@ namespace Sinodac.Contracts.Delegator.Managers
             });
         }
 
-        public void AddOrganizationDepartment(OrganizationDepartment organizationDepartment)
+        public void AddOrganizationDepartment(OrganizationDepartment organizationDepartment,
+            IPermissionIgnoreStrategy permissionIgnoreStrategy)
         {
             var departmentKey = KeyHelper.GetOrganizationDepartmentKey(organizationDepartment.OrganizationName,
                 organizationDepartment.DepartmentName);
@@ -104,9 +102,10 @@ namespace Sinodac.Contracts.Delegator.Managers
             };
             _organizationUnitMap[organizationDepartment.OrganizationName].DepartmentList.Value
                 .Add(organizationDepartment.DepartmentName);
-            
-            InheritPermissionListFromRole(organizationDepartment.OrganizationName, organizationDepartment.DepartmentName,
-                new AdminPermissionSetStrategy());
+
+            InheritPermissionListFromRole(organizationDepartment.OrganizationName,
+                organizationDepartment.DepartmentName,
+                permissionIgnoreStrategy);
         }
 
         public void AddDefaultDepartmentsForOrganization(string organizationName)
@@ -115,13 +114,13 @@ namespace Sinodac.Contracts.Delegator.Managers
             {
                 OrganizationName = organizationName,
                 DepartmentName = DelegatorContractConstants.Admin
-            });
+            }, new AdminPermissionIgnoreStrategy());
 
             AddOrganizationDepartment(new OrganizationDepartment
             {
                 OrganizationName = organizationName,
                 DepartmentName = DelegatorContractConstants.Member
-            });
+            }, new MemberPermissionStrategy());
         }
 
         public void AddUser(User user)
@@ -135,7 +134,7 @@ namespace Sinodac.Contracts.Delegator.Managers
             if (user.Enabled)
             {
                 _organizationUnitMap[user.OrganizationName].UserCount++;
-                _roleManager.AddUserCount(_organizationUnitMap[user.OrganizationName].RoleName);
+                _roleManager.AddUser(user);
             }
         }
 
@@ -186,25 +185,16 @@ namespace Sinodac.Contracts.Delegator.Managers
         }
 
         private void InheritPermissionListFromRole(string organizationName, string departmentName,
-            IPermissionSetStrategy permissionSetStrategy)
+            IPermissionIgnoreStrategy permissionIgnoreStrategy)
         {
             AssertOrganizationUnitExists(organizationName);
             AssertOrganizationDepartmentExists(organizationName, departmentName);
-            var rolePermissionList = _roleManager.GetRolePermissionList(GetOrganizationUnit(organizationName).RoleName);
-            var departmentPermissionList =
-                permissionSetStrategy.ExtractPermissionList(rolePermissionList);
+            var departmentIgnoredPermissionList = permissionIgnoreStrategy.GetIgnoredPermissionList();
             var departmentKey = KeyHelper.GetOrganizationDepartmentKey(organizationName, departmentName);
-            foreach (var permissionId in departmentPermissionList)
+            _organizationDepartmentIgnoredPermissionListMap[departmentKey] = new StringList
             {
-                _organizationDepartmentPermissionMap[departmentKey][permissionId] = true;
-            }
-
-            _organizationDepartmentPermissionListMap[departmentKey] = new StringList
-            {
-                Value = { departmentPermissionList }
+                Value = { departmentIgnoredPermissionList }
             };
         }
-
-
     }
 }

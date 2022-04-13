@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using AElf.CSharp.Core;
 using AElf.Sdk.CSharp;
-using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
 using Sinodac.Contracts.DAC;
-using Sinodac.Contracts.Delegator;
 
 namespace Sinodac.Contracts.DACMarket
 {
@@ -41,7 +38,7 @@ namespace Sinodac.Contracts.DACMarket
             return new Empty();
         }
 
-        public override Empty AddCollection(AddCollectionInput input)
+        public override Empty AddProtocol(AddProtocolInput input)
         {
             if (Context.Sender != State.DACContract.Value)
             {
@@ -128,7 +125,7 @@ namespace Sinodac.Contracts.DACMarket
         public override Empty Buy(BuyInput input)
         {
             AssertSenderIsDelegatorContract();
-            var dacCollection = State.DACContract.GetDACCollectionInfo.Call(new StringValue
+            var dacCollection = State.DACContract.GetDACProtocolInfo.Call(new StringValue
             {
                 Value = input.DacName
             });
@@ -137,21 +134,15 @@ namespace Sinodac.Contracts.DACMarket
                 throw new AssertionException($"查无此DAC：{input.DacName}");
             }
 
-            Assert(input.ReceiverAddress.Value.Any(), "无效的DAC的接受地址");
-
-            var quantity = Math.Min(input.Quantity, dacCollection.PurchaseLimit);
-            var fromDacId = dacCollection.Minted.Add(1);
+            Assert(input.To.Value.Any(), "无效的DAC的接受地址");
 
             Assert(State.ListInfoMap[input.DacName] != null, $"{input.DacName} 还没有上架");
 
-            State.DACContract.Mint.Send(new MintInput
+            State.DACContract.InitialTransfer.Send(new InitialTransferInput
             {
                 DacName = input.DacName,
-                ActualPrice = input.ActualPrice,
-                Owner = input.ReceiverAddress,
-                FileId = State.ListInfoMap[input.DacName].UseFileId,
-                FromDacId = fromDacId,
-                Quantity = quantity
+                DacId = input.DacId,
+                To = input.To
             });
 
             return new Empty();

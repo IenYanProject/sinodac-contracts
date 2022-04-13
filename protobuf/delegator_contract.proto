@@ -58,22 +58,13 @@ service DelegatorContract {
     rpc GetRole (google.protobuf.StringValue) returns (Role) {
         option (aelf.is_view) = true;
     }
-    rpc GetRoleList (GetRoleListInput) returns (RoleList) {
-        option (aelf.is_view) = true;
-    }
     rpc GetOrganizationUnit (google.protobuf.StringValue) returns (OrganizationUnit) {
-        option (aelf.is_view) = true;
-    }
-    rpc GetOrganizationUnitList (GetOrganizationUnitListInput) returns (OrganizationUnitList) {
         option (aelf.is_view) = true;
     }
     rpc GetOrganizationDepartment (google.protobuf.StringValue) returns (OrganizationDepartment) {
         option (aelf.is_view) = true;
     }
     rpc GetUser (google.protobuf.StringValue) returns (User) {
-        option (aelf.is_view) = true;
-    }
-    rpc GetUserList (GetUserListInput) returns (UserList) {
         option (aelf.is_view) = true;
     }
     rpc GetOrganizationCertificate (google.protobuf.StringValue) returns (OrganizationCertificate) {
@@ -296,6 +287,7 @@ message Role {
     int32 organization_unit_count = 6;
     int32 user_count = 7;
     bool enabled = 8;
+    string latest_edit_id = 9;
 }
 
 message RoleList {
@@ -324,6 +316,7 @@ message IndependentArtist {
     bool is_rejected = 4;
     bool enabled = 5;
     google.protobuf.Timestamp latest_edit_time = 6;
+    string auditor = 7;
 }
 
 message IndependentArtistList {
@@ -338,6 +331,7 @@ message User {
     bool enabled = 5;
     string user_creator_organization_name = 6;
     string organization_department_name = 7;
+    string role_name = 8;
 }
 
 message UserList {

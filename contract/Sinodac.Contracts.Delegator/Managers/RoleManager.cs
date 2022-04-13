@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AElf.Sdk.CSharp;
 using AElf.Sdk.CSharp.State;
+using Google.Protobuf.Collections;
 using Sinodac.Contracts.Delegator.Helpers;
 
 namespace Sinodac.Contracts.Delegator.Managers
@@ -35,7 +36,7 @@ namespace Sinodac.Contracts.Delegator.Managers
                 Enabled = true,
                 RoleDescription = "系统管理员"
             });
-            InitialPermissionListToRole(DelegatorContractConstants.Admin, PermissionHelper.GetAllPermissionIdList());
+            InitialRolePermissionList(DelegatorContractConstants.Admin, PermissionHelper.GetAllPermissionIdList());
 
             AddRole(new Role
             {
@@ -44,7 +45,7 @@ namespace Sinodac.Contracts.Delegator.Managers
                 Enabled = true,
                 RoleDescription = "不属于任何机构的角色"
             });
-            InitialPermissionListToRole(DelegatorContractConstants.DefaultRoleName,
+            InitialRolePermissionList(DelegatorContractConstants.DefaultRoleName,
                 PermissionHelper.GetDefaultPermissionIdList());
         }
 
@@ -66,6 +67,16 @@ namespace Sinodac.Contracts.Delegator.Managers
             });
         }
 
+        public void UpdateRole(Role role)
+        {
+            _roleMap[role.RoleName] = role;
+            _context.Fire(new RoleUpdated
+            {
+                FromId = role.LatestEditId,
+                Role = role
+            });
+        }
+
         public void AddOrganizationUnit(OrganizationUnit organizationUnit)
         {
             AssertRoleExists(organizationUnit.RoleName);
@@ -73,8 +84,9 @@ namespace Sinodac.Contracts.Delegator.Managers
             _roleOrganizationUnitListMap[organizationUnit.RoleName].Value.Add(organizationUnit.OrganizationName);
         }
 
-        public void AddUserCount(string roleName)
+        public void AddUser(User user)
         {
+            var roleName = user.RoleName;
             AssertRoleExists(roleName);
             _roleMap[roleName].UserCount++;
         }
@@ -85,7 +97,7 @@ namespace Sinodac.Contracts.Delegator.Managers
             _roleMap[roleName].UserCount--;
         }
 
-        public void InitialPermissionListToRole(string roleName, List<string> permissionList)
+        public void InitialRolePermissionList(string roleName, List<string> permissionList)
         {
             AssertRoleExists(roleName);
             foreach (var permissionId in permissionList)
@@ -97,6 +109,51 @@ namespace Sinodac.Contracts.Delegator.Managers
             {
                 Value = { permissionList }
             };
+        }
+
+        public void UpdateRolePermissionList(string roleName, RepeatedField<string> enablePermissionList,
+            RepeatedField<string> disablePermissionList)
+        {
+            var previewsActionIdList = _rolePermissionListMap[roleName];
+            foreach (var actionId in enablePermissionList)
+            {
+                _rolePermissionMap[roleName][actionId] = true;
+                if (!previewsActionIdList.Value.Contains(actionId))
+                {
+                    previewsActionIdList.Value.Add(actionId);
+                }
+            }
+
+            foreach (var actionId in disablePermissionList)
+            {
+                _rolePermissionMap[roleName].Remove(actionId);
+                if (previewsActionIdList.Value.Contains(actionId))
+                {
+                    previewsActionIdList.Value.Remove(actionId);
+                }
+            }
+
+            _rolePermissionListMap[roleName] = previewsActionIdList;
+        }
+
+        public void EnableRole(Role role)
+        {
+            UpdateRole(role);
+            _context.Fire(new RoleEnabled
+            {
+                FromId = role.LatestEditId,
+                RoleName = role.RoleName
+            });
+        }
+
+        public void DisableRole(Role role)
+        {
+            UpdateRole(role);
+            _context.Fire(new RoleDisabled
+            {
+                FromId = role.LatestEditId,
+                RoleName = role.RoleName
+            });
         }
 
         public Role GetRole(string roleName)

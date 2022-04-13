@@ -15,20 +15,12 @@ service DACContract {
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
     rpc Create (CreateInput) returns (google.protobuf.Empty) { }
     rpc Mint (MintInput) returns (google.protobuf.Empty) { }
+    rpc InitialTransfer (InitialTransferInput) returns (google.protobuf.Empty) { }
     rpc Transfer (TransferInput) returns (google.protobuf.Empty) { }
     rpc TransferFrom (TransferFromInput) returns (google.protobuf.Empty) { }
-    rpc Approve (ApproveInput) returns (google.protobuf.Empty) { }
-    rpc UnApprove (UnApproveInput) returns (google.protobuf.Empty) { }
-    rpc ApproveCollection (ApproveCollectionInput) returns (google.protobuf.Empty) { }
-    rpc Burn (BurnInput) returns (google.protobuf.Empty) { }
-    rpc Assemble (AssembleInput) returns (aelf.Hash) { }
-    rpc Disassemble (DisassembleInput) returns (google.protobuf.Empty) { }
-    rpc Recast (RecastInput) returns (google.protobuf.Empty) { }
+    rpc ApproveProtocol (ApproveProtocolInput) returns (google.protobuf.Empty) { }
 
-    rpc AddDACType (AddDACTypeInput) returns (google.protobuf.Empty) { }
-    rpc RemoveDACType (google.protobuf.StringValue) returns (google.protobuf.Empty) { }
-
-    rpc GetDACCollectionInfo (google.protobuf.StringValue) returns (DACCollectionInfo) {
+    rpc GetDACProtocolInfo (google.protobuf.StringValue) returns (DACProtocolInfo) {
         option (aelf.is_view) = true;
     }
     rpc GetDACInfo (GetDACInfoInput) returns (DACInfo) {
@@ -43,19 +35,7 @@ service DACContract {
     rpc GetBalanceByDACHash (GetBalanceByDACHashInput) returns (DACBalance) {
         option (aelf.is_view) = true;
     }
-    rpc GetAllowance (GetAllowanceInput) returns (DACAllowance) {
-        option (aelf.is_view) = true;
-    }
-    rpc GetAllowanceByDACHash (GetAllowanceByDACHashInput) returns (DACAllowance) {
-        option (aelf.is_view) = true;
-    }
     rpc CalculateDACHash (CalculateDACHashInput) returns (aelf.Hash) {
-        option (aelf.is_view) = true;
-    }
-    rpc GetDACTypes (google.protobuf.Empty) returns (DACTypes) {
-        option (aelf.is_view) = true;
-    }
-    rpc GetOperatorList (GetOperatorListInput) returns (AddressList) {
         option (aelf.is_view) = true;
     }
 }
@@ -74,24 +54,24 @@ message CreateInput {
     string description_file_id = 5;
     string dac_type = 6;
     string dac_shape = 7;
-    Metadata metadata = 8;
     bool is_created_by_organization = 9;
     bool is_real = 10;
-    int64 real_circulation = 11;
-    int32 purchase_limit = 12;
-    string creator_name = 13;
-    string dac_description = 14;
-    repeated FileInfo file_info_list = 15;
+    int64 reserve_for_lottery = 11;
+    string creator_id = 13;
+    repeated FileInfo file_info_list = 14;
+    bool is_creating_mystery_box = 15;
 }
 
 message MintInput {
-    aelf.Address owner = 1;
-    string dac_name = 2;
-    int64 actual_price = 3;
-    string file_id = 4;
-    Metadata metadata = 5;
-    int64 from_dac_id = 6;
-    int64 quantity = 7;
+    string dac_name = 1;
+    int64 from_dac_id = 2;
+    int64 quantity = 3;
+}
+
+message InitialTransferInput {
+    string dac_name = 1;
+    int64 dac_id = 2;
+    aelf.Address to = 3;
 }
 
 message TransferInput {
@@ -99,7 +79,6 @@ message TransferInput {
     string dac_name = 2;
     int64 dac_id = 3;
     string memo = 4;
-    int64 amount = 5;
 }
 
 message TransferFromInput {
@@ -108,71 +87,11 @@ message TransferFromInput {
     string dac_name = 3;
     int64 dac_id = 4;
     string memo = 5;
-    int64 amount = 6;
 }
 
-message ApproveInput {
-    aelf.Address spender = 1;
-    string dac_name = 2;
-    int64 dac_id = 3;
-    int64 amount = 4;
-}
-
-message UnApproveInput {
-    aelf.Address spender = 1;
-    string dac_name = 2;
-    int64 dac_id = 3;
-    int64 amount = 4;
-}
-
-message ApproveCollectionInput {
-    aelf.Address operator = 1;
-    string dac_name = 2;
-    bool approved = 3;
-}
-
-message BurnInput {
+message ApproveProtocolInput {
     string dac_name = 1;
-    int64 dac_id = 2;
-    int64 amount = 3;
-}
-
-message AssembleInput {
-    string dac_name = 1;
-    aelf.Address owner = 2;
-    string uri = 3;
-    string alias = 4;
-    Metadata metadata = 5;
-    AssembledDacs assembled_dacs = 6;
-    AssembledCredits assembled_credits = 7;
-    int64 dac_id = 8;
-}
-
-message AssembledDacs {
-    map<string, int64> value = 1;
-}
-
-message AssembledCredits {
-    map<string, int64> value = 1;
-}
-
-message DisassembleInput {
-    string dac_name = 1;
-    int64 dac_id = 2;
-    aelf.Address owner = 3;
-}
-
-message RecastInput {
-    string dac_name = 1;
-    int64 dac_id = 2;
-    string uri = 3;
-    string alias = 4;
-    Metadata metadata = 5;
-}
-
-message AddDACTypeInput {
-    string full_name = 1;
-    string short_name = 2;
+    bool approve = 2;
 }
 
 message GetDACInfoInput {
@@ -214,33 +133,27 @@ message CalculateDACHashInput {
     int64 dac_id = 2;
 }
 
-message DACCollectionInfo {
-    aelf.Address creator = 1;
+message DACProtocolInfo {
+    string creator_user_id = 1;
     string dac_name = 2;
     int64 price = 3;
     int64 circulation = 4;
     string description_file_id = 5;
     string dac_type = 6;
     string dac_shape = 7;
-    Metadata metadata = 8;
-    bool is_created_by_organization = 9;
-    bool is_real = 10;
-    int64 real_circulation = 11;
-    int32 purchase_limit = 12;
-    string creator_name = 13;
-    string dac_description = 14;
-    repeated FileInfo file_info_list = 15;
-    int64 minted = 16;
+    bool is_provide_real = 9;
+    int64 reserve_for_lottery = 10;
+    string creator_id = 12;
+    repeated FileInfo file_info_list = 13;
+    int64 minted = 14;
+    int64 code_generated = 15;
 }
 
 message DACInfo {
-    aelf.Address creator = 1;
-    string dac_name = 2;
-    int64 price = 3;
-    string file_id = 4;
-    string dac_type = 5;
-    string dac_shape = 6;
-    Metadata metadata = 7;
+    string dac_name = 1;
+    int64 dac_id = 2;
+    aelf.Hash dac_hash = 3;
+    aelf.Hash redeem_code_hash = 4;
 }
 
 message DACTypes {
@@ -253,19 +166,8 @@ message AddressList {
 
 message DACBalance {
     aelf.Address owner = 1;
-    aelf.Hash dac_hash = 2;
+    string dac_name = 2;
     int64 balance = 3;
-}
-
-message DACAllowance {
-    string dac_name = 1;
-    int64 dac_id = 2;
-    aelf.Address owner = 3;
-    aelf.Address spender = 4;
-}
-
-message Metadata {
-    map<string, string> value = 1;
 }
 
 message FileInfo {
@@ -280,10 +182,10 @@ message Int64List {
 
 // Events
 
-message DACCollectionCreated {
+message DACProtocolCreated {
     option (aelf.is_event) = true;
     string dac_name = 1 [(aelf.is_indexed) = true];
-    DACCollectionInfo dac_collection_info = 2;
+    DACProtocolInfo dac_protocol_info = 2;
 }
 
 message DACMinted {

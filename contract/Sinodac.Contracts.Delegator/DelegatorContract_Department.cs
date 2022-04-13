@@ -16,7 +16,7 @@ namespace Sinodac.Contracts.Delegator
                 Assert(State.RolePermissionMap[organizationUnit.RoleName][actionId], $"无法授予权限：{actionId}");
             }
 
-            State.OrganizationDepartmentPermissionListMap[departmentKey] = input.DepartmentPermissionList;
+            State.OrganizationDepartmentIgnoredPermissionListMap[departmentKey] = input.DepartmentPermissionList;
 
             var organizationDepartment = new OrganizationDepartment
             {
@@ -40,7 +40,7 @@ namespace Sinodac.Contracts.Delegator
             var organizationUnit = State.OrganizationUnitMap[State.UserMap[input.FromId].OrganizationName];
             Assert(organizationUnit.OrganizationName == input.OrganizationName, "不能创建其他机构的权限组");
             var departmentKey = GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName);
-            var permissionList = State.OrganizationDepartmentPermissionListMap[departmentKey];
+            var permissionList = State.OrganizationDepartmentIgnoredPermissionListMap[departmentKey];
             foreach (var actionId in input.EnableDepartmentPermissionList.Value)
             {
                 permissionList.Value.Add(actionId);
@@ -55,7 +55,7 @@ namespace Sinodac.Contracts.Delegator
                 }
             }
 
-            State.OrganizationDepartmentPermissionListMap[departmentKey] = permissionList;
+            State.OrganizationDepartmentIgnoredPermissionListMap[departmentKey] = permissionList;
 
             Context.Fire(new OrganizationDepartmentUpdated()
             {
@@ -74,7 +74,7 @@ namespace Sinodac.Contracts.Delegator
             var organizationUnit = State.OrganizationUnitMap[State.UserMap[input.FromId].OrganizationName];
             Assert(organizationUnit.OrganizationName == input.OrganizationName, "不能创建其他机构的权限组");
             var departmentKey = GetOrganizationDepartmentKey(input.OrganizationName, input.DepartmentName);
-            State.OrganizationDepartmentPermissionListMap.Remove(departmentKey);
+            State.OrganizationDepartmentIgnoredPermissionListMap.Remove(departmentKey);
             State.OrganizationDepartmentMap.Remove(departmentKey);
 
             Context.Fire(new OrganizationDepartmentDeleted

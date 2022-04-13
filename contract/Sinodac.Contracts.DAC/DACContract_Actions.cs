@@ -10,32 +10,16 @@ namespace Sinodac.Contracts.DAC
         public override Empty Create(CreateInput input)
         {
             AssertSenderIsDelegatorContract();
-            if (input.Metadata != null)
-            {
-                AssertMetadataKeysAreCorrect(input.Metadata.Value.Keys);
-            }
-
-            var dacCollection = new DACCollectionInfo
+            var dacService = GetDACService();
+            dacService.CreateProtocol(new DACProtocolInfo
             {
                 DacName = input.DacName,
-                Creator = input.Creator ?? Context.Sender,
-                Metadata = input.Metadata,
+                Price = input.Price,
+                CreatorId = input.CreatorId,
                 Circulation = input.Circulation,
                 DacShape = input.DacShape,
                 DacType = input.DacType,
                 DescriptionFileId = input.DescriptionFileId,
-                IsCreatedByOrganization = input.IsCreatedByOrganization,
-                Price = input.Price,
-                IsReal = input.IsReal,
-                RealCirculation = input.RealCirculation,
-                PurchaseLimit = input.PurchaseLimit
-            };
-            State.DACCollectionInfoMap[input.DacName] = dacCollection;
-
-            Context.Fire(new DACCollectionCreated
-            {
-                DacName = input.DacName,
-                DacCollectionInfo = dacCollection
             });
             return new Empty();
         }
@@ -43,67 +27,42 @@ namespace Sinodac.Contracts.DAC
         public override Empty Mint(MintInput input)
         {
             AssertSenderIsDACMarketContract();
-            if (input.Metadata != null && input.Metadata.Value.Any())
-            {
-                AssertMetadataKeysAreCorrect(input.Metadata.Value.Keys);
-            }
-
-            PerformMint(input);
+            var dacService = GetDACService();
+            dacService.BatchMint(input.DacName, input.FromDacId, input.Quantity);
             return new Empty();
         }
 
-        public override Empty Burn(BurnInput input)
+        public override Empty InitialTransfer(InitialTransferInput input)
         {
+            AssertSenderIsDACMarketContract();
+            var dacService = GetDACService();
+            dacService.InitialTransfer(input.DacName, input.DacId, input.To);
             return new Empty();
         }
 
         public override Empty Transfer(TransferInput input)
         {
+            var dacService = GetDACService();
+            dacService.Transfer(input.DacName, input.DacId, Context.Sender, input.To);
             return new Empty();
         }
 
         public override Empty TransferFrom(TransferFromInput input)
         {
+            AssertSenderIsDACMarketContract();
+            var dacService = GetDACService();
+            dacService.Transfer(input.DacName, input.DacId, input.From, input.To);
             return new Empty();
         }
 
-        public override Empty Approve(ApproveInput input)
+        public override Empty ApproveProtocol(ApproveProtocolInput input)
         {
-            return new Empty();
-        }
-
-        public override Empty UnApprove(UnApproveInput input)
-        {
-            return new Empty();
-        }
-
-        public override Empty Recast(RecastInput input)
-        {
-            return new Empty();
-        }
-
-        public override Hash Assemble(AssembleInput input)
-        {
-            return base.Assemble(input);
-        }
-
-        public override Empty Disassemble(DisassembleInput input)
-        {
-            return new Empty();
-        }
-
-        public override Empty AddDACType(AddDACTypeInput input)
-        {
-            return new Empty();
-        }
-
-        public override Empty RemoveDACType(StringValue input)
-        {
-            return new Empty();
-        }
-
-        public override Empty ApproveCollection(ApproveCollectionInput input)
-        {
+            AssertSenderIsDelegatorContract();
+            if (input.Approve)
+            {
+                var dacService = GetDACService();
+                dacService.ApproveProtocol(input.DacName);
+            }
             return new Empty();
         }
     }

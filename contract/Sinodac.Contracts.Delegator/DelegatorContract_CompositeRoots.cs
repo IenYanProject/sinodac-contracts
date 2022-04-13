@@ -18,8 +18,8 @@ namespace Sinodac.Contracts.Delegator
             }
 
             return new OrganizationUnitManager(Context, roleManager, State.OrganizationCertificateMap,
-                State.OrganizationUnitMap, State.OrganizationDepartmentMap, State.OrganizationDepartmentPermissionMap,
-                State.OrganizationDepartmentPermissionListMap);
+                State.OrganizationUnitMap, State.OrganizationDepartmentMap,
+                State.OrganizationDepartmentIgnoredPermissionListMap);
         }
 
         private UserManager GetUserManager(RoleManager roleManager = null,
@@ -36,6 +36,11 @@ namespace Sinodac.Contracts.Delegator
             }
 
             return new UserManager(Context, organizationUnitManager, State.UserMap);
+        }
+
+        private IndependentArtistManager GetIndependentArtistManager()
+        {
+            return new IndependentArtistManager(Context, State.IndependentCertificateMap, State.IndependentArtistMap);
         }
     }
 }

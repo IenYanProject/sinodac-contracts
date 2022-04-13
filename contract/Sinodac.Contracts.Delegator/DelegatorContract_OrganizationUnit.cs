@@ -190,10 +190,5 @@ namespace Sinodac.Contracts.Delegator
             });
             return new Empty();
         }
-
-        public override OrganizationUnitList GetOrganizationUnitList(GetOrganizationUnitListInput input)
-        {
-            return base.GetOrganizationUnitList(input);
-        }
     }
 }

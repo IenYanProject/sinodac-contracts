@@ -15,4 +15,7 @@
             <Link>Protobuf\Proto\delegator_contract.proto</Link>
         </ContractCode>
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Abstracts" />
+    </ItemGroup>
 </Project>
