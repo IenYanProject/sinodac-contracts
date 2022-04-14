@@ -29,6 +29,19 @@ namespace Sinodac.Contracts.DAC.Managers
 
         public void Create(string dacName, long dacId, Hash redeemCodeHash = null)
         {
+            var dacInfo = PerformCreate(dacName, dacId, redeemCodeHash);
+
+            _context.Fire(new DACMinted
+            {
+                DacName = dacName,
+                FromDacId = dacId,
+                Quantity = 1,
+                DacInfo = dacInfo
+            });
+        }
+
+        private DACInfo PerformCreate(string dacName, long dacId, Hash redeemCodeHash = null)
+        {
             var dacHash = DACHelper.CalculateDACHash(dacName, dacId);
             _dacMap[dacName][dacId] = new DACInfo
             {
@@ -38,6 +51,7 @@ namespace Sinodac.Contracts.DAC.Managers
                 RedeemCodeHash = redeemCodeHash
             };
             _ownerMap[dacName][dacId] = CalculateInitialAddress(dacHash);
+            return _dacMap[dacName][dacId];
         }
 
         public void BatchCreate(string dacName, long fromDacId, long count = 0)
@@ -52,9 +66,16 @@ namespace Sinodac.Contracts.DAC.Managers
             {
                 if (_dacMap[dacName][dacId] == null)
                 {
-                    Create(dacName, dacId);
+                    PerformCreate(dacName, dacId);
                 }
             }
+            
+            _context.Fire(new DACMinted
+            {
+                DacName = dacName,
+                FromDacId = fromDacId,
+                Quantity = count
+            });
         }
 
         public void InitialTransfer(string dacName, long dacId, Address to)
@@ -67,6 +88,14 @@ namespace Sinodac.Contracts.DAC.Managers
 
             _ownerMap[dacName][dacId] = to;
             _balanceMap[dacName][to] = _balanceMap[dacName][to].Add(1);
+            
+            _context.Fire(new DACInitialTransferred
+            {
+                DacName = dacName,
+                DacId = dacId,
+                From = initialAddress,
+                To = to
+            });
         }
 
         public void Transfer(string dacName, long dacId, Address from, Address to)
@@ -79,6 +108,14 @@ namespace Sinodac.Contracts.DAC.Managers
             _ownerMap[dacName][dacId] = to;
             _balanceMap[dacName][to] = _balanceMap[dacName][to].Add(1);
             _balanceMap[dacName][from] = _balanceMap[dacName][from].Sub(1);
+
+            _context.Fire(new DACTransferred
+            {
+                DacName = dacName,
+                DacId = dacId,
+                From = from,
+                To = to
+            });
         }
 
         private Address CalculateInitialAddress(Hash dacHash)

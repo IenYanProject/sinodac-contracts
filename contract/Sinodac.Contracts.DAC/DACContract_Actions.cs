@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using AElf.CSharp.Core;
-using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
 
 namespace Sinodac.Contracts.DAC
@@ -25,7 +23,7 @@ namespace Sinodac.Contracts.DAC
                 Circulation = input.Circulation,
                 DacShape = input.DacShape,
                 DacType = input.DacType,
-                ReserveFrom = input.ReserveFrom,
+                ReserveFrom = reserveFrom,
                 ReserveForLottery = input.ReserveForLottery
             });
             return new Empty();
@@ -90,7 +88,7 @@ namespace Sinodac.Contracts.DAC
         {
             AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
-            dacService.BindRedeemCode(input.DacName, input.RedeemCodeHashList.ToList());
+            dacService.BindRedeemCode(input.DacName, input.RedeemCodeHashList.ToList(), (int)input.Skip);
             return new Empty();
         }
     }

@@ -68,6 +68,7 @@ message MintInput {
 message MintForRedeemCodeInput {
     string dac_name = 1;
     repeated aelf.Hash redeem_code_hash_list = 2;
+    int64 skip = 3;
 }
 
 message InitialTransferInput {
@@ -173,9 +174,38 @@ message DACProtocolCreated {
     DACProtocolInfo dac_protocol_info = 2;
 }
 
+message DACProtocolApproved {
+    option (aelf.is_event) = true;
+    string dac_name = 1 [(aelf.is_indexed) = true];
+}
+
 message DACMinted {
     option (aelf.is_event) = true;
     string dac_name = 1 [(aelf.is_indexed) = true];
-    int64 dac_id = 2 [(aelf.is_indexed) = true];
+    int64 from_dac_id = 2 [(aelf.is_indexed) = true];
+    int64 quantity = 3 [(aelf.is_indexed) = true];
     DACInfo dac_info = 4;
+}
+
+message DACInitialTransferred {
+    option (aelf.is_event) = true;
+    aelf.Address from = 1 [(aelf.is_indexed) = true];
+    aelf.Address to = 2 [(aelf.is_indexed) = true];
+    string dac_name = 3 [(aelf.is_indexed) = true];
+    int64 dac_id = 4 [(aelf.is_indexed) = true];
+}
+
+message DACTransferred {
+    option (aelf.is_event) = true;
+    aelf.Address from = 1 [(aelf.is_indexed) = true];
+    aelf.Address to = 2 [(aelf.is_indexed) = true];
+    string dac_name = 3 [(aelf.is_indexed) = true];
+    int64 dac_id = 4 [(aelf.is_indexed) = true];
+}
+
+message RedeemCodeCreated {
+    option (aelf.is_event) = true;
+    string dac_name = 1 [(aelf.is_indexed) = true];
+    int64 dac_id = 2 [(aelf.is_indexed) = true];
+    aelf.Hash redeem_code_hash = 3 [(aelf.is_indexed) = true];
 }

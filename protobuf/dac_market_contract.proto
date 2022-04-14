@@ -69,12 +69,14 @@ message BuyInput {
     string dac_name = 1;
     int64 dac_id = 2;
     aelf.Address to = 3;
-    int64 actual_price = 4;
+    int64 price = 4;
+    string user_id = 5;
 }
 
 message RedeemInput {
     aelf.Address to = 1;
     string redeem_code = 2;
+    string user_id = 3;
 }
 
 message BoxInput {
@@ -85,6 +87,7 @@ message UnboxInput {
     aelf.Address to = 1;
     string dac_name = 2;
     string box_id = 3;
+    string user_id = 4;
 }
 
 message DACCopyright {
@@ -111,6 +114,7 @@ message StringList {
 message BoxInfo {
     string dac_name = 1;
     int64 dac_id = 2;
+    int64 price = 3;
 }
 
 // Events
@@ -148,4 +152,46 @@ message CopyrightConfirmed {
     string from_id = 1 [(aelf.is_indexed) = true];
     string dac_name = 2 [(aelf.is_indexed) = true];
     string copyright_id = 3 [(aelf.is_indexed) = true];
+}
+
+message DACSold {
+    option (aelf.is_event) = true;
+    string user_id = 1 [(aelf.is_indexed) = true];
+    string dac_name = 2 [(aelf.is_indexed) = true];
+    int64 dac_id = 3 [(aelf.is_indexed) = true];
+    int64 price = 4 [(aelf.is_indexed) = true];
+    aelf.Address user_address = 5 [(aelf.is_indexed) = true];
+}
+
+message BoxSold {
+    option (aelf.is_event) = true;
+    string user_id = 1 [(aelf.is_indexed) = true];
+    string dac_name = 2 [(aelf.is_indexed) = true];
+    string box_id = 3 [(aelf.is_indexed) = true];
+    int64 price = 4 [(aelf.is_indexed) = true];
+    aelf.Address user_address = 5 [(aelf.is_indexed) = true];
+    int64 dac_id = 6 [(aelf.is_indexed) = true];
+}
+
+message CodeRedeemed {
+    option (aelf.is_event) = true;
+    string user_id = 1 [(aelf.is_indexed) = true];
+    string dac_name = 2 [(aelf.is_indexed) = true];
+    string redeem_code = 3 [(aelf.is_indexed) = true];
+    int64 dac_id = 4 [(aelf.is_indexed) = true];
+    aelf.Address user_address = 5 [(aelf.is_indexed) = true];
+}
+
+message Boxed {
+    option (aelf.is_event) = true;
+    string dac_name = 1 [(aelf.is_indexed) = true];
+}
+
+message Unboxed {
+    option (aelf.is_event) = true;
+    string user_id = 1 [(aelf.is_indexed) = true];
+    string dac_name = 2 [(aelf.is_indexed) = true];
+    string box_id = 3 [(aelf.is_indexed) = true];
+    int64 dac_id = 4 [(aelf.is_indexed) = true];
+    aelf.Address user_address = 5 [(aelf.is_indexed) = true];
 }

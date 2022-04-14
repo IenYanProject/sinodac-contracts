@@ -27,6 +27,13 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacName = dacName,
                 DacId = dacId
             };
+
+            _context.Fire(new RedeemCodeCreated
+            {
+                DacName = dacName,
+                DacId = dacId,
+                RedeemCodeHash = redeemCodeHash
+            });
         }
     }
 }

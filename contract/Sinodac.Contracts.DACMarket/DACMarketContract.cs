@@ -45,7 +45,7 @@ namespace Sinodac.Contracts.DACMarket
                 AssertSenderIsDelegatorContract();
             }
 
-            AssertDACExists(input.DacName);
+            AssertProtocolExists(input.DacName);
 
             var series = State.DACSeriesMap[input.SeriesName];
             if (series == null)
@@ -68,7 +68,7 @@ namespace Sinodac.Contracts.DACMarket
         {
             AssertSenderIsDelegatorContract();
             var publicTime = input.PublicTime ?? Context.CurrentBlockTime;
-            AssertDACExists(input.DacName);
+            AssertProtocolExists(input.DacName);
             State.PublicTimeMap[input.DacName] = publicTime;
             Context.Fire(new DACListed
             {
@@ -82,7 +82,7 @@ namespace Sinodac.Contracts.DACMarket
         {
             AssertSenderIsDelegatorContract();
             Assert(State.PublicTimeMap[input.DacName] != null, $"{input.DacName} 还没有上架");
-            AssertDACExists(input.DacName);
+            AssertProtocolExists(input.DacName);
             State.PublicTimeMap.Remove(input.DacName);
             Context.Fire(new DACDelisted
             {
@@ -124,7 +124,8 @@ namespace Sinodac.Contracts.DACMarket
             });
             Assert(!string.IsNullOrEmpty(protocol.DacName), $"查无此DAC：{input.DacName}");
             Assert(input.To.Value.Any(), "无效的DAC的接受地址");
-            Assert(State.PublicTimeMap[input.DacName] != null, $"{input.DacName} 还没有上架");
+            Assert(State.PublicTimeMap[input.DacName] != null, $"{input.DacName} 没有设置上架时间");
+            Assert(State.PublicTimeMap[input.DacName] <= Context.CurrentBlockTime, $"{input.DacName} 还没有上架");
 
             var isMysteryBox = protocol.Circulation == protocol.ReserveForLottery;
             if (isMysteryBox)
@@ -135,17 +136,27 @@ namespace Sinodac.Contracts.DACMarket
                     DacName = input.DacName,
                     DacId = input.DacId
                 };
-                if (State.OwnBoxCodeMap[input.To] == null)
+                if (State.OwnBoxIdListMap[input.To] == null)
                 {
-                    State.OwnBoxCodeMap[input.To] = new StringList
+                    State.OwnBoxIdListMap[input.To] = new StringList
                     {
                         Value = { boxId }
                     };
                 }
                 else
                 {
-                    State.OwnBoxCodeMap[input.To].Value.Add(boxId);
+                    State.OwnBoxIdListMap[input.To].Value.Add(boxId);
                 }
+
+                Context.Fire(new BoxSold
+                {
+                    UserAddress = input.To,
+                    UserId = input.UserId,
+                    DacName = input.DacName,
+                    DacId = input.DacId,
+                    BoxId = boxId,
+                    Price = input.Price
+                });
             }
             else
             {
@@ -154,6 +165,15 @@ namespace Sinodac.Contracts.DACMarket
                     DacName = input.DacName,
                     DacId = input.DacId,
                     To = input.To
+                });
+
+                Context.Fire(new DACSold
+                {
+                    UserAddress = input.To,
+                    UserId = input.UserId,
+                    DacId = input.DacId,
+                    DacName = input.DacName,
+                    Price = input.Price
                 });
             }
 
@@ -180,6 +200,14 @@ namespace Sinodac.Contracts.DACMarket
                 To = input.To
             });
 
+            Context.Fire(new CodeRedeemed
+            {
+                DacName = dacInfo.DacName,
+                DacId = dacInfo.DacId,
+                RedeemCode = input.RedeemCode,
+                UserAddress = input.To,
+                UserId = input.UserId
+            });
             return new Empty();
         }
 
@@ -187,6 +215,10 @@ namespace Sinodac.Contracts.DACMarket
         {
             AssertSenderIsDelegatorContract();
             State.BoxIdSeedMap[input.DacName] = Context.OriginTransactionId.ToHex();
+            Context.Fire(new Boxed
+            {
+                DacName = input.DacName
+            });
             return new Empty();
         }
 
@@ -200,11 +232,29 @@ namespace Sinodac.Contracts.DACMarket
             }
 
             Assert(State.PublicTimeMap[input.DacName] != null, $"{input.DacName} 还没有上架");
+
+            var ownBoxIdList = State.OwnBoxIdListMap[input.To];
+            if (ownBoxIdList == null)
+            {
+                throw new AssertionException($"用户 {input.To} 名下没有盲盒");
+            }
+            Assert(ownBoxIdList.Value.Contains(input.BoxId), $"编号为 {input.BoxId} 的盲盒不属于用户 {input.To}");
+            ownBoxIdList.Value.Remove(input.BoxId);
+
             State.DACContract.InitialTransfer.Send(new InitialTransferInput
             {
                 DacName = boxInfo.DacName,
                 DacId = boxInfo.DacId,
                 To = input.To
+            });
+
+            Context.Fire(new Unboxed
+            {
+                UserId = input.UserId,
+                UserAddress = input.To,
+                DacName = boxInfo.DacName,
+                DacId = boxInfo.DacId,
+                BoxId = input.BoxId
             });
             return new Empty();
         }

@@ -42,6 +42,11 @@ namespace Sinodac.Contracts.DAC.Managers
         public void Approve(string dacName)
         {
             _isApprovedMap[dacName] = true;
+            
+            _context.Fire(new DACProtocolApproved
+            {
+                DacName = dacName
+            });
         }
 
         public bool IsApproved(string dacName)

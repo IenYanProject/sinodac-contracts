@@ -11,7 +11,7 @@ namespace Sinodac.Contracts.DACMarket
 
         public MappedState<string, Timestamp> PublicTimeMap { get; set; }
 
-        public MappedState<Address, StringList> OwnBoxCodeMap { get; set; }
+        public MappedState<Address, StringList> OwnBoxIdListMap { get; set; }
 
         public MappedState<string, string> BoxIdSeedMap { get; set; }
 

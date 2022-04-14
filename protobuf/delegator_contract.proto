@@ -52,6 +52,7 @@ service DelegatorContract {
     rpc AddProtocolToSeries (AddProtocolToSeriesInput) returns (google.protobuf.Empty) { }
     rpc AuditDAC (AuditDACInput) returns (google.protobuf.Empty) { }
     rpc ListDAC (ListDACInput) returns (google.protobuf.Empty) { }
+    rpc MintDAC (MintDACInput) returns (google.protobuf.Empty) { }
     rpc DelistDAC (DelistDACInput) returns (google.protobuf.Empty) { }
     rpc BindRedeemCode (BindRedeemCodeInput) returns (google.protobuf.Empty) { }
     rpc Buy (BuyInput) returns (google.protobuf.Empty) { }
@@ -156,6 +157,13 @@ message ListDACInput {
     google.protobuf.Timestamp public_time = 3;
 }
 
+message MintDACInput {
+    string from_id = 1;
+    string dac_name = 2;
+    int64 from_dac_id = 3;
+    int64 quantity = 4;
+}
+
 message DelistDACInput {
     string from_id = 1;
     string dac_name = 2;
@@ -165,13 +173,14 @@ message BindRedeemCodeInput {
     string from_id = 1;
     string dac_name = 2;
     repeated aelf.Hash redeem_code_hash_list = 3;
+    int64 skip = 4;
 }
 
 message BuyInput {
     string from_id = 1;
     string dac_name = 2;
     int64 dac_id = 3;
-    int64 actual_price = 4;
+    int64 price = 4;
 }
 
 message RedeemInput {
@@ -676,3 +685,4 @@ message DepartmentPermissionChanged {
     string department_name = 2 [(aelf.is_indexed) = true];
     StringList permission_list = 3;
 }
+

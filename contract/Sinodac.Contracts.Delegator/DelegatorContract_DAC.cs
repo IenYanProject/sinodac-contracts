@@ -73,6 +73,18 @@ namespace Sinodac.Contracts.Delegator
             return new Empty();
         }
 
+        public override Empty MintDAC(MintDACInput input)
+        {
+            AssertPermission(input.FromId, DAC.List);
+            State.DACContract.Mint.Send(new MintInput
+            {
+                DacName = input.DacName,
+                FromDacId = input.FromDacId,
+                Quantity = input.Quantity
+            });
+            return new Empty();
+        }
+
         public override Empty DelistDAC(DelistDACInput input)
         {
             AssertPermission(input.FromId, DAC.List);
@@ -86,13 +98,11 @@ namespace Sinodac.Contracts.Delegator
         public override Empty BindRedeemCode(BindRedeemCodeInput input)
         {
             AssertPermission(input.FromId, DAC.Create);
-            Assert(input.DacIdList.Count == input.RedeemCodeHashList.Count,
-                $"DAC编号和抽奖码个数不一致，前者有 {input.DacIdList.Count} 个，后者有 {input.RedeemCodeHashList.Count} 个");
             State.DACContract.MintForRedeemCode.Send(new MintForRedeemCodeInput
             {
                 DacName = input.DacName,
-                DacIdList = { input.DacIdList },
-                RedeemCodeHashList = { input.RedeemCodeHashList }
+                RedeemCodeHashList = { input.RedeemCodeHashList },
+                Skip = input.Skip
             });
             return new Empty();
         }
@@ -104,7 +114,8 @@ namespace Sinodac.Contracts.Delegator
                 To = GetVirtualAddress(input.FromId),
                 DacName = input.DacName,
                 DacId = input.DacId,
-                ActualPrice = input.ActualPrice
+                Price = input.Price,
+                UserId = input.FromId
             });
             return new Empty();
         }
@@ -114,7 +125,8 @@ namespace Sinodac.Contracts.Delegator
             State.DACMarketContract.Redeem.Send(new DACMarket.RedeemInput
             {
                 To = GetVirtualAddress(input.FromId),
-                RedeemCode = input.RedeemCode
+                RedeemCode = input.RedeemCode,
+                UserId = input.FromId
             });
             return new Empty();
         }
@@ -135,7 +147,8 @@ namespace Sinodac.Contracts.Delegator
             {
                 DacName = input.DacName,
                 BoxId = input.BoxId,
-                To = GetVirtualAddress(input.FromId)
+                To = GetVirtualAddress(input.FromId),
+                UserId = input.FromId
             });
             return new Empty();
         }
