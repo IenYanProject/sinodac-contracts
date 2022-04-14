@@ -1,0 +1,160 @@
+using Google.Protobuf.WellKnownTypes;
+using Sinodac.Contracts.DAC;
+using Sinodac.Contracts.DACMarket;
+
+namespace Sinodac.Contracts.Delegator
+{
+    public partial class DelegatorContract
+    {
+        public override Empty CreateDAC(CreateDACInput input)
+        {
+            AssertPermission(input.FromId, DAC.Create);
+            State.DACContract.Create.Send(new CreateInput
+            {
+                CreatorUserId = input.FromId,
+                CreatorId = input.CreatorId,
+                DacName = input.DacName,
+                Circulation = input.Circulation,
+                Price = input.Price,
+                DacShape = input.DacShape,
+                DacType = input.DacType,
+                ReserveForLottery = input.ReserveForLottery
+            });
+            return new Empty();
+        }
+
+        public override Empty CreateSeries(CreateSeriesInput input)
+        {
+            AssertPermission(input.FromId, DAC.CreateSeries);
+            State.DACMarketContract.CreateSeries.Send(new DACMarket.CreateSeriesInput
+            {
+                CreatorUserId = input.FromId,
+                CreatorId = input.CreatorId,
+                SeriesName = input.SeriesName,
+                SeriesDescription = input.SeriesDescription
+            });
+            return new Empty();
+        }
+
+        public override Empty AddProtocolToSeries(AddProtocolToSeriesInput input)
+        {
+            AssertPermission(input.FromId, DAC.CreateSeries);
+            State.DACMarketContract.AddProtocol.Send(new AddProtocolInput
+            {
+                DacName = input.DacName,
+                SeriesName = input.SeriesName
+            });
+            return new Empty();
+        }
+
+        public override Empty AuditDAC(AuditDACInput input)
+        {
+            AssertPermission(input.FromId, DAC.AuditDetail);
+            if (input.IsApprove)
+            {
+                State.DACContract.ApproveProtocol.Send(new ApproveProtocolInput
+                {
+                    DacName = input.DacName,
+                    IsApprove = true
+                });
+            }
+
+            return new Empty();
+        }
+
+        public override Empty ListDAC(ListDACInput input)
+        {
+            AssertPermission(input.FromId, DAC.List);
+            State.DACMarketContract.List.Send(new ListInput
+            {
+                DacName = input.DacName,
+                PublicTime = input.PublicTime
+            });
+            return new Empty();
+        }
+
+        public override Empty DelistDAC(DelistDACInput input)
+        {
+            AssertPermission(input.FromId, DAC.List);
+            State.DACMarketContract.Delist.Send(new DelistInput
+            {
+                DacName = input.DacName
+            });
+            return new Empty();
+        }
+
+        public override Empty BindRedeemCode(BindRedeemCodeInput input)
+        {
+            AssertPermission(input.FromId, DAC.Create);
+            Assert(input.DacIdList.Count == input.RedeemCodeHashList.Count,
+                $"DAC编号和抽奖码个数不一致，前者有 {input.DacIdList.Count} 个，后者有 {input.RedeemCodeHashList.Count} 个");
+            State.DACContract.MintForRedeemCode.Send(new MintForRedeemCodeInput
+            {
+                DacName = input.DacName,
+                DacIdList = { input.DacIdList },
+                RedeemCodeHashList = { input.RedeemCodeHashList }
+            });
+            return new Empty();
+        }
+
+        public override Empty Buy(BuyInput input)
+        {
+            State.DACMarketContract.Buy.Send(new DACMarket.BuyInput
+            {
+                To = GetVirtualAddress(input.FromId),
+                DacName = input.DacName,
+                DacId = input.DacId,
+                ActualPrice = input.ActualPrice
+            });
+            return new Empty();
+        }
+
+        public override Empty Redeem(RedeemInput input)
+        {
+            State.DACMarketContract.Redeem.Send(new DACMarket.RedeemInput
+            {
+                To = GetVirtualAddress(input.FromId),
+                RedeemCode = input.RedeemCode
+            });
+            return new Empty();
+        }
+
+        public override Empty Box(BoxInput input)
+        {
+            AssertPermission(input.FromId, DAC.Create);
+            State.DACMarketContract.Box.Send(new DACMarket.BoxInput
+            {
+                DacName = input.DacName
+            });
+            return new Empty();
+        }
+
+        public override Empty Unbox(UnboxInput input)
+        {
+            State.DACMarketContract.Unbox.Send(new DACMarket.UnboxInput
+            {
+                DacName = input.DacName,
+                BoxId = input.BoxId,
+                To = GetVirtualAddress(input.FromId)
+            });
+            return new Empty();
+        }
+
+        public override Empty Give(GiveInput input)
+        {
+            var from = GetVirtualAddress(input.FromId);
+            Assert(
+                State.DACContract.IsOwner.Call(new IsOwnerInput
+                    { DacName = input.DacName, DacId = input.DacId, Owner = from }).Value,
+                $"转出方不持有DAC {input.DacName}-{input.DacId}");
+            State.DACContract.TransferFrom.Send(new TransferFromInput
+            {
+                DacName = input.DacName,
+                DacId = input.DacId,
+                From = from,
+                To = GetVirtualAddress(input.ToId)
+            });
+            return new Empty();
+        }
+    }
+}

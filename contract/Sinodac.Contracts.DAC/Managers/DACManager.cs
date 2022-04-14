@@ -27,14 +27,15 @@ namespace Sinodac.Contracts.DAC.Managers
             _balanceMap = balanceMap;
         }
 
-        public void Create(string dacName, long dacId)
+        public void Create(string dacName, long dacId, Hash redeemCodeHash = null)
         {
             var dacHash = DACHelper.CalculateDACHash(dacName, dacId);
             _dacMap[dacName][dacId] = new DACInfo
             {
                 DacName = dacName,
                 DacId = dacId,
-                DacHash = dacHash
+                DacHash = dacHash,
+                RedeemCodeHash = redeemCodeHash
             };
             _ownerMap[dacName][dacId] = CalculateInitialAddress(dacHash);
         }

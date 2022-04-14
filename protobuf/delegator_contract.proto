@@ -45,6 +45,20 @@ service DelegatorContract {
     rpc CreateIndependentArtist (CreateIndependentArtistInput) returns (google.protobuf.Empty) { }
     rpc UpdateIndependentArtist (UpdateIndependentArtistInput) returns (google.protobuf.Empty) { }
     rpc DisableIndependentArtist (DisableIndependentArtistInput) returns (google.protobuf.Empty) { }
+    
+    // DAC Specific
+    rpc CreateDAC (CreateDACInput) returns (google.protobuf.Empty) { }
+    rpc CreateSeries (CreateSeriesInput) returns (google.protobuf.Empty) { }
+    rpc AddProtocolToSeries (AddProtocolToSeriesInput) returns (google.protobuf.Empty) { }
+    rpc AuditDAC (AuditDACInput) returns (google.protobuf.Empty) { }
+    rpc ListDAC (ListDACInput) returns (google.protobuf.Empty) { }
+    rpc DelistDAC (DelistDACInput) returns (google.protobuf.Empty) { }
+    rpc BindRedeemCode (BindRedeemCodeInput) returns (google.protobuf.Empty) { }
+    rpc Buy (BuyInput) returns (google.protobuf.Empty) { }
+    rpc Redeem (RedeemInput) returns (google.protobuf.Empty) { }
+    rpc Box (BoxInput) returns (google.protobuf.Empty) { }
+    rpc Unbox (UnboxInput) returns (google.protobuf.Empty) { }
+    rpc Give (GiveInput) returns (google.protobuf.Empty) { }
 
     rpc IsPermittedAddress (IsPermittedAddressInput) returns (google.protobuf.BoolValue) {
         option (aelf.is_view) = true;
@@ -89,6 +103,8 @@ service DelegatorContract {
 
 message InitializeInput {
     aelf.Address admin_address = 1;
+    aelf.Address dac_contract_address = 2;
+    aelf.Address dac_market_contract_address = 3;
 }
 
 message RegisterSendersInput {
@@ -101,6 +117,84 @@ message RegisterMethodsInput {
     string scope_id = 1;
     StringList method_name_list = 2;
     bool is_remove = 3;
+}
+
+message CreateDACInput {
+    string from_id = 1;
+    string creator_id = 2;
+    string dac_name = 3;
+    int64 price = 4;
+    int64 circulation = 5;
+    string dac_type = 6;
+    string dac_shape = 7;
+    int64 reserve_for_lottery = 8;
+    string series_name = 9;
+}
+
+message CreateSeriesInput {
+    string from_id = 1;
+    string series_name = 2;
+    string series_description = 3;
+    string creator_id = 4;
+}
+
+message AddProtocolToSeriesInput {
+    string from_id = 1;
+    string series_name = 2;
+    string dac_name = 3;
+}
+
+message AuditDACInput {
+    string from_id = 1;
+    string dac_name = 2;
+    bool is_approve = 3;
+}
+
+message ListDACInput {
+    string from_id = 1;
+    string dac_name = 2;
+    google.protobuf.Timestamp public_time = 3;
+}
+
+message DelistDACInput {
+    string from_id = 1;
+    string dac_name = 2;
+}
+
+message BindRedeemCodeInput {
+    string from_id = 1;
+    string dac_name = 2;
+    repeated aelf.Hash redeem_code_hash_list = 3;
+}
+
+message BuyInput {
+    string from_id = 1;
+    string dac_name = 2;
+    int64 dac_id = 3;
+    int64 actual_price = 4;
+}
+
+message RedeemInput {
+    string from_id = 1;
+    string redeem_code = 2;
+}
+
+message BoxInput {
+    string from_id = 1;
+    string dac_name = 2;
+}
+
+message UnboxInput {
+    string from_id = 1;
+    string dac_name = 2;
+    string box_id = 3;
+}
+
+message GiveInput {
+    string from_id = 1;
+    string to_id = 2;
+    string dac_name = 3;
+    int64 dac_id = 4;
 }
 
 message CreateRoleInput {

@@ -20,5 +20,28 @@ namespace Sinodac.Contracts.DAC
         {
             return DACHelper.CalculateDACHash(input.DacName, input.DacId);
         }
+
+        public override BoolValue IsOwner(IsOwnerInput input)
+        {
+            return new BoolValue
+            {
+                Value = State.OwnerMap[input.DacName][input.DacId] != null
+            };
+        }
+
+        public override DACInfo GetDACInfo(GetDACInfoInput input)
+        {
+            return State.DACInfoMap[input.DacName][input.DacId];
+        }
+
+        public override DACProtocolInfo GetDACProtocolInfo(StringValue input)
+        {
+            return State.DACProtocolInfoMap[input.Value];
+        }
+
+        public override DACInfo GetRedeemCodeDAC(Hash input)
+        {
+            return State.RedeemCodeDACMap[input];
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace Sinodac.Contracts.Delegator.Helpers
                 DAC.Default,
                 DAC.List,
                 DAC.Create,
-                DAC.CreateCollection,
+                DAC.CreateProtocol,
                 DAC.CreateSeries,
                 DAC.CreateMysteryBox,
                 DAC.Audit,
@@ -82,7 +82,7 @@ namespace Sinodac.Contracts.Delegator.Helpers
                 DAC.Default,
                 DAC.List,
                 DAC.Create,
-                DAC.CreateCollection,
+                DAC.CreateProtocol,
                 DAC.CreateSeries,
                 DAC.CreateMysteryBox,
 

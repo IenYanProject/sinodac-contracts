@@ -64,7 +64,7 @@ namespace Sinodac.Contracts.Delegator
         {
             var dacContractActionIds = new List<string>
             {
-                DAC.CreateCollection,
+                DAC.CreateProtocol,
                 DAC.CreateSeries,
                 DAC.CreateMysteryBox,
             };
@@ -85,7 +85,7 @@ namespace Sinodac.Contracts.Delegator
                 DAC.Default,
                 DAC.List,
                 DAC.Create,
-                DAC.CreateCollection,
+                DAC.CreateProtocol,
                 DAC.CreateSeries,
                 DAC.CreateMysteryBox,
                 DAC.Audit,

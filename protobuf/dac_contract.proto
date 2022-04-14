@@ -15,6 +15,7 @@ service DACContract {
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
     rpc Create (CreateInput) returns (google.protobuf.Empty) { }
     rpc Mint (MintInput) returns (google.protobuf.Empty) { }
+    rpc MintForRedeemCode (MintForRedeemCodeInput) returns (google.protobuf.Empty) { }
     rpc InitialTransfer (InitialTransferInput) returns (google.protobuf.Empty) { }
     rpc Transfer (TransferInput) returns (google.protobuf.Empty) { }
     rpc TransferFrom (TransferFromInput) returns (google.protobuf.Empty) { }
@@ -26,13 +27,13 @@ service DACContract {
     rpc GetDACInfo (GetDACInfoInput) returns (DACInfo) {
         option (aelf.is_view) = true;
     }
-    rpc GetDACInfoByDACHash (aelf.Hash) returns (DACInfo) {
-        option (aelf.is_view) = true;
-    }
     rpc GetBalance (GetBalanceInput) returns (DACBalance) {
         option (aelf.is_view) = true;
     }
-    rpc GetBalanceByDACHash (GetBalanceByDACHashInput) returns (DACBalance) {
+    rpc GetRedeemCodeDAC (aelf.Hash) returns (DACInfo) {
+        option (aelf.is_view) = true;
+    }
+    rpc IsOwner (IsOwnerInput) returns (google.protobuf.BoolValue) {
         option (aelf.is_view) = true;
     }
     rpc CalculateDACHash (CalculateDACHashInput) returns (aelf.Hash) {
@@ -47,19 +48,15 @@ message InitializeInput {
 }
 
 message CreateInput {
-    aelf.Address creator = 1;
-    string dac_name = 2;
-    int64 price = 3;
-    int64 circulation = 4;
-    string description_file_id = 5;
+    string creator_user_id = 1;
+    string creator_id = 2;
+    string dac_name = 3;
+    int64 price = 4;
+    int64 circulation = 5;
     string dac_type = 6;
     string dac_shape = 7;
-    bool is_created_by_organization = 9;
-    bool is_real = 10;
-    int64 reserve_for_lottery = 11;
-    string creator_id = 13;
-    repeated FileInfo file_info_list = 14;
-    bool is_creating_mystery_box = 15;
+    int64 reserve_for_lottery = 8;
+    int64 reserve_from = 9;
 }
 
 message MintInput {
@@ -68,10 +65,15 @@ message MintInput {
     int64 quantity = 3;
 }
 
-message InitialTransferInput {
+message MintForRedeemCodeInput {
     string dac_name = 1;
-    int64 dac_id = 2;
-    aelf.Address to = 3;
+    repeated aelf.Hash redeem_code_hash_list = 2;
+}
+
+message InitialTransferInput {
+    aelf.Address to = 1;
+    string dac_name = 2;
+    int64 dac_id = 3;
 }
 
 message TransferInput {
@@ -91,7 +93,7 @@ message TransferFromInput {
 
 message ApproveProtocolInput {
     string dac_name = 1;
-    bool approve = 2;
+    bool is_approve = 2;
 }
 
 message GetDACInfoInput {
@@ -102,7 +104,6 @@ message GetDACInfoInput {
 message GetBalanceInput {
     aelf.Address owner = 1;
     string dac_name = 2;
-    int64 dac_id = 3;
 }
 
 message GetBalanceByDACHashInput {
@@ -110,22 +111,10 @@ message GetBalanceByDACHashInput {
     aelf.Hash dac_hash = 2;
 }
 
-message GetAllowanceInput {
-    string dac_name = 1;
-    int64 dac_id = 2;
-    aelf.Address owner = 3;
-    aelf.Address spender = 4;
-}
-
-message GetAllowanceByDACHashInput {
-    aelf.Hash dac_hash = 1;
-    aelf.Address owner = 2;
-    aelf.Address spender = 3;
-}
-
-message GetOperatorListInput {
-    string dac_name = 1;
-    aelf.Address owner = 2;
+message IsOwnerInput {
+    aelf.Address owner = 1;
+    string dac_name = 2;
+    int64 dac_id = 3;
 }
 
 message CalculateDACHashInput {
@@ -135,18 +124,14 @@ message CalculateDACHashInput {
 
 message DACProtocolInfo {
     string creator_user_id = 1;
-    string dac_name = 2;
-    int64 price = 3;
-    int64 circulation = 4;
-    string description_file_id = 5;
+    string creator_id = 2;
+    string dac_name = 3;
+    int64 price = 4;
+    int64 circulation = 5;
     string dac_type = 6;
     string dac_shape = 7;
-    bool is_provide_real = 9;
-    int64 reserve_for_lottery = 10;
-    string creator_id = 12;
-    repeated FileInfo file_info_list = 13;
-    int64 minted = 14;
-    int64 code_generated = 15;
+    int64 reserve_for_lottery = 8;
+    int64 reserve_from = 9;
 }
 
 message DACInfo {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using AElf.CSharp.Core;
 using AElf.Sdk.CSharp;
 using AElf.Types;
 using Sinodac.Contracts.DAC.Managers;
@@ -43,14 +44,16 @@ namespace Sinodac.Contracts.DAC.Services
         /// 注意少量多次
         /// </summary>
         /// <param name="dacName"></param>
-        /// <param name="redeemCodeHashMap"></param>
-        public void BindRedeemCode(string dacName, Dictionary<long, Hash> redeemCodeHashMap)
+        /// <param name="redeemCodeHashList"></param>
+        public void BindRedeemCode(string dacName, List<Hash> redeemCodeHashList)
         {
-            foreach (var pair in redeemCodeHashMap)
+            var reserveFrom = _protocolManager.GetProtocol(dacName).ReserveFrom;
+            for (var i = 0; i < redeemCodeHashList.Count; i++)
             {
-                var dacId = pair.Key;
-                var redeemCodeHash = pair.Value;
+                var dacId = reserveFrom.Add(i);
+                var redeemCodeHash = redeemCodeHashList[i];
                 _redeemCodeManager.Create(dacName, dacId, redeemCodeHash);
+                _dacManager.Create(dacName, dacId, redeemCodeHash);
             }
         }
 

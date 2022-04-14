@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using AElf;
 using AElf.CSharp.Core;
 using AElf.Sdk.CSharp;
 using Google.Protobuf.WellKnownTypes;
@@ -20,19 +21,18 @@ namespace Sinodac.Contracts.DACMarket
             AssertSenderIsDelegatorContract();
             var series = new DACSeries
             {
-                Creator = input.Creator,
-                CreateTime = Context.CurrentBlockTime,
-                CreatorOrganization = input.CreatorOrganization,
+                CreatorUserId = input.CreatorUserId,
+                CreatorId = input.CreatorId,
                 SeriesDescription = input.SeriesDescription,
-                CoverFileId = input.CoverFileId,
-                SeriesName = input.SeriesName
+                SeriesName = input.SeriesName,
+                CreateTime = Context.CurrentBlockTime,
             };
             State.DACSeriesMap[input.SeriesName] = series;
             Context.Fire(new SeriesCreated
             {
                 SeriesName = series.SeriesName,
-                Creator = series.Creator,
-                CreatorOrganization = series.CreatorOrganization,
+                CreatorUserId = series.CreatorUserId,
+                CreatorId = series.CreatorId,
                 DacSeries = series
             });
             return new Empty();
@@ -45,7 +45,7 @@ namespace Sinodac.Contracts.DACMarket
                 AssertSenderIsDelegatorContract();
             }
 
-            AssertPermission(input.FromId, input.DacName);
+            AssertDACExists(input.DacName);
 
             var series = State.DACSeriesMap[input.SeriesName];
             if (series == null)
@@ -56,9 +56,8 @@ namespace Sinodac.Contracts.DACMarket
             series.CollectionList.Value.Add(input.DacName);
             series.CollectionCount = series.CollectionCount.Add(1);
             State.DACSeriesMap[input.SeriesName] = series;
-            Context.Fire(new CollectionAdded
+            Context.Fire(new ProtocolAdded
             {
-                FromId = input.FromId,
                 DacName = input.DacName,
                 SeriesName = input.SeriesName
             });
@@ -69,17 +68,11 @@ namespace Sinodac.Contracts.DACMarket
         {
             AssertSenderIsDelegatorContract();
             var publicTime = input.PublicTime ?? Context.CurrentBlockTime;
-            var dacCollection = AssertPermission(input.FromId, input.DacName);
-            Assert(dacCollection.FileInfoList.Count > input.UseFileInfoIndex, "FileInfoList数组下标越界");
-            State.ListInfoMap[input.DacName] = new ListInfo
-            {
-                PublicTime = input.PublicTime,
-                UseFileId = dacCollection.FileInfoList[input.UseFileInfoIndex].FileId
-            };
+            AssertDACExists(input.DacName);
+            State.PublicTimeMap[input.DacName] = publicTime;
             Context.Fire(new DACListed
             {
                 DacName = input.DacName,
-                FromId = input.FromId,
                 PublicTime = publicTime
             });
             return new Empty();
@@ -88,13 +81,12 @@ namespace Sinodac.Contracts.DACMarket
         public override Empty Delist(DelistInput input)
         {
             AssertSenderIsDelegatorContract();
-            Assert(State.ListInfoMap[input.DacName] != null, $"{input.DacName} 还没有上架");
-            AssertPermission(input.FromId, input.DacName);
-            State.ListInfoMap.Remove(input.DacName);
+            Assert(State.PublicTimeMap[input.DacName] != null, $"{input.DacName} 还没有上架");
+            AssertDACExists(input.DacName);
+            State.PublicTimeMap.Remove(input.DacName);
             Context.Fire(new DACDelisted
             {
                 DacName = input.DacName,
-                FromId = input.FromId
             });
             return new Empty();
         }
@@ -125,26 +117,95 @@ namespace Sinodac.Contracts.DACMarket
         public override Empty Buy(BuyInput input)
         {
             AssertSenderIsDelegatorContract();
-            var dacCollection = State.DACContract.GetDACProtocolInfo.Call(new StringValue
+
+            var protocol = State.DACContract.GetDACProtocolInfo.Call(new StringValue
             {
                 Value = input.DacName
             });
-            if (string.IsNullOrEmpty(dacCollection.DacName))
+            Assert(!string.IsNullOrEmpty(protocol.DacName), $"查无此DAC：{input.DacName}");
+            Assert(input.To.Value.Any(), "无效的DAC的接受地址");
+            Assert(State.PublicTimeMap[input.DacName] != null, $"{input.DacName} 还没有上架");
+
+            var isMysteryBox = protocol.Circulation == protocol.ReserveForLottery;
+            if (isMysteryBox)
             {
-                throw new AssertionException($"查无此DAC：{input.DacName}");
+                var boxId = CalculateBoxId(input.DacName, input.DacId);
+                State.BoxInfoMap[boxId] = new BoxInfo
+                {
+                    DacName = input.DacName,
+                    DacId = input.DacId
+                };
+                if (State.OwnBoxCodeMap[input.To] == null)
+                {
+                    State.OwnBoxCodeMap[input.To] = new StringList
+                    {
+                        Value = { boxId }
+                    };
+                }
+                else
+                {
+                    State.OwnBoxCodeMap[input.To].Value.Add(boxId);
+                }
+            }
+            else
+            {
+                State.DACContract.InitialTransfer.Send(new InitialTransferInput
+                {
+                    DacName = input.DacName,
+                    DacId = input.DacId,
+                    To = input.To
+                });
             }
 
-            Assert(input.To.Value.Any(), "无效的DAC的接受地址");
+            return new Empty();
+        }
 
-            Assert(State.ListInfoMap[input.DacName] != null, $"{input.DacName} 还没有上架");
+        private string CalculateBoxId(string dacName, long dacId)
+        {
+            var seed = State.BoxIdSeedMap[dacName];
+            return HashHelper.ComputeFrom($"{seed} - {dacId} - {Context.OriginTransactionId.ToHex()}").ToHex();
+        }
 
+        public override Empty Redeem(RedeemInput input)
+        {
+            AssertSenderIsDelegatorContract();
+            var redeemCodeHash = HashHelper.ComputeFrom(input.RedeemCode);
+            var dacInfo = State.DACContract.GetRedeemCodeDAC.Call(redeemCodeHash);
+            Assert(dacInfo.DacName != null, $"兑换码 {input.RedeemCode} 无效");
+            Assert(State.PublicTimeMap[dacInfo.DacName] != null, $"{dacInfo.DacName} 还没有上架");
             State.DACContract.InitialTransfer.Send(new InitialTransferInput
             {
-                DacName = input.DacName,
-                DacId = input.DacId,
+                DacName = dacInfo.DacName,
+                DacId = dacInfo.DacId,
                 To = input.To
             });
 
+            return new Empty();
+        }
+
+        public override Empty Box(BoxInput input)
+        {
+            AssertSenderIsDelegatorContract();
+            State.BoxIdSeedMap[input.DacName] = Context.OriginTransactionId.ToHex();
+            return new Empty();
+        }
+
+        public override Empty Unbox(UnboxInput input)
+        {
+            AssertSenderIsDelegatorContract();
+            var boxInfo = State.BoxInfoMap[input.BoxId];
+            if (boxInfo == null)
+            {
+                throw new AssertionException($"盲盒 {input.BoxId} 无效");
+            }
+
+            Assert(State.PublicTimeMap[input.DacName] != null, $"{input.DacName} 还没有上架");
+            State.DACContract.InitialTransfer.Send(new InitialTransferInput
+            {
+                DacName = boxInfo.DacName,
+                DacId = boxInfo.DacId,
+                To = input.To
+            });
             return new Empty();
         }
     }

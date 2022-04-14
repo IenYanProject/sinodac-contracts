@@ -17,6 +17,9 @@ namespace Sinodac.Contracts.Delegator
             organizationUnitManager.Initialize();
             var userManager = GetUserManager(roleManager, organizationUnitManager);
             userManager.Initialize();
+
+            State.DACContract.Value = input.DacContractAddress;
+            State.DACMarketContract.Value = input.DacMarketContractAddress;
             return new Empty();
         }
 

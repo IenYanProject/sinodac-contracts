@@ -1,5 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using AElf.Sdk.CSharp;
+using AElf.CSharp.Core;
 using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
 
@@ -11,17 +13,34 @@ namespace Sinodac.Contracts.DAC
         {
             AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
+            var reserveFrom = input.ReserveFrom == 0
+                ? PickReserveFrom(input.Circulation, input.ReserveForLottery)
+                : input.ReserveFrom;
             dacService.CreateProtocol(new DACProtocolInfo
             {
+                CreatorUserId = input.CreatorUserId,
                 DacName = input.DacName,
                 Price = input.Price,
                 CreatorId = input.CreatorId,
                 Circulation = input.Circulation,
                 DacShape = input.DacShape,
                 DacType = input.DacType,
-                DescriptionFileId = input.DescriptionFileId,
+                ReserveFrom = input.ReserveFrom,
+                ReserveForLottery = input.ReserveForLottery
             });
             return new Empty();
+        }
+
+        private long PickReserveFrom(long circulation, long reserveForLottery)
+        {
+            var randomNumber = Math.Abs(Context.GetRandomHash(Context.TransactionId).ToInt64());
+            var reserveFrom = (randomNumber % circulation).Add(1);
+            if (reserveFrom.Add(reserveForLottery) > circulation)
+            {
+                return Math.Abs(reserveFrom.Sub(reserveForLottery));
+            }
+
+            return reserveFrom;
         }
 
         public override Empty Mint(MintInput input)
@@ -49,7 +68,7 @@ namespace Sinodac.Contracts.DAC
 
         public override Empty TransferFrom(TransferFromInput input)
         {
-            AssertSenderIsDACMarketContract();
+            AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
             dacService.Transfer(input.DacName, input.DacId, input.From, input.To);
             return new Empty();
@@ -58,11 +77,20 @@ namespace Sinodac.Contracts.DAC
         public override Empty ApproveProtocol(ApproveProtocolInput input)
         {
             AssertSenderIsDelegatorContract();
-            if (input.Approve)
+            if (input.IsApprove)
             {
                 var dacService = GetDACService();
                 dacService.ApproveProtocol(input.DacName);
             }
+
+            return new Empty();
+        }
+
+        public override Empty MintForRedeemCode(MintForRedeemCodeInput input)
+        {
+            AssertSenderIsDelegatorContract();
+            var dacService = GetDACService();
+            dacService.BindRedeemCode(input.DacName, input.RedeemCodeHashList.ToList());
             return new Empty();
         }
     }

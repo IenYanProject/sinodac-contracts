@@ -13,10 +13,10 @@ namespace Sinodac.Contracts.DACMarket
             State.DelegatorContract.ForwardCheck.Send(Context.OriginTransactionId);
         }
 
-        private DACProtocolInfo AssertPermission(string fromId, string dacName)
+        private DACProtocolInfo AssertDACExists(string dacName)
         {
-            var dacCollection = State.DACContract.GetDACProtocolInfo.Call(new StringValue { Value = dacName });
-            if (dacCollection == null)
+            var protocol = State.DACContract.GetDACProtocolInfo.Call(new StringValue { Value = dacName });
+            if (protocol == null)
             {
                 throw new AssertionException($"单件藏品 {dacName} 尚未创建");
             }
@@ -43,7 +43,7 @@ namespace Sinodac.Contracts.DACMarket
                     $"没有权限操作单件藏品 {dacName}");
             }*/
 
-            return dacCollection;
+            return protocol;
         }
     }
 }
