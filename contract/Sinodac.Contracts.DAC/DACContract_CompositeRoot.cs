@@ -22,7 +22,7 @@ namespace Sinodac.Contracts.DAC
 
         private RedeemCodeManager GetRedeemCodeManager()
         {
-            return new RedeemCodeManager(Context, State.RedeemCodeDACMap);
+            return new RedeemCodeManager(Context, State.RedeemCodeDACMap, State.BindRedeemCodeCountMap);
         }
 
         private DACService GetDACService()

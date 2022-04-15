@@ -1,4 +1,5 @@
 using AElf.Boilerplate.TestBase;
+using AElf.ContractTestKit;
 using AElf.Cryptography.ECDSA;
 using AElf.Types;
 using Sinodac.Contracts.DACMarket;
@@ -10,6 +11,13 @@ namespace Sinodac.Contracts.DAC
     {
         internal Address DelegatorContractAddress => GetAddress(DelegatorSmartContractAddressNameProvider.StringName);
         internal Address DACMarketContractAddress => GetAddress(DACMarketSmartContractAddressNameProvider.StringName);
+
+        internal IBlockTimeProvider BlockTimeProvider { get; set; }
+
+        public DACContractTestBase()
+        {
+            BlockTimeProvider = GetRequiredService<IBlockTimeProvider>();
+        }
 
         internal DACContractContainer.DACContractStub DACContractStub => GetDACContractStub(DefaultAccount.KeyPair);
 

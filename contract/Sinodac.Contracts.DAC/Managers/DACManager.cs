@@ -50,7 +50,8 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacHash = dacHash,
                 RedeemCodeHash = redeemCodeHash
             };
-            _ownerMap[dacName][dacId] = CalculateInitialAddress(dacHash);
+            var initialAddress = CalculateInitialAddress(dacHash);
+            _ownerMap[dacName][dacId] = initialAddress;
             return _dacMap[dacName][dacId];
         }
 
@@ -59,8 +60,8 @@ namespace Sinodac.Contracts.DAC.Managers
             var protocol = _protocolManager.GetProtocol(dacName);
 
             count = count == 0
-                ? protocol.Circulation.Sub(fromDacId)
-                : Math.Min(protocol.Circulation.Sub(fromDacId), count);
+                ? protocol.Circulation.Sub(fromDacId).Add(1)
+                : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
 
             for (var dacId = fromDacId; dacId <= count; dacId++)
             {
@@ -69,7 +70,7 @@ namespace Sinodac.Contracts.DAC.Managers
                     PerformCreate(dacName, dacId);
                 }
             }
-            
+
             _context.Fire(new DACMinted
             {
                 DacName = dacName,
@@ -81,14 +82,19 @@ namespace Sinodac.Contracts.DAC.Managers
         public void InitialTransfer(string dacName, long dacId, Address to)
         {
             var initialAddress = CalculateInitialAddress(DACHelper.CalculateDACHash(dacName, dacId));
+            if (_ownerMap[dacName][dacId] != null)
+            {
+                throw new AssertionException($"DAC {dacName}:{dacId} 还没有mint到初始地址");
+            }
+
             if (_ownerMap[dacName][dacId] != initialAddress)
             {
-                throw new AssertionException($"DAC {dacName}-{dacId} 已经从初始地址转给 {_ownerMap[dacName][dacId]} 了");
+                throw new AssertionException($"DAC {dacName}:{dacId} 已经从初始地址转给 {_ownerMap[dacName][dacId]} 了");
             }
 
             _ownerMap[dacName][dacId] = to;
             _balanceMap[dacName][to] = _balanceMap[dacName][to].Add(1);
-            
+
             _context.Fire(new DACInitialTransferred
             {
                 DacName = dacName,
@@ -102,7 +108,7 @@ namespace Sinodac.Contracts.DAC.Managers
         {
             if (_ownerMap[dacName][dacId] != from)
             {
-                throw new AssertionException($"{from} 不拥有 DAC {dacName}-{dacId}");
+                throw new AssertionException($"{from} 不拥有 DAC {dacName}:{dacId}");
             }
 
             _ownerMap[dacName][dacId] = to;

@@ -71,6 +71,7 @@ namespace Sinodac.Contracts.DACMarket
         public override Empty List(ListInput input)
         {
             AssertSenderIsDelegatorContract();
+            Assert(State.DACContract.IsDACProtocolApproved.Call(new StringValue{Value = input.DacName}).Value, $"DAC {input.DacName} 还没有通过审核");
             var publicTime = input.PublicTime ?? Context.CurrentBlockTime;
             AssertProtocolExists(input.DacName);
             State.PublicTimeMap[input.DacName] = publicTime;
@@ -120,7 +121,7 @@ namespace Sinodac.Contracts.DACMarket
         public override Empty Buy(BuyInput input)
         {
             AssertSenderIsDelegatorContract();
-
+            
             var protocol = State.DACContract.GetDACProtocolInfo.Call(new StringValue
             {
                 Value = input.DacName
@@ -137,7 +138,8 @@ namespace Sinodac.Contracts.DACMarket
                 State.BoxInfoMap[boxId] = new BoxInfo
                 {
                     DacName = input.DacName,
-                    DacId = input.DacId
+                    DacId = input.DacId,
+                    Price = input.Price
                 };
                 if (State.OwnBoxIdListMap[input.To] == null)
                 {
@@ -185,8 +187,15 @@ namespace Sinodac.Contracts.DACMarket
 
         private string CalculateBoxId(string dacName, long dacId)
         {
+            if (State.BoxIdSeedMap[dacName] == null)
+            {
+                throw new AssertionException("盲盒还未打包");
+            }
+
             var seed = State.BoxIdSeedMap[dacName];
-            return HashHelper.ComputeFrom($"{seed} - {dacId} - {Context.OriginTransactionId.ToHex()}").ToHex();
+            return HashHelper
+                .ComputeFrom($"{seed} - {dacId} - {Context.OriginTransactionId.ToHex()} - {Context.CurrentBlockTime}")
+                .ToHex();
         }
 
         public override Empty Redeem(RedeemInput input)
@@ -217,12 +226,17 @@ namespace Sinodac.Contracts.DACMarket
         public override Empty Box(BoxInput input)
         {
             AssertSenderIsDelegatorContract();
-            State.BoxIdSeedMap[input.DacName] = Context.OriginTransactionId.ToHex();
+            SetBoxIdSeed(input.DacName);
             Context.Fire(new Boxed
             {
                 DacName = input.DacName
             });
             return new Empty();
+        }
+
+        private void SetBoxIdSeed(string dacName)
+        {
+            State.BoxIdSeedMap[dacName] = Context.OriginTransactionId.ToHex();
         }
 
         public override Empty Unbox(UnboxInput input)

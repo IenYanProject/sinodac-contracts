@@ -96,7 +96,7 @@ service DelegatorContract {
     rpc GetRolePermissionList (google.protobuf.StringValue) returns (StringList) {
         option (aelf.is_view) = true;
     }
-    rpc GetOrganizationDepartmentPermissionList (GetOrganizationDepartmentPermissionListInput) returns (StringList) {
+    rpc GetOrganizationDepartmentIgnoredPermissionList (GetOrganizationDepartmentIgnoredPermissionListInput) returns (StringList) {
         option (aelf.is_view) = true;
     }
     rpc GetUserPermissionList (google.protobuf.StringValue) returns (StringList) {
@@ -485,7 +485,7 @@ message ForwardRecord {
     bytes parameter = 6;
 }
 
-message GetOrganizationDepartmentPermissionListInput {
+message GetOrganizationDepartmentIgnoredPermissionListInput {
     string organization_name = 1;
     string department_name = 2;
 }

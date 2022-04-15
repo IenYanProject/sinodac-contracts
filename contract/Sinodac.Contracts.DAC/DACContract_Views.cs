@@ -43,5 +43,29 @@ namespace Sinodac.Contracts.DAC
         {
             return State.RedeemCodeDACMap[input];
         }
+
+        public override BoolValue IsDACProtocolApproved(StringValue input)
+        {
+            return new BoolValue
+            {
+                Value = State.IsApprovedMap[input.Value]
+            };
+        }
+
+        public override BoolValue IsMinted(IsMintedInput input)
+        {
+            return new BoolValue
+            {
+                Value = State.OwnerMap[input.DacName][input.DacId] != null
+            };
+        }
+
+        public override BoolValue IsBindCompleted(StringValue input)
+        {
+            return new BoolValue
+            {
+                Value = GetDACService().IsBindCompleted(input.Value)
+            };
+        }
     }
 }

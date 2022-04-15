@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using AElf.Boilerplate.TestBase;
 using AElf.ContractTestBase;
+using AElf.ContractTestKit;
 using AElf.Kernel.SmartContract.Application;
 using Microsoft.Extensions.DependencyInjection;
 using Sinodac.Contracts.DACMarket;
@@ -16,6 +17,7 @@ namespace Sinodac.Contracts.DAC
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
+            context.Services.AddSingleton<IBlockTimeProvider, BlockTimeProvider>();
             context.Services.AddSingleton<IContractInitializationProvider, DACMarketContractInitializationProvider>();
             context.Services.AddSingleton<IContractInitializationProvider, DACContractInitializationProvider>();
             context.Services.AddSingleton<IContractInitializationProvider, DelegatorInitializationProvider>();

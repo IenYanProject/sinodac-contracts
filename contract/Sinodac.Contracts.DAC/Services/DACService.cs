@@ -95,5 +95,17 @@ namespace Sinodac.Contracts.DAC.Services
         {
             _protocolManager.Approve(dacName);
         }
+
+        /// <summary>
+        /// protocol.Circulation == protocol.ReserveForLottery 意思是盲盒不必检查
+        /// </summary>
+        /// <param name="dacName"></param>
+        /// <returns></returns>
+        public bool IsBindCompleted(string dacName)
+        {
+            var protocol = _protocolManager.GetProtocol(dacName);
+            return protocol.Circulation == protocol.ReserveForLottery ||
+                   _redeemCodeManager.GetBindCount(dacName) == protocol.ReserveForLottery;
+        }
     }
 }

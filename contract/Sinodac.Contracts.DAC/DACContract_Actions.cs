@@ -31,6 +31,11 @@ namespace Sinodac.Contracts.DAC
 
         private long PickReserveFrom(long circulation, long reserveForLottery)
         {
+            if (circulation == reserveForLottery)
+            {
+                return 1;
+            }
+
             var randomNumber = Math.Abs(Context.GetRandomHash(Context.TransactionId).ToInt64());
             var reserveFrom = (randomNumber % circulation).Add(1);
             if (reserveFrom.Add(reserveForLottery) > circulation)
@@ -43,7 +48,7 @@ namespace Sinodac.Contracts.DAC
 
         public override Empty Mint(MintInput input)
         {
-            AssertSenderIsDACMarketContract();
+            AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
             dacService.BatchMint(input.DacName, input.FromDacId, input.Quantity);
             return new Empty();
@@ -53,6 +58,7 @@ namespace Sinodac.Contracts.DAC
         {
             AssertSenderIsDACMarketContract();
             var dacService = GetDACService();
+            Assert(dacService.IsBindCompleted(input.DacName), "兑换码还没有完成绑定");
             dacService.InitialTransfer(input.DacName, input.DacId, input.To);
             return new Empty();
         }
