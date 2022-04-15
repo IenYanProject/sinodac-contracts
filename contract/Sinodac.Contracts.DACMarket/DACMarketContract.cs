@@ -26,6 +26,7 @@ namespace Sinodac.Contracts.DACMarket
                 SeriesDescription = input.SeriesDescription,
                 SeriesName = input.SeriesName,
                 CreateTime = Context.CurrentBlockTime,
+                CollectionList = new StringList()
             };
             State.DACSeriesMap[input.SeriesName] = series;
             Context.Fire(new SeriesCreated
@@ -52,6 +53,9 @@ namespace Sinodac.Contracts.DACMarket
             {
                 throw new AssertionException($"系列藏品 {input.SeriesName} 尚未创建");
             }
+
+            var protocol = State.DACContract.GetDACProtocolInfo.Call(new StringValue { Value = input.DacName });
+            Assert(!string.IsNullOrEmpty(protocol.DacName), $"藏品 {input.DacName} 尚未创建");
 
             series.CollectionList.Value.Add(input.DacName);
             series.CollectionCount = series.CollectionCount.Add(1);
@@ -98,16 +102,15 @@ namespace Sinodac.Contracts.DACMarket
             {
                 DacName = input.DacName,
                 IsConfirmed = input.IsConfirm,
-                FromId = input.FromId,
                 CopyrightId = input.CopyrightId
             };
+            State.DACCopyrightMap[input.DacName] = dacCopyright;
             if (input.IsConfirm)
             {
                 Context.Fire(new CopyrightConfirmed
                 {
                     DacName = dacCopyright.DacName,
                     CopyrightId = dacCopyright.CopyrightId,
-                    FromId = dacCopyright.FromId
                 });
             }
 
@@ -238,6 +241,7 @@ namespace Sinodac.Contracts.DACMarket
             {
                 throw new AssertionException($"用户 {input.To} 名下没有盲盒");
             }
+
             Assert(ownBoxIdList.Value.Contains(input.BoxId), $"编号为 {input.BoxId} 的盲盒不属于用户 {input.To}");
             ownBoxIdList.Value.Remove(input.BoxId);
 

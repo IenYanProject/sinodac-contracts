@@ -23,12 +23,15 @@ namespace Sinodac.Contracts.Delegator
             var organizationUnitManager = GetOrganizationUnitManager();
             var roleManager = GetRoleManager();
             var userManager = GetUserManager(roleManager, organizationUnitManager);
-            var user = userManager.GetUser(fromId);
-            var organizationUnit = organizationUnitManager.GetOrganizationUnit(user.OrganizationName);
 
-            Assert(user.Enabled, $"用户 {fromId} 当前为禁用状态");
-            Assert(actionIds.Any(actionId => CheckPermission(user, organizationUnit.RoleName, actionId)),
-                $"用户 {fromId} 没有权限调用当前方法");
+            if (State.EnablePermissionCheck.Value)
+            {
+                var user = userManager.GetUser(fromId);
+                var organizationUnit = organizationUnitManager.GetOrganizationUnit(user.OrganizationName);
+                Assert(user.Enabled, $"用户 {fromId} 当前为禁用状态");
+                Assert(actionIds.Any(actionId => CheckPermission(user, organizationUnit.RoleName, actionId)),
+                    $"用户 {fromId} 没有权限调用当前方法");
+            }
 
             return new ManagerList
             {
@@ -60,96 +63,9 @@ namespace Sinodac.Contracts.Delegator
             return true;
         }
 
-        private void TransferPermissionToForwardPermission(List<string> actionIds)
-        {
-            var dacContractActionIds = new List<string>
-            {
-                DAC.CreateProtocol,
-                DAC.CreateSeries,
-                DAC.CreateMysteryBox,
-            };
-            var dacMarketContractActionIds = new List<string>
-            {
-                DAC.List
-            };
-
-            // TODO: Move this logic to DAC Contract & DAC Market Contract.
-        }
-
-        private List<string> GetAllActionIds()
-        {
-            return new List<string>
-            {
-                HomePage.Default,
-
-                DAC.Default,
-                DAC.List,
-                DAC.Create,
-                DAC.CreateProtocol,
-                DAC.CreateSeries,
-                DAC.CreateMysteryBox,
-                DAC.Audit,
-                DAC.AuditDetail,
-                DAC.Copyright,
-
-                Permission.Default,
-                Permission.Role.RoleDefault,
-                Permission.Role.Create,
-                Permission.Role.Update,
-                Permission.Role.Disable,
-                Permission.OrganizationUnit.OrganizationUnitDefault,
-                Permission.OrganizationUnit.Create,
-                Permission.OrganizationUnit.Update,
-                Permission.OrganizationUnit.Disable,
-                Permission.User.UserDefault,
-                Permission.User.Create,
-                Permission.User.Update,
-                Permission.User.Disable,
-                Permission.IndependentArtist.IndependentArtistDefault,
-                Permission.IndependentArtist.Create,
-                Permission.IndependentArtist.Update,
-                Permission.IndependentArtist.Disable,
-
-                Statistic.Default,
-
-                Profile.Default,
-                Profile.Information,
-                Profile.CertificateOrganizationUnit,
-                Profile.CertificateIndependentArtist
-            };
-        }
-
         private Address GetVirtualAddress(string fromId)
         {
             return Context.ConvertVirtualAddressToContractAddress(HashHelper.ComputeFrom(fromId));
-        }
-
-        private void SetDefaultPermissionsToDefaultRole()
-        {
-            State.RolePermissionListMap[DefaultRoleName] = new StringList
-            {
-                Value =
-                {
-                    Profile.Default,
-                    Profile.Information,
-                    Profile.CertificateOrganizationUnit,
-                    Profile.CertificateIndependentArtist
-                }
-            };
-            foreach (var actionId in State.RolePermissionListMap[DefaultRoleName].Value)
-            {
-                State.RolePermissionMap[DefaultRoleName][actionId] = true;
-            }
-        }
-
-        private string GetOrganizationAdminKey(string organizationName)
-        {
-            return $"{organizationName}-管理员";
-        }
-
-        private string GetOrganizationMemberKey(string organizationName)
-        {
-            return $"{organizationName}-员工";
         }
 
         private string GetOrganizationDepartmentKey(string organizationName, string groupName)

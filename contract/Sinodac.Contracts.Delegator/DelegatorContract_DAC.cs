@@ -20,6 +20,17 @@ namespace Sinodac.Contracts.Delegator
                 DacType = input.DacType,
                 ReserveForLottery = input.ReserveForLottery
             });
+            if (!string.IsNullOrEmpty(input.SeriesName))
+            {
+                State.DACMarketContract.AddProtocol.Send(new AddProtocolInput
+                {
+                    SeriesName = input.SeriesName,
+                    DacName = input.DacName
+                });
+            }
+
+            State.TemporaryTxIdMap[Context.TransactionId] = 2;
+
             return new Empty();
         }
 
@@ -33,6 +44,8 @@ namespace Sinodac.Contracts.Delegator
                 SeriesName = input.SeriesName,
                 SeriesDescription = input.SeriesDescription
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -44,6 +57,8 @@ namespace Sinodac.Contracts.Delegator
                 DacName = input.DacName,
                 SeriesName = input.SeriesName
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -58,6 +73,7 @@ namespace Sinodac.Contracts.Delegator
                     IsApprove = true
                 });
             }
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
 
             return new Empty();
         }
@@ -70,6 +86,8 @@ namespace Sinodac.Contracts.Delegator
                 DacName = input.DacName,
                 PublicTime = input.PublicTime
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -82,6 +100,8 @@ namespace Sinodac.Contracts.Delegator
                 FromDacId = input.FromDacId,
                 Quantity = input.Quantity
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -92,6 +112,8 @@ namespace Sinodac.Contracts.Delegator
             {
                 DacName = input.DacName
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -104,6 +126,8 @@ namespace Sinodac.Contracts.Delegator
                 RedeemCodeHashList = { input.RedeemCodeHashList },
                 Skip = input.Skip
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -117,6 +141,8 @@ namespace Sinodac.Contracts.Delegator
                 Price = input.Price,
                 UserId = input.FromId
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -128,6 +154,8 @@ namespace Sinodac.Contracts.Delegator
                 RedeemCode = input.RedeemCode,
                 UserId = input.FromId
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -138,6 +166,8 @@ namespace Sinodac.Contracts.Delegator
             {
                 DacName = input.DacName
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -150,6 +180,8 @@ namespace Sinodac.Contracts.Delegator
                 To = GetVirtualAddress(input.FromId),
                 UserId = input.FromId
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
 
@@ -167,6 +199,8 @@ namespace Sinodac.Contracts.Delegator
                 From = from,
                 To = GetVirtualAddress(input.ToId)
             });
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
+
             return new Empty();
         }
     }

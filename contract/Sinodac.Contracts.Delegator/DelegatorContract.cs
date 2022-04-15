@@ -1,4 +1,5 @@
 using AElf;
+using AElf.CSharp.Core;
 using AElf.Sdk.CSharp;
 using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
@@ -20,6 +21,20 @@ namespace Sinodac.Contracts.Delegator
 
             State.DACContract.Value = input.DacContractAddress;
             State.DACMarketContract.Value = input.DacMarketContractAddress;
+
+            State.DACContract.Initialize.Send(new Contracts.DAC.InitializeInput
+            {
+                AdminAddress = State.Admin.Value,
+                DelegatorContractAddress = Context.Self,
+                DacMarketContractAddress = State.DACMarketContract.Value
+            });
+
+            State.DACMarketContract.Initialize.Send(new DACMarket.InitializeInput
+            {
+                AdminAddress = State.Admin.Value,
+                DelegatorContractAddress = Context.Self,
+                DacContractAddress = State.DACContract.Value
+            });
             return new Empty();
         }
 
@@ -70,6 +85,7 @@ namespace Sinodac.Contracts.Delegator
             {
                 throw new AssertionException($"用户 {input.FromId} 不存在");
             }
+
             var organization = State.OrganizationUnitMap[user.OrganizationName];
             Assert(State.RolePermissionMap[organization.RoleName][input.ScopeId],
                 $"用户所属的角色 {organization.RoleName} 没有 {input.ScopeId} 权限");
@@ -89,14 +105,19 @@ namespace Sinodac.Contracts.Delegator
                 Parameter = input.Parameter,
                 ScopeId = input.ScopeId
             };
-            State.TemporaryTxIdMap[Context.TransactionId] = true;
+            State.TemporaryTxIdMap[Context.TransactionId] = 1;
             return new Empty();
         }
 
         public override Empty ForwardCheck(Hash input)
         {
-            Assert(State.TemporaryTxIdMap[input], "Forward check failed.");
-            State.TemporaryTxIdMap.Remove(input);
+            Assert(State.TemporaryTxIdMap[input] > 0, "Forward check failed.");
+            State.TemporaryTxIdMap[input] = State.TemporaryTxIdMap[input].Sub(1);
+            if (State.TemporaryTxIdMap[input] == 0)
+            {
+                State.TemporaryTxIdMap.Remove(input);
+            }
+
             return new Empty();
         }
 
@@ -116,6 +137,12 @@ namespace Sinodac.Contracts.Delegator
             {
                 Value = State.IsPermittedMethodNameMap[input.ToAddress][input.ScopeId][input.MethodName]
             };
+        }
+
+        public override Empty EnablePermissionCheck(EnablePermissionCheckInput input)
+        {
+            State.EnablePermissionCheck.Value = input.Enable;
+            return new Empty();
         }
     }
 }

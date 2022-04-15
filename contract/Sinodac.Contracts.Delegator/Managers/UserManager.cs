@@ -38,6 +38,7 @@ namespace Sinodac.Contracts.Delegator.Managers
                 throw new AssertionException($"用户 {user.UserName} 已经存在了");
             }
 
+            user.RoleName = _organizationUnitManager.GetOrganizationUnit(user.OrganizationName).RoleName;
             _userMap[user.UserName] = user;
             _organizationUnitManager.AddUser(user);
 

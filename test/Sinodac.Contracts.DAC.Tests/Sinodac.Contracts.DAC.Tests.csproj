@@ -34,6 +34,9 @@
     <ContractStub Include="..\..\protobuf\dac_contract.proto">
       <Link>Protobuf\Proto\dac_contract.proto</Link>
     </ContractStub>
+    <ContractStub Include="..\..\protobuf\dac_market_contract.proto">
+      <Link>Protobuf\Proto\dac_market_contract.proto</Link>
+    </ContractStub>
     <ContractStub Include="..\..\protobuf\delegator_contract.proto">
       <Link>Protobuf\Proto\delegator_contract.proto</Link>
     </ContractStub>
@@ -42,6 +45,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\contract\Sinodac.Contracts.DAC\Sinodac.Contracts.DAC.csproj" />
     <ProjectReference Include="..\..\contract\Sinodac.Contracts.Delegator\Sinodac.Contracts.Delegator.csproj" />
+    <ProjectReference Include="..\..\contract\Sinodac.Contracts.DACMarket\Sinodac.Contracts.DACMarket.csproj" />
     <ProjectReference Include="..\..\src\AElf.Boilerplate.TestBase\AElf.Boilerplate.TestBase.csproj" />
   </ItemGroup>
 

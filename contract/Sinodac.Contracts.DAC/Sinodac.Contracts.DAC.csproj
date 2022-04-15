@@ -14,9 +14,6 @@
         <ContractBase Include="..\..\protobuf\acs2.proto">
             <Link>Protobuf\Proto\acs2.proto</Link>
         </ContractBase>
-        <ContractReference Include="..\..\protobuf\credit_contract.proto">
-            <Link>Protobuf\Proto\reference\credit_contract.proto</Link>
-        </ContractReference>
         <ContractReference Include="..\..\protobuf\delegator_contract.proto">
             <Link>Protobuf\Proto\reference\delegator_contract.proto</Link>
         </ContractReference>

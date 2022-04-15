@@ -17,11 +17,13 @@ namespace Sinodac.Contracts.Delegator
         /// </summary>
         public MappedState<Address, string, string, bool> IsPermittedMethodNameMap { get; set; }
 
-        public MappedState<Hash, bool> TemporaryTxIdMap { get; set; }
+        public MappedState<Hash, long> TemporaryTxIdMap { get; set; }
 
         /// <summary>
         /// Tx Id -> ForwardRecord.
         /// </summary>
         public MappedState<Hash, ForwardRecord> ForwardRecordMap { get; set; }
+
+        public BoolState EnablePermissionCheck { get; set; }
     }
 }

@@ -51,7 +51,7 @@ namespace Sinodac.Contracts.DAC
                 role.RoleName.ShouldBe("默认");
                 role.RoleCreator.ShouldBe("系统");
                 role.OrganizationUnitCount.ShouldBe(1);
-                
+
                 var rolePermissionList = await delegatorContractStub.GetRolePermissionList.CallAsync(new StringValue
                 {
                     Value = "默认"
@@ -89,7 +89,7 @@ namespace Sinodac.Contracts.DAC
                         });
                 departmentPermissionList.Value.Count.ShouldBeGreaterThan(30);
             }
-            
+
             {
                 var department = await delegatorContractStub.GetOrganizationDepartment.CallAsync(new StringValue
                 {
@@ -213,7 +213,7 @@ namespace Sinodac.Contracts.DAC
             });
             user.OrganizationName.ShouldBe("默认机构");
             user.OrganizationDepartmentName.ShouldBe("员工");
-            
+
             // 默认角色和默认机构的UserCount该变成1了
             var role = await delegatorContractStub.GetRole.CallAsync(new StringValue
             {
@@ -282,7 +282,7 @@ namespace Sinodac.Contracts.DAC
             organizationUnit.IsApproved.ShouldBeTrue();
             organizationUnit.DepartmentList.Value.Count.ShouldBe(2);
             organizationUnit.UserCount.ShouldBe(1);
-            
+
             return delegatorContractStub;
         }
 
@@ -334,7 +334,7 @@ namespace Sinodac.Contracts.DAC
         internal async Task<DelegatorContractContainer.DelegatorContractStub> Permission_CreateDefaultUserTest()
         {
             var delegatorContractStub = await Permission_CreateMemberTest();
-            
+
             // bob创建用户：非本机构员工mao
             await delegatorContractStub.CreateUser.SendAsync(new CreateUserInput
             {
@@ -398,8 +398,8 @@ namespace Sinodac.Contracts.DAC
                 Enable = true,
                 IsApprove = true
             });
-            
-            
+
+
         }
 
         public async Task Permission_CreateTest()
@@ -621,8 +621,11 @@ namespace Sinodac.Contracts.DAC
             var delegatorContractStub = GetDelegatorContractStub(adminAccount.KeyPair);
             await delegatorContractStub.Initialize.SendAsync(new Delegator.InitializeInput
             {
-                AdminAddress = adminAccount.Address
+                AdminAddress = adminAccount.Address,
+                DacContractAddress = DAppContractAddress,
+                DacMarketContractAddress = DACMarketContractAddress
             });
+
             return delegatorContractStub;
         }
     }

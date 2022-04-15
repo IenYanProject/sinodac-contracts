@@ -14,6 +14,7 @@ namespace Sinodac.Contracts.DAC
             var list = base.GetDeployContractNameList();
             list.Add(DAppSmartContractAddressNameProvider.Name);
             list.Add(DelegatorSmartContractAddressNameProvider.Name);
+            list.Add(DACMarketSmartContractAddressNameProvider.Name);
             return list;
         }
     }
