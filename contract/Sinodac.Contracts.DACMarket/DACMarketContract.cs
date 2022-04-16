@@ -129,8 +129,9 @@ namespace Sinodac.Contracts.DACMarket
             });
             Assert(!string.IsNullOrEmpty(protocol.DacName), $"查无此DAC：{input.DacName}");
             Assert(input.To.Value.Any(), "无效的DAC的接受地址");
-            Assert(State.PublicTimeMap[input.DacName] != null, $"{input.DacName} 没有设置上架时间");
-            Assert(State.PublicTimeMap[input.DacName] <= Context.CurrentBlockTime, $"{input.DacName} 还没有上架");
+            var publicTime = State.PublicTimeMap[input.DacName];
+            Assert(publicTime != null, $"{input.DacName} 没有设置上架时间");
+            Assert(publicTime <= Context.CurrentBlockTime, $"{input.DacName} 还没有上架");
 
             var isMysteryBox = protocol.Circulation == protocol.ReserveForLottery;
             if (isMysteryBox)

@@ -21,7 +21,8 @@ namespace Sinodac.Contracts.DAC
             context.Services.AddSingleton<IContractInitializationProvider, DACMarketContractInitializationProvider>();
             context.Services.AddSingleton<IContractInitializationProvider, DACContractInitializationProvider>();
             context.Services.AddSingleton<IContractInitializationProvider, DelegatorInitializationProvider>();
-            context.Services.AddSingleton<IContractDeploymentListProvider, MainChainDAppContractTestDeploymentListProvider>();
+            context.Services
+                .AddSingleton<IContractDeploymentListProvider, MainChainDAppContractTestDeploymentListProvider>();
         }
 
         public override void OnPreApplicationInitialization(ApplicationInitializationContext context)

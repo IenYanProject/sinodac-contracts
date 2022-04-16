@@ -45,19 +45,20 @@ namespace Sinodac.Contracts.DAC.Services
         /// </summary>
         /// <param name="dacName"></param>
         /// <param name="redeemCodeHashList"></param>
-        /// <param name="skip"></param>
-        public void BindRedeemCode(string dacName, List<Hash> redeemCodeHashList, int skip = 0)
+        /// <param name="fromDacId"></param>
+        public void BindRedeemCode(string dacName, List<Hash> redeemCodeHashList, long fromDacId)
         {
             var protocol = _protocolManager.GetProtocol(dacName);
             var reserveFrom = protocol.ReserveFrom;
-            if (redeemCodeHashList.Count.Add(skip) > protocol.ReserveForLottery)
+            var supposedAlreadyBindCount = fromDacId.Sub(reserveFrom);
+            if (supposedAlreadyBindCount.Add(redeemCodeHashList.Count) > protocol.ReserveForLottery)
             {
                 throw new AssertionException("抽奖码给多了");
             }
 
-            for (var i = skip; i < redeemCodeHashList.Count; i++)
+            for (var i = 0; i < redeemCodeHashList.Count; i++)
             {
-                var dacId = reserveFrom.Add(i);
+                var dacId = fromDacId.Add(i);
                 var redeemCodeHash = redeemCodeHashList[i];
                 _redeemCodeManager.Create(dacName, dacId, redeemCodeHash);
                 _dacManager.Create(dacName, dacId, redeemCodeHash);

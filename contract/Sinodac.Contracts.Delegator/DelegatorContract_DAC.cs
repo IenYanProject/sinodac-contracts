@@ -124,7 +124,7 @@ namespace Sinodac.Contracts.Delegator
             {
                 DacName = input.DacName,
                 RedeemCodeHashList = { input.RedeemCodeHashList },
-                Skip = input.Skip
+                FromDacId = input.FromDacId
             });
             State.TemporaryTxIdMap[Context.TransactionId] = 1;
 

@@ -94,7 +94,7 @@ namespace Sinodac.Contracts.DAC
         {
             AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
-            dacService.BindRedeemCode(input.DacName, input.RedeemCodeHashList.ToList(), (int)input.Skip);
+            dacService.BindRedeemCode(input.DacName, input.RedeemCodeHashList.ToList(), input.FromDacId);
             return new Empty();
         }
     }

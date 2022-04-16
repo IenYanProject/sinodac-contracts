@@ -82,7 +82,7 @@ namespace Sinodac.Contracts.DAC.Managers
         public void InitialTransfer(string dacName, long dacId, Address to)
         {
             var initialAddress = CalculateInitialAddress(DACHelper.CalculateDACHash(dacName, dacId));
-            if (_ownerMap[dacName][dacId] != null)
+            if (_ownerMap[dacName][dacId] == null)
             {
                 throw new AssertionException($"DAC {dacName}:{dacId} 还没有mint到初始地址");
             }

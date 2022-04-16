@@ -5,8 +5,19 @@
     <projectFile>src/AElf.Boilerplate.ContractPatcher/AElf.Boilerplate.ContractPatcher.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="">
+    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Fix List.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Services/DACService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Services/DACService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_DAC.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_DAC.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protobuf/dac_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/dac_contract.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protobuf/delegator_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/delegator_contract.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestModule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" beforeDir="false" afterPath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,8 +41,9 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/IL/fb3ba90972a34e4f8ba499f1440ce83c18400/41/46be5643/02000023.il" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/93fbebdc1ef34bf0a8f8576542ecc6a050200/4e/1f125289/BlockTimeProvider.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1f9cf4ebfe9e417f9dcf06761033b34f25000/ac/1cf76262/IContractInitializationProvider.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.3.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Protobuf/Generated/DelegatorContract.g.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0ee42911820846bc8efeb7a996f4fa3f6a00/d6/08d12787/CSharpSmartContractAbstract.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.3.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/93fbebdc1ef34bf0a8f8576542ecc6a050200/83/15dbe00a/IBlockTimeProvider.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Protobuf/Generated/DelegatorContract.g.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract.cs" root0="SKIP_HIGHLIGHTING" />
@@ -109,7 +121,8 @@
       <workItem from="1649140438566" duration="3005000" />
       <workItem from="1649210210422" duration="27736000" />
       <workItem from="1649817181781" duration="2698000" />
-      <workItem from="1649851146498" duration="43880000" />
+      <workItem from="1649851146498" duration="46203000" />
+      <workItem from="1650019737868" duration="11292000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
       <created>1647851255016</created>
@@ -237,7 +250,14 @@
       <option name="project" value="LOCAL" />
       <updated>1650003348376</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Fix List.">
+      <created>1650006840876</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1650006840876</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -280,25 +300,7 @@
     <MESSAGE value="Added some events." />
     <MESSAGE value="Initial test cases." />
     <MESSAGE value="Test cases." />
-    <option name="LAST_COMMIT_MESSAGE" value="Test cases." />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs</url>
-          <line>59</line>
-          <properties documentPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" initialLine="59" containingFunctionPresentation="method 'BatchCreate'">
-            <startOffsets>
-              <option value="2091" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2144" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Fix List." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix List." />
   </component>
 </project>

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AElf;
+using AElf.CSharp.Core;
 using AElf.CSharp.Core.Extension;
 using Google.Protobuf.WellKnownTypes;
 using Shouldly;
@@ -127,11 +129,14 @@ namespace Sinodac.Contracts.DAC
             {
                 DacName = "老鼠人",
                 FromId = "国博馆员3",
-                PublicTime = TimestampHelper.GetUtcNow(),
+                PublicTime = TimestampHelper.GetUtcNow().AddSeconds(1)
             });
 
             var publicTime = await DACMarketContractStub.GetPublicTime.CallAsync(new StringValue { Value = "老鼠人" });
             publicTime.ShouldNotBeNull();
+
+            Thread.Sleep(2000);
+
             return stub;
         }
 
@@ -188,12 +193,48 @@ namespace Sinodac.Contracts.DAC
         internal async Task<DelegatorContractContainer.DelegatorContractStub> BindRedeemCodeTest()
         {
             var stub = await BatchMintTest();
-            RedeemCodeList = Enumerable.Range(1, 100).Select(i => Guid.NewGuid().ToString()).ToList();
+            RedeemCodeList = Enumerable.Range(1, 120).Select(i => Guid.NewGuid().ToString()).ToList();
+            var redeemCodeHashList = RedeemCodeList.Select(HashHelper.ComputeFrom).ToList();
+            var protocol = await DACContractStub.GetDACProtocolInfo.CallAsync(new StringValue { Value = "老鼠人" });
             await stub.BindRedeemCode.SendAsync(new BindRedeemCodeInput
             {
                 DacName = "老鼠人",
                 FromId = "管理员",
-                RedeemCodeHashList = { RedeemCodeList.Select(HashHelper.ComputeFrom) }
+                RedeemCodeHashList = { redeemCodeHashList.Take(30) },
+                FromDacId = protocol.ReserveFrom
+            });
+            
+            var executionResult = await stub.BindRedeemCode.SendWithExceptionAsync(new BindRedeemCodeInput
+            {
+                DacName = "老鼠人",
+                FromId = "管理员",
+                RedeemCodeHashList = { redeemCodeHashList.Skip(30) },
+                FromDacId = protocol.ReserveFrom.Add(30)
+            });
+            executionResult.TransactionResult.Error.ShouldContain("抽奖码给多了");
+
+            await stub.BindRedeemCode.SendAsync(new BindRedeemCodeInput
+            {
+                DacName = "老鼠人",
+                FromId = "管理员",
+                RedeemCodeHashList = { redeemCodeHashList.Skip(30).Take(30) },
+                FromDacId = protocol.ReserveFrom.Add(30)
+            });
+            
+            await stub.BindRedeemCode.SendAsync(new BindRedeemCodeInput
+            {
+                DacName = "老鼠人",
+                FromId = "管理员",
+                RedeemCodeHashList = { redeemCodeHashList.Skip(60).Take(30) },
+                FromDacId = protocol.ReserveFrom.Add(60)
+            });
+
+            await stub.BindRedeemCode.SendAsync(new BindRedeemCodeInput
+            {
+                DacName = "老鼠人",
+                FromId = "管理员",
+                RedeemCodeHashList = { redeemCodeHashList.Skip(90).Take(10) },
+                FromDacId = protocol.ReserveFrom.Add(90)
             });
 
             var isBindCompleted = await DACContractStub.IsBindCompleted.CallAsync(new StringValue { Value = "老鼠人" });
@@ -206,7 +247,7 @@ namespace Sinodac.Contracts.DAC
         internal async Task<DelegatorContractContainer.DelegatorContractStub> BuyTest()
         {
             var stub = await BindRedeemCodeTest();
-            BlockTimeProvider.SetBlockTime(TimestampHelper.GetUtcNow().AddSeconds(10));
+            BlockTimeProvider.SetBlockTime(TimestampHelper.GetUtcNow().AddDays(2));
             await stub.Buy.SendAsync(new BuyInput
             {
                 DacName = "老鼠人",
@@ -242,7 +283,7 @@ namespace Sinodac.Contracts.DAC
                 RedeemCode = RedeemCodeList[10],
                 FromId = "李四"
             });
-            
+
             var address = await stub.CalculateUserAddress.CallAsync(new StringValue { Value = "李四" });
             var balance = await DACContractStub.GetBalance.CallAsync(new GetBalanceInput
             {
@@ -291,7 +332,7 @@ namespace Sinodac.Contracts.DAC
         internal async Task<DelegatorContractContainer.DelegatorContractStub> BoxTest()
         {
             var stub = await CreateMysteryBoxTest();
-
+            
             await stub.AuditDAC.SendAsync(new AuditDACInput
             {
                 FromId = "管理员",
@@ -309,7 +350,7 @@ namespace Sinodac.Contracts.DAC
             {
                 FromId = "管理员",
                 DacName = "小聋人",
-                PublicTime = TimestampHelper.GetUtcNow()
+                PublicTime = TimestampHelper.GetUtcNow().AddSeconds(1)
             });
 
             await stub.MintDAC.SendAsync(new MintDACInput
@@ -320,7 +361,7 @@ namespace Sinodac.Contracts.DAC
                 Quantity = 5000
             });
 
-            BlockTimeProvider.SetBlockTime(TimestampHelper.GetUtcNow().AddSeconds(10));
+            Thread.Sleep(2000);
 
             return stub;
         }
