@@ -5,10 +5,13 @@
     <projectFile>src/AElf.Boilerplate.ContractPatcher/AElf.Boilerplate.ContractPatcher.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Fix BindRedeemCode.">
+    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract_Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract_Helpers.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/protobuf/dac_market_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/dac_market_contract.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" beforeDir="false" afterPath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,12 +55,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Project.AElf.Boilerplate.ContractPatcher">
     <configuration name="AElf.Boilerplate.ContractPatcher" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -114,7 +118,8 @@
       <workItem from="1649817181781" duration="2698000" />
       <workItem from="1649851146498" duration="46203000" />
       <workItem from="1650019737868" duration="12583000" />
-      <workItem from="1650531585276" duration="391000" />
+      <workItem from="1650531585276" duration="781000" />
+      <workItem from="1650533165149" duration="366000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
       <created>1647851255016</created>
@@ -256,7 +261,14 @@
       <option name="project" value="LOCAL" />
       <updated>1650103822299</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Fix PickReserveFrom.">
+      <created>1650532031702</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1650532031702</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -301,24 +313,12 @@
     <MESSAGE value="Test cases." />
     <MESSAGE value="Fix List." />
     <MESSAGE value="Fix BindRedeemCode." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix BindRedeemCode." />
+    <MESSAGE value="Fix PickReserveFrom." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix PickReserveFrom." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs</url>
-          <line>112</line>
-          <properties documentPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs" initialLine="112" containingFunctionPresentation="method 'CreateDACToCheckReserveFromIdTest'">
-            <startOffsets>
-              <option value="3686" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3727" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs</url>
           <line>33</line>

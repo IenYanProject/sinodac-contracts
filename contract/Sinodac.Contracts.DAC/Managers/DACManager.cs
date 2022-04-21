@@ -63,7 +63,7 @@ namespace Sinodac.Contracts.DAC.Managers
                 ? protocol.Circulation.Sub(fromDacId).Add(1)
                 : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
 
-            for (var dacId = fromDacId; dacId <= count; dacId++)
+            for (var dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
             {
                 if (_dacMap[dacName][dacId] == null)
                 {

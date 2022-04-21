@@ -13,7 +13,7 @@ namespace Sinodac.Contracts.DACMarket
         private void AssertProtocolExists(string dacName)
         {
             var protocol = State.DACContract.GetDACProtocolInfo.Call(new StringValue { Value = dacName });
-            if (protocol == null)
+            if (string.IsNullOrEmpty(protocol.DacName))
             {
                 throw new AssertionException($"单件藏品 {dacName} 尚未创建");
             }
