@@ -5,19 +5,10 @@
     <projectFile>src/AElf.Boilerplate.ContractPatcher/AElf.Boilerplate.ContractPatcher.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Fix List.">
+    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Fix BindRedeemCode.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Services/DACService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Services/DACService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_DAC.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/DelegatorContract_DAC.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/protobuf/dac_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/dac_contract.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/protobuf/delegator_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/delegator_contract.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACContractTestModule.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" beforeDir="false" afterPath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,17 +27,18 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/Protobuf/Generated/Acs7.g.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fb3ba90972a34e4f8ba499f1440ce83c18400/ed/9b661599/IContractPatcher.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/IL/fb3ba90972a34e4f8ba499f1440ce83c18400/41/46be5643/02000023.il" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/93fbebdc1ef34bf0a8f8576542ecc6a050200/4e/1f125289/BlockTimeProvider.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1f9cf4ebfe9e417f9dcf06761033b34f25000/ac/1cf76262/IContractInitializationProvider.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Protobuf/Generated/DelegatorContract.g.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0ee42911820846bc8efeb7a996f4fa3f6a00/d6/08d12787/CSharpSmartContractAbstract.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.3.0/build/netcoreapp1.0/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/93fbebdc1ef34bf0a8f8576542ecc6a050200/83/15dbe00a/IBlockTimeProvider.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Protobuf/Generated/DelegatorContract.g.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.Credit/CreditContract.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Protobuf/Generated/DelegatorContract.g.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/Protobuf/Generated/DelegatorContract.g.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/contract/Sinodac.Contracts.Delegator/Protobuf/Generated/DelegatorContract.g.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/AElf.Boilerplate.MainChain/Protobuf/Generated/Acs7.g.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/IL/fb3ba90972a34e4f8ba499f1440ce83c18400/41/46be5643/02000023.il" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0ee42911820846bc8efeb7a996f4fa3f6a00/d6/08d12787/CSharpSmartContractAbstract.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1f9cf4ebfe9e417f9dcf06761033b34f25000/ac/1cf76262/IContractInitializationProvider.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/93fbebdc1ef34bf0a8f8576542ecc6a050200/4e/1f125289/BlockTimeProvider.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/93fbebdc1ef34bf0a8f8576542ecc6a050200/83/15dbe00a/IBlockTimeProvider.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fb3ba90972a34e4f8ba499f1440ce83c18400/ed/9b661599/IContractPatcher.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -60,13 +52,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="vue.rearranger.settings.migration" value="true" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
   <component name="RunManager" selected=".NET Project.AElf.Boilerplate.ContractPatcher">
     <configuration name="AElf.Boilerplate.ContractPatcher" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -122,7 +113,8 @@
       <workItem from="1649210210422" duration="27736000" />
       <workItem from="1649817181781" duration="2698000" />
       <workItem from="1649851146498" duration="46203000" />
-      <workItem from="1650019737868" duration="11292000" />
+      <workItem from="1650019737868" duration="12583000" />
+      <workItem from="1650531585276" duration="391000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
       <created>1647851255016</created>
@@ -257,7 +249,14 @@
       <option name="project" value="LOCAL" />
       <updated>1650006840876</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Fix BindRedeemCode.">
+      <created>1650103822299</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1650103822299</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -301,6 +300,39 @@
     <MESSAGE value="Initial test cases." />
     <MESSAGE value="Test cases." />
     <MESSAGE value="Fix List." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix List." />
+    <MESSAGE value="Fix BindRedeemCode." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix BindRedeemCode." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs</url>
+          <line>112</line>
+          <properties documentPath="$PROJECT_DIR$/test/Sinodac.Contracts.DAC.Tests/DACTests.cs" initialLine="112" containingFunctionPresentation="method 'CreateDACToCheckReserveFromIdTest'">
+            <startOffsets>
+              <option value="3686" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3727" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs</url>
+          <line>33</line>
+          <properties documentPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_Actions.cs" initialLine="33" containingFunctionPresentation="method 'PickReserveFrom'">
+            <startOffsets>
+              <option value="1144" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1181" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

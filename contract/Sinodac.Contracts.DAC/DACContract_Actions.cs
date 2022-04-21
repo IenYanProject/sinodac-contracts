@@ -37,12 +37,8 @@ namespace Sinodac.Contracts.DAC
             }
 
             var randomNumber = Math.Abs(Context.GetRandomHash(Context.TransactionId).ToInt64());
-            var reserveFrom = (randomNumber % circulation).Add(1);
-            if (reserveFrom.Add(reserveForLottery) > circulation)
-            {
-                return Math.Abs(reserveFrom.Sub(reserveForLottery));
-            }
-
+            var reserveFromMax = circulation.Sub(reserveForLottery).Add(1);
+            var reserveFrom = (randomNumber % reserveFromMax).Add(1);
             return reserveFrom;
         }
 

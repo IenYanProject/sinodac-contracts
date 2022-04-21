@@ -87,6 +87,31 @@ namespace Sinodac.Contracts.DAC
 
             return stub;
         }
+        
+        [Fact(DisplayName = "【DAC】创建单件DAC，检查ReserveFrom字段")]
+        internal async Task CreateDACToCheckReserveFromIdTest()
+        {
+            var stub = await CreateSeriesTest();
+
+            await stub.CreateDAC.SendAsync(new CreateDACInput
+            {
+                DacName = "老鼠人",
+                SeriesName = "新版十二生肖",
+                Price = 999,
+                Circulation = 1000,
+                CreatorId = "国家博物馆",
+                DacShape = "长方形",
+                DacType = "图片",
+                FromId = "国博馆员2",
+                ReserveForLottery = 999
+            });
+
+            var protocol = await DACContractStub.GetDACProtocolInfo.CallAsync(new StringValue
+            {
+                Value = "老鼠人"
+            });
+            protocol.ReserveFrom.ShouldBeLessThan(3);
+        }
 
         [Fact(DisplayName = "【DAC】还没有审核通过DAC就试图上架")]
         internal async Task<DelegatorContractContainer.DelegatorContractStub> ListWithoutApprovalTest()
