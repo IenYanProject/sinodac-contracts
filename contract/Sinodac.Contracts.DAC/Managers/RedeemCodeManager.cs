@@ -9,19 +9,21 @@ namespace Sinodac.Contracts.DAC.Managers
     {
         private readonly CSharpSmartContractContext _context;
         private readonly MappedState<Hash, DACInfo> _redeemCodeMap;
+        private readonly MappedState<string, long, Hash> _dacRedeemCodeMap;
         private readonly MappedState<string, long> _countMap;
 
         public RedeemCodeManager(CSharpSmartContractContext context, MappedState<Hash, DACInfo> redeemCodeMap,
-            MappedState<string, long> countMap)
+            MappedState<string, long, Hash> dacRedeemCodeMap, MappedState<string, long> countMap)
         {
             _context = context;
             _redeemCodeMap = redeemCodeMap;
+            _dacRedeemCodeMap = dacRedeemCodeMap;
             _countMap = countMap;
         }
 
-        public void Create(string dacName, long dacId, Hash redeemCodeHash)
+        public long Create(string dacName, long dacId, Hash redeemCodeHash)
         {
-            if (_redeemCodeMap[redeemCodeHash] != null)
+            if (_redeemCodeMap[redeemCodeHash] != null || _dacRedeemCodeMap[dacName][dacId] != null)
             {
                 throw new AssertionException($"DAC {dacName}:{dacId} 已经绑定过哈希值为 {redeemCodeHash.ToHex()} 的兑换码了。");
             }
@@ -40,6 +42,8 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacId = dacId,
                 RedeemCodeHash = redeemCodeHash
             });
+
+            return _countMap[dacName];
         }
 
         public long GetBindCount(string dacName)

@@ -60,7 +60,11 @@ namespace Sinodac.Contracts.DAC.Services
             {
                 var dacId = fromDacId.Add(i);
                 var redeemCodeHash = redeemCodeHashList[i];
-                _redeemCodeManager.Create(dacName, dacId, redeemCodeHash);
+                var count = _redeemCodeManager.Create(dacName, dacId, redeemCodeHash);
+                if (count > protocol.ReserveForLottery)
+                {
+                    throw new AssertionException("抽奖码给多了");
+                }
                 _dacManager.Create(dacName, dacId, redeemCodeHash);
             }
         }

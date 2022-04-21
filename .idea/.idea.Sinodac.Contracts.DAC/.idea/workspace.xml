@@ -5,13 +5,12 @@
     <projectFile>src/AElf.Boilerplate.ContractPatcher/AElf.Boilerplate.ContractPatcher.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="">
+    <list default="true" id="afa0b720-fb15-4b6e-baf9-e5e6f9e11702" name="Changes" comment="Fix BatchCreate.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Sinodac.Contracts.DAC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/DACManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract_Helpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DACMarket/DACMarketContract_Helpers.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/protobuf/dac_market_contract.proto" beforeDir="false" afterPath="$PROJECT_DIR$/protobuf/dac_market_contract.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/AElf.Boilerplate.Launcher/contracts/Sinodac.Contracts.DAC.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" beforeDir="false" afterPath="$PROJECT_DIR$/test/patched/Sinodac.Contracts.DAC.dll.patched" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContractState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_CompositeRoot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/DACContract_CompositeRoot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/RedeemCodeManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Managers/RedeemCodeManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Services/DACService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/contract/Sinodac.Contracts.DAC/Services/DACService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +118,8 @@
       <workItem from="1649851146498" duration="46203000" />
       <workItem from="1650019737868" duration="12583000" />
       <workItem from="1650531585276" duration="781000" />
-      <workItem from="1650533165149" duration="366000" />
+      <workItem from="1650533165149" duration="847000" />
+      <workItem from="1650537233330" duration="398000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit and initial Delegator Contract.">
       <created>1647851255016</created>
@@ -268,7 +268,14 @@
       <option name="project" value="LOCAL" />
       <updated>1650532031702</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Fix BatchCreate.">
+      <created>1650533539294</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1650533539294</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -314,7 +321,8 @@
     <MESSAGE value="Fix List." />
     <MESSAGE value="Fix BindRedeemCode." />
     <MESSAGE value="Fix PickReserveFrom." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix PickReserveFrom." />
+    <MESSAGE value="Fix BatchCreate." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix BatchCreate." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
