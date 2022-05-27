@@ -30,26 +30,37 @@ namespace AElf.Boilerplate.DACContract.Launcher
         {
             if (preBlockHeight == 1)
             {
-                var code = ByteString.CopyFrom(GetContractCodes());
-                return new List<Transaction>
+                string[] ContractCodeKeys = new[]
                 {
-                    await _transactionGeneratingService.GenerateTransactionAsync(
+                    "Sinodac.Contracts.DAC",
+                    "Sinodac.Contracts.DACMarket",
+                    "Sinodac.Contracts.Delegator"
+                };
+                List<Transaction> Transactions = new List<Transaction>();
+                
+                foreach (var key in ContractCodeKeys)
+                {
+                    var code = ByteString.CopyFrom(GetContractCodes(key));
+                    
+                    Transactions.Add(await _transactionGeneratingService.GenerateTransactionAsync(
                         ZeroSmartContractAddressNameProvider.Name, nameof(BasicContractZero.DeploySmartContract),
                         new ContractDeploymentInput
                         {
                             Category = KernelConstants.DefaultRunnerCategory,
                             Code = code
-                        }.ToByteString())
-                };
+                        }.ToByteString()));
+                }
+
+                return Transactions;
             }
 
             return new List<Transaction>();
         }
 
-        private byte[] GetContractCodes()
+        private byte[] GetContractCodes(string key)
         {
             return ContractsDeployer.GetContractCodes<DeployContractsSystemTransactionGenerator>(_contractOptions
-                .GenesisContractDir)["Sinodac.Contracts.DACContract"];
+                .GenesisContractDir)[key];
         }
     }
 }
