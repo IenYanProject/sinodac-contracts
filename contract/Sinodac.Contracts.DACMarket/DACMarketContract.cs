@@ -73,7 +73,7 @@ namespace Sinodac.Contracts.DACMarket
             AssertSenderIsDelegatorContract();
             Assert(State.DACContract.IsDACProtocolApproved.Call(new StringValue{Value = input.DacName}).Value, $"DAC {input.DacName} 还没有通过审核");
             var publicTime = input.PublicTime ?? Context.CurrentBlockTime;
-            Assert(publicTime >= Context.CurrentBlockTime, "上架时间不能是过去的时间");
+            // Assert(publicTime >= Context.CurrentBlockTime, "上架时间不能是过去的时间");
             AssertProtocolExists(input.DacName);
             State.PublicTimeMap[input.DacName] = publicTime;
             Context.Fire(new DACListed
