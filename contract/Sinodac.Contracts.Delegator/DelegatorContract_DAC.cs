@@ -1,3 +1,4 @@
+using System.Linq;
 using Google.Protobuf.WellKnownTypes;
 using Sinodac.Contracts.DAC;
 using Sinodac.Contracts.DACMarket;
@@ -94,12 +95,17 @@ namespace Sinodac.Contracts.Delegator
         public override Empty MintDAC(MintDACInput input)
         {
             AssertPermission(input.FromId, DAC.List);
-            State.DACContract.Mint.Send(new MintInput
+
+            var mintInput = new MintInput()
             {
                 DacName = input.DacName,
                 FromDacId = input.FromDacId,
-                Quantity = input.Quantity
-            });
+                Quantity = input.RedeemCodeHashList.Count,
+            };
+            mintInput.RedeemCodeHashList.AddRange(input.RedeemCodeHashList);
+            
+            
+            State.DACContract.Mint.Send(mintInput);
             State.TemporaryTxIdMap[Context.TransactionId] = 1;
 
             return new Empty();
@@ -123,7 +129,7 @@ namespace Sinodac.Contracts.Delegator
             State.DACContract.MintForRedeemCode.Send(new MintForRedeemCodeInput
             {
                 DacName = input.DacName,
-                RedeemCodeHashList = { input.RedeemCodeHashList },
+                RedeemCodeHashList = { input.Rl },
                 FromDacId = input.FromDacId
             });
             State.TemporaryTxIdMap[Context.TransactionId] = 1;
