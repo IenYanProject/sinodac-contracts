@@ -72,6 +72,7 @@ message MintInput {
     string dac_name = 1;
     int64 from_dac_id = 2;
     int64 quantity = 3;
+    repeated aelf.Hash redeem_code_hash_list = 4;
 }
 
 message MintForRedeemCodeInput {
@@ -193,12 +194,16 @@ message DACProtocolApproved {
     string dac_name = 1 [(aelf.is_indexed) = true];
 }
 
+message DACInfoList {
+    repeated DACInfo value = 1;
+}
+
 message DACMinted {
     option (aelf.is_event) = true;
     string dac_name = 1 [(aelf.is_indexed) = true];
     int64 from_dac_id = 2 [(aelf.is_indexed) = true];
     int64 quantity = 3 [(aelf.is_indexed) = true];
-    DACInfo dac_info = 4;
+    DACInfoList dac_info = 4;
 }
 
 message DACInitialTransferred {

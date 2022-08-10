@@ -174,7 +174,8 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 FromDacId = 1,
-                Quantity = 10000
+                // Quantity = 10000,
+                RedeemCodeHashList = { HashHelper.ComputeFrom(123) }
             });
 
             {
@@ -186,14 +187,6 @@ namespace Sinodac.Contracts.DAC
                 isMinted.Value.ShouldBeTrue();
             }
 
-            {
-                var isMinted = await DACContractStub.IsMinted.CallAsync(new IsMintedInput
-                {
-                    DacName = "老鼠人",
-                    DacId = 10000
-                });
-                isMinted.Value.ShouldBeTrue();
-            }
             return stub;
         }
 
@@ -225,7 +218,7 @@ namespace Sinodac.Contracts.DAC
             {
                 DacName = "老鼠人",
                 FromId = "管理员",
-                RedeemCodeHashList = { redeemCodeHashList.Take(30) },
+                Rl = { redeemCodeHashList.Take(30) },
                 FromDacId = protocol.ReserveFrom
             });
             
@@ -233,7 +226,7 @@ namespace Sinodac.Contracts.DAC
             {
                 DacName = "老鼠人",
                 FromId = "管理员",
-                RedeemCodeHashList = { redeemCodeHashList.Skip(30) },
+                Rl = { redeemCodeHashList.Skip(30) },
                 FromDacId = protocol.ReserveFrom.Add(30)
             });
             executionResult.TransactionResult.Error.ShouldContain("抽奖码给多了");
@@ -242,7 +235,7 @@ namespace Sinodac.Contracts.DAC
             {
                 DacName = "老鼠人",
                 FromId = "管理员",
-                RedeemCodeHashList = { redeemCodeHashList.Skip(30).Take(30) },
+                Rl = { redeemCodeHashList.Skip(30).Take(30) },
                 FromDacId = protocol.ReserveFrom.Add(30)
             });
             
@@ -250,7 +243,7 @@ namespace Sinodac.Contracts.DAC
             {
                 DacName = "老鼠人",
                 FromId = "管理员",
-                RedeemCodeHashList = { redeemCodeHashList.Skip(60).Take(30) },
+                Rl = { redeemCodeHashList.Skip(60).Take(30) },
                 FromDacId = protocol.ReserveFrom.Add(60)
             });
 
@@ -258,7 +251,7 @@ namespace Sinodac.Contracts.DAC
             {
                 DacName = "老鼠人",
                 FromId = "管理员",
-                RedeemCodeHashList = { redeemCodeHashList.Skip(90).Take(10) },
+                Rl = { redeemCodeHashList.Skip(90).Take(10) },
                 FromDacId = protocol.ReserveFrom.Add(90)
             });
 
@@ -383,7 +376,7 @@ namespace Sinodac.Contracts.DAC
                 FromId = "管理员",
                 DacName = "小聋人",
                 FromDacId = 1,
-                Quantity = 5000
+                // Quantity = 5000
             });
 
             Thread.Sleep(2000);

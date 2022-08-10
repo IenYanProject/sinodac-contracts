@@ -163,7 +163,7 @@ message MintDACInput {
     string from_id = 1;
     string dac_name = 2;
     int64 from_dac_id = 3;
-    int64 quantity = 4;
+    repeated aelf.Hash redeem_code_hash_list = 4;
 }
 
 message DelistDACInput {
@@ -174,7 +174,7 @@ message DelistDACInput {
 message BindRedeemCodeInput {
     string from_id = 1;
     string dac_name = 2;
-    repeated aelf.Hash redeem_code_hash_list = 3;
+    repeated aelf.Hash rl = 3;
     int64 from_dac_id = 4;
 }
 

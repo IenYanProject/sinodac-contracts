@@ -46,7 +46,7 @@ namespace Sinodac.Contracts.DAC
         {
             AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
-            dacService.BatchMint(input.DacName, input.FromDacId, input.Quantity);
+            dacService.BatchMint(input.DacName, input.FromDacId, input.RedeemCodeHashList.ToList(), input.Quantity);
             return new Empty();
         }
 

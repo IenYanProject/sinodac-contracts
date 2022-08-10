@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using AElf.CSharp.Core;
 using AElf.Sdk.CSharp;
 using AElf.Sdk.CSharp.State;
 using AElf.Types;
+using Google.Protobuf.Collections;
 using Sinodac.Contracts.DAC.Helpers;
 
 namespace Sinodac.Contracts.DAC.Managers
@@ -31,12 +33,15 @@ namespace Sinodac.Contracts.DAC.Managers
         {
             var dacInfo = PerformCreate(dacName, dacId, redeemCodeHash);
 
+            var dacInfoList = new DACInfoList();
+            dacInfoList.Value.Add(dacInfo);
+            
             _context.Fire(new DACMinted
             {
                 DacName = dacName,
                 FromDacId = dacId,
                 Quantity = 1,
-                DacInfo = dacInfo
+                DacInfo = dacInfoList
             });
         }
 
@@ -55,7 +60,7 @@ namespace Sinodac.Contracts.DAC.Managers
             return _dacMap[dacName][dacId];
         }
 
-        public void BatchCreate(string dacName, long fromDacId, long count = 0)
+        public void BatchCreate(string dacName, long fromDacId, List<Hash> redeemCodeHashList, long count = 0)
         {
             var protocol = _protocolManager.GetProtocol(dacName);
 
@@ -63,19 +68,23 @@ namespace Sinodac.Contracts.DAC.Managers
                 ? protocol.Circulation.Sub(fromDacId).Add(1)
                 : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
 
-            for (var dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
+            var dacMintInfo = new DACInfoList();
+            
+            for (long dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
             {
                 if (_dacMap[dacName][dacId] == null)
                 {
-                    PerformCreate(dacName, dacId);
+                    var dacInfo = PerformCreate(dacName, dacId, redeemCodeHashList[(int)(dacId - fromDacId)]);
+                    dacMintInfo.Value.Add(dacInfo);
                 }
             }
 
-            _context.Fire(new DACMinted
+            _context.Fire(new DACMinted()
             {
                 DacName = dacName,
                 FromDacId = fromDacId,
-                Quantity = count
+                Quantity = count,
+                DacInfo = dacMintInfo
             });
         }
 
