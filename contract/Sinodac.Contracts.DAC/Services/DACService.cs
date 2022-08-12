@@ -130,7 +130,7 @@ namespace Sinodac.Contracts.DAC.Services
         {
             var protocol = _protocolManager.GetProtocol(dacName);
             return protocol.Circulation == protocol.ReserveForLottery ||
-                   _redeemCodeManager.GetBindCount(dacName) == protocol.ReserveForLottery;
+                   _redeemCodeManager.GetBindCount(dacName) == protocol.Circulation;
         }
     }
 }
