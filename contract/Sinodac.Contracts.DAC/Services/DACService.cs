@@ -58,6 +58,19 @@ namespace Sinodac.Contracts.DAC.Services
             }
             _dacManager.BatchCreate(dacName, fromDacId, redeemCodeHashList, count);
         }
+        
+        /// <summary>
+        /// 批量Mint
+        /// </summary>
+        /// <param name="dacName"></param>
+        /// <param name="fromDacId"></param>
+        /// <param name="dacFile"></param>
+        /// <param name="count"></param>
+        public void BatchMint(string dacName, long fromDacId, Hash dacFile, long count = 0)
+        {
+            var protocol = _protocolManager.GetProtocol(dacName);
+            _dacManager.BatchCreate(dacName, fromDacId, dacFile, count);
+        }
 
         /// <summary>
         /// 后端生成兑换码，通过调用该方法绑定兑换码并创建出DAC

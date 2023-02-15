@@ -72,7 +72,7 @@ message MintInput {
     string dac_name = 1;
     int64 from_dac_id = 2;
     int64 quantity = 3;
-    repeated aelf.Hash redeem_code_hash_list = 4;
+    aelf.Hash dac_file = 4;
 }
 
 message MintForRedeemCodeInput {
@@ -149,7 +149,7 @@ message DACInfo {
     string dac_name = 1;
     int64 dac_id = 2;
     aelf.Hash dac_hash = 3;
-    aelf.Hash redeem_code_hash = 4;
+    aelf.Hash dac_file = 4;
 }
 
 message DACTypes {

@@ -175,7 +175,7 @@ namespace Sinodac.Contracts.DAC
                 FromId = "管理员",
                 FromDacId = 1,
                 // Quantity = 10000,
-                RedeemCodeHashList = { HashHelper.ComputeFrom(123) }
+                //RedeemCodeHashList = { HashHelper.ComputeFrom(123) }
             });
 
             {
@@ -219,7 +219,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Take(30) },
-                FromDacId = protocol.ReserveFrom
+                //FromDacId = protocol.ReserveFrom
             });
             
             var executionResult = await stub.BindRedeemCode.SendWithExceptionAsync(new BindRedeemCodeInput
@@ -227,7 +227,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Skip(30) },
-                FromDacId = protocol.ReserveFrom.Add(30)
+                //FromDacId = protocol.ReserveFrom.Add(30)
             });
             executionResult.TransactionResult.Error.ShouldContain("抽奖码给多了");
 
@@ -236,7 +236,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Skip(30).Take(30) },
-                FromDacId = protocol.ReserveFrom.Add(30)
+                //FromDacId = protocol.ReserveFrom.Add(30)
             });
             
             await stub.BindRedeemCode.SendAsync(new BindRedeemCodeInput
@@ -244,7 +244,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Skip(60).Take(30) },
-                FromDacId = protocol.ReserveFrom.Add(60)
+                //FromDacId = protocol.ReserveFrom.Add(60)
             });
 
             await stub.BindRedeemCode.SendAsync(new BindRedeemCodeInput
@@ -252,7 +252,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Skip(90).Take(10) },
-                FromDacId = protocol.ReserveFrom.Add(90)
+                //FromDacId = protocol.ReserveFrom.Add(90)
             });
 
             var isBindCompleted = await DACContractStub.IsBindCompleted.CallAsync(new StringValue { Value = "老鼠人" });

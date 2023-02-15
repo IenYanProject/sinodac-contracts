@@ -21,4 +21,7 @@
             <Link>Protobuf\Proto\dac_contract.proto</Link>
         </ContractCode>
     </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Volo.Abp.Timing" Version="3.1.0" />
+    </ItemGroup>
 </Project>

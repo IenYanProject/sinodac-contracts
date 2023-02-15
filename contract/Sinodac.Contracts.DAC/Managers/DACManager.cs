@@ -45,7 +45,7 @@ namespace Sinodac.Contracts.DAC.Managers
             });
         }
 
-        private DACInfo PerformCreate(string dacName, long dacId, Hash redeemCodeHash = null)
+        private DACInfo PerformCreate(string dacName, long dacId, Hash dacFile = null)
         {
             var dacHash = DACHelper.CalculateDACHash(dacName, dacId);
             _dacMap[dacName][dacId] = new DACInfo
@@ -53,13 +53,15 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacName = dacName,
                 DacId = dacId,
                 DacHash = dacHash,
-                RedeemCodeHash = redeemCodeHash
+                DacFile = dacFile,
+                //RedeemCodeHash = redeemCodeHash
             };
             var initialAddress = CalculateInitialAddress(dacHash);
             _ownerMap[dacName][dacId] = initialAddress;
             return _dacMap[dacName][dacId];
         }
 
+       
         public void BatchCreate(string dacName, long fromDacId, List<Hash> redeemCodeHashList, long count = 0)
         {
             var protocol = _protocolManager.GetProtocol(dacName);
@@ -87,7 +89,33 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacInfo = dacMintInfo
             });
         }
+        public void BatchCreate(string dacName, long fromDacId, Hash dacFile, long count = 0)
+        {
+            var protocol = _protocolManager.GetProtocol(dacName);
 
+            count = count == 0
+                ? protocol.Circulation.Sub(fromDacId).Add(1)
+                : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
+
+            var dacMintInfo = new DACInfoList();
+            
+            for (long dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
+            {
+                if (_dacMap[dacName][dacId] == null)
+                {
+                    var dacInfo = PerformCreate(dacName, dacId, dacFile);
+                    dacMintInfo.Value.Add(dacInfo);
+                }
+            }
+
+            _context.Fire(new DACMinted()
+            {
+                DacName = dacName,
+                FromDacId = fromDacId,
+                Quantity = count,
+                DacInfo = dacMintInfo
+            });
+        }
         public void InitialTransfer(string dacName, long dacId, Address to)
         {
             var initialAddress = CalculateInitialAddress(DACHelper.CalculateDACHash(dacName, dacId));
