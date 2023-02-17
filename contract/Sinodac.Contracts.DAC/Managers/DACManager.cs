@@ -47,7 +47,8 @@ namespace Sinodac.Contracts.DAC.Managers
 
         private DACInfo PerformCreate(string dacName, long dacId, Hash dacFile = null)
         {
-            var dacHash = DACHelper.CalculateDACHash(dacName, dacId);
+            #region The old logic
+            /*var dacHash = DACHelper.CalculateDACHash(dacName, dacId);
             _dacMap[dacName][dacId] = new DACInfo
             {
                 DacName = dacName,
@@ -58,7 +59,21 @@ namespace Sinodac.Contracts.DAC.Managers
             };
             var initialAddress = CalculateInitialAddress(dacHash);
             _ownerMap[dacName][dacId] = initialAddress;
-            return _dacMap[dacName][dacId];
+            return _dacMap[dacName][dacId];*/
+
+            #endregion
+
+            var dacHash = DACHelper.CalculateDACHash(dacName, dacId);
+            var dacInfo = new DACInfo
+            {
+                DacName = dacName,
+                DacId = dacId,
+                DacHash = dacHash,
+                DacFile = dacFile,
+            };
+            var initialAddress = CalculateInitialAddress(dacHash);
+            _ownerMap[dacName][dacId] = initialAddress;
+            return dacInfo;
         }
 
        
@@ -89,23 +104,22 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacInfo = dacMintInfo
             });
         }
-        public void BatchCreate(string dacName, long fromDacId, Hash dacFile, long count = 0)
+        public void BatchCreate(string dacName, long fromDacId, Hash dacFile, long count )
         {
-            var protocol = _protocolManager.GetProtocol(dacName);
+            //var protocol = _protocolManager.GetProtocol(dacName);
 
-            count = count == 0
+            /*count = count == 0
                 ? protocol.Circulation.Sub(fromDacId).Add(1)
-                : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
+                : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);*/
 
             var dacMintInfo = new DACInfoList();
             
             for (long dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
             {
-                if (_dacMap[dacName][dacId] == null)
-                {
-                    var dacInfo = PerformCreate(dacName, dacId, dacFile);
-                    dacMintInfo.Value.Add(dacInfo);
-                }
+                
+                var dacInfo = PerformCreate(dacName, dacId, dacFile);
+                dacMintInfo.Value.Add(dacInfo);
+                
             }
 
             _context.Fire(new DACMinted()
