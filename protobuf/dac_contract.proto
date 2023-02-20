@@ -83,8 +83,10 @@ message MintForRedeemCodeInput {
 
 message InitialTransferInput {
     aelf.Address to = 1;
-    string dac_name = 2;
-    int64 dac_id = 3;
+    string nft_hash = 2;
+    string nftInfoId = 3;
+    string file = 4;
+    string owner = 5;
 }
 
 message TransferInput {
@@ -210,8 +212,8 @@ message DACInitialTransferred {
     option (aelf.is_event) = true;
     aelf.Address from = 1 [(aelf.is_indexed) = true];
     aelf.Address to = 2 [(aelf.is_indexed) = true];
-    string dac_name = 3 [(aelf.is_indexed) = true];
-    int64 dac_id = 4 [(aelf.is_indexed) = true];
+    string nft_info_id = 3 [(aelf.is_indexed) = true];
+    string owner = 4 [(aelf.is_indexed) = true];
 }
 
 message DACTransferred {

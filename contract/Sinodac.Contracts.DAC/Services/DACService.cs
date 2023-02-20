@@ -108,9 +108,9 @@ namespace Sinodac.Contracts.DAC.Services
         /// <param name="dacName"></param>
         /// <param name="dacId"></param>
         /// <param name="to"></param>
-        public void InitialTransfer(string dacName, long dacId, Address to)
+        public void InitialTransfer(string nftInfoId, Address to, string nftHash, string nftFile, string owner)
         {
-            _dacManager.InitialTransfer(dacName, dacId, to);
+            _dacManager.InitialTransfer(nftInfoId, to, nftHash, nftFile, owner);
         }
 
         /// <summary>

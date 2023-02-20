@@ -179,9 +179,9 @@ message BindRedeemCodeInput {
 
 message BuyInput {
     string from_id = 1;
-    string dac_name = 2;
-    int64 dac_id = 3;
-    int64 price = 4;
+    string nftInfoid = 2;
+    string file = 3;
+    string nftHash = 4;
 }
 
 message RedeemInput {

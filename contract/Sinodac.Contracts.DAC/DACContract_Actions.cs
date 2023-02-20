@@ -52,10 +52,9 @@ namespace Sinodac.Contracts.DAC
 
         public override Empty InitialTransfer(InitialTransferInput input)
         {
-            AssertSenderIsDACMarketContract();
+            AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
-            Assert(dacService.IsBindCompleted(input.DacName), "兑换码还没有完成绑定");
-            dacService.InitialTransfer(input.DacName, input.DacId, input.To);
+            dacService.InitialTransfer(input.NftInfoId, input.To, input.NftHash, input.File, input.Owner);
             return new Empty();
         }
 
