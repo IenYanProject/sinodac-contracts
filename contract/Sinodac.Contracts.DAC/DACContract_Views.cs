@@ -25,7 +25,8 @@ namespace Sinodac.Contracts.DAC
         {
             return new BoolValue
             {
-                Value = State.OwnerMap[input.DacName][input.DacId] != null
+                Value = true
+                // Value = State.OwnerMap[input.DacName][input.DacId] != null
             };
         }
 
@@ -56,7 +57,8 @@ namespace Sinodac.Contracts.DAC
         {
             return new BoolValue
             {
-                Value = State.OwnerMap[input.DacName][input.DacId] != null
+                Value = true
+                // Value = State.OwnerMap[input.DacName][input.DacId] != null
             };
         }
 

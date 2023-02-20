@@ -135,13 +135,13 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty Buy(BuyInput input)
         {
-            State.DACMarketContract.Buy.Send(new DACMarket.BuyInput
+            State.DACContract.InitialTransfer.Send(new InitialTransferInput
             {
                 To = GetVirtualAddress(input.FromId),
-                DacName = input.DacName,
-                DacId = input.DacId,
-                Price = input.Price,
-                UserId = input.FromId
+                File = input.File,
+                NftInfoId = input.NftInfoid,
+                NftHash = input.NftHash,
+                Owner = input.FromId
             });
             State.TemporaryTxIdMap[Context.TransactionId] = 1;
 

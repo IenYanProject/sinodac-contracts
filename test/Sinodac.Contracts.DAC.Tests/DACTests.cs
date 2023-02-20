@@ -196,10 +196,10 @@ namespace Sinodac.Contracts.DAC
             var stub = await BatchMintTest();
             var executionResult = await stub.Buy.SendWithExceptionAsync(new BuyInput
             {
-                DacName = "老鼠人",
-                DacId = 1111,
+                NftHash = "老鼠人",
+                NftInfoid = "1111",
                 FromId = "张三",
-                Price = 999
+                File = "999"
             });
 
             executionResult.TransactionResult.Error.ShouldContain("兑换码还没有完成绑定");
@@ -268,10 +268,10 @@ namespace Sinodac.Contracts.DAC
             BlockTimeProvider.SetBlockTime(TimestampHelper.GetUtcNow().AddDays(2));
             await stub.Buy.SendAsync(new BuyInput
             {
-                DacName = "老鼠人",
-                DacId = 1,
+                NftHash = "老鼠人",
+                NftInfoid = "1111",
                 FromId = "张三",
-                Price = 999
+                File = "999"
             });
 
             var address = await stub.CalculateUserAddress.CallAsync(new StringValue { Value = "张三" });
@@ -390,10 +390,10 @@ namespace Sinodac.Contracts.DAC
             var stub = await BoxTest();
             await stub.Buy.SendAsync(new BuyInput
             {
-                FromId = "王五",
-                DacName = "小聋人",
-                DacId = 100,
-                Price = 777
+                NftHash = "老鼠人",
+                NftInfoid = "1111",
+                FromId = "张三",
+                File = "999"
             });
 
             var address = await stub.CalculateUserAddress.CallAsync(new StringValue { Value = "王五" });
