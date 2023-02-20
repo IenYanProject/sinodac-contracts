@@ -66,9 +66,8 @@ namespace Sinodac.Contracts.DAC.Services
         /// <param name="fromDacId"></param>
         /// <param name="dacFile"></param>
         /// <param name="count"></param>
-        public void BatchMint(string dacName, long fromDacId, Hash dacFile, long count = 0)
+        public void BatchMint(string dacName, long fromDacId, Hash dacFile, long count)
         {
-            var protocol = _protocolManager.GetProtocol(dacName);
             _dacManager.BatchCreate(dacName, fromDacId, dacFile, count);
         }
 
