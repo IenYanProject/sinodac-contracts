@@ -100,7 +100,8 @@ namespace Sinodac.Contracts.Delegator
                 DacName = input.DacName,
                 FromDacId = input.FromDacId,
                 Quantity = input.Quantity,
-                DacFile=input.DacFile
+                ProtocolId = input.ProtocolId,
+                BatchId = input.BatchId
             };
             State.DACContract.Mint.Send(mintInput);
             State.TemporaryTxIdMap[Context.TransactionId] = 1;

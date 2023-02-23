@@ -72,7 +72,8 @@ message MintInput {
     string dac_name = 1;
     int64 from_dac_id = 2;
     int64 quantity = 3;
-    aelf.Hash dac_file = 4;
+    string protocol_id = 4;
+    string batch_id = 5;
 }
 
 message MintForRedeemCodeInput {
@@ -151,7 +152,7 @@ message DACInfo {
     string dac_name = 1;
     int64 dac_id = 2;
     aelf.Hash dac_hash = 3;
-    aelf.Hash dac_file = 4;
+    string batch_id = 4;
 }
 
 message DACTypes {
@@ -205,7 +206,10 @@ message DACMinted {
     string dac_name = 1 [(aelf.is_indexed) = true];
     int64 from_dac_id = 2 [(aelf.is_indexed) = true];
     int64 quantity = 3 [(aelf.is_indexed) = true];
-    DACInfoList dac_info = 4;
+    string protocol_id = 4;
+    int32 dac_ts=5;
+    DACInfoList dac_info = 6;  
+    
 }
 
 message DACInitialTransferred {

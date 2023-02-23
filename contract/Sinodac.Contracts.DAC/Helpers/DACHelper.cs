@@ -11,8 +11,11 @@ namespace Sinodac.Contracts.DAC.Helpers
         
         public static Hash CalculateDACHash(string dacName, long dacId)
         {
-            var date = _clock.Now;
-            return HashHelper.ComputeFrom($"{dacName}{dacId}-{date}");
+            return HashHelper.ComputeFrom($"{dacName}{dacId}");
+        }
+        public static Hash CalculateDACHash(string dacName, long dacId,int dacTs)
+        {
+            return HashHelper.ComputeFrom($"{dacName}{dacId}-{dacTs}");
         }
     }
 }

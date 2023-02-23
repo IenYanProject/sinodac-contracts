@@ -53,7 +53,7 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacName = dacName,
                 DacId = dacId,
                 DacHash = dacHash,
-                DacFile = dacFile,
+                //DacFile = dacFile,
                 //RedeemCodeHash = redeemCodeHash
             };
             var initialAddress = CalculateInitialAddress(dacHash);
@@ -62,7 +62,22 @@ namespace Sinodac.Contracts.DAC.Managers
             _ownerMap[strHash] = initialAddress;
             return _dacMap[dacName][dacId];
         }
+        private DACInfo PerformCreate(string dacName, long dacId, int dacTs,string batchId)
+        {
+            var dacHash = DACHelper.CalculateDACHash(dacName, dacId,dacTs);
+            var dacInfo = new DACInfo
+            {
+                DacName = dacName,
+                DacId = dacId,
+                DacHash = dacHash,
+                BatchId = batchId
+            };
+            var initialAddress = CalculateInitialAddress(dacHash);
 
+            var strHash = dacHash.ToString();
+            _ownerMap[strHash] = initialAddress;
+            return dacInfo;
+        }
        
         public void BatchCreate(string dacName, long fromDacId, List<Hash> redeemCodeHashList, long count = 0)
         {
@@ -91,23 +106,17 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacInfo = dacMintInfo
             });
         }
-        public void BatchCreate(string dacName, long fromDacId, Hash dacFile, long count = 0)
+        public void BatchCreate(string dacName, long fromDacId, int dacTs, long count ,string batchId,string protocolId)
         {
-            var protocol = _protocolManager.GetProtocol(dacName);
-
-            count = count == 0
-                ? protocol.Circulation.Sub(fromDacId).Add(1)
-                : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
-
+           
             var dacMintInfo = new DACInfoList();
             
             for (long dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
             {
-                if (_dacMap[dacName][dacId] == null)
-                {
-                    var dacInfo = PerformCreate(dacName, dacId, dacFile);
-                    dacMintInfo.Value.Add(dacInfo);
-                }
+                
+                var dacInfo = PerformCreate(dacName, dacId, dacTs,batchId);
+                dacMintInfo.Value.Add(dacInfo);
+                
             }
 
             _context.Fire(new DACMinted()
@@ -115,7 +124,9 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacName = dacName,
                 FromDacId = fromDacId,
                 Quantity = count,
-                DacInfo = dacMintInfo
+                DacInfo = dacMintInfo,
+                ProtocolId = protocolId,
+                DacTs = dacTs
             });
         }
         public void InitialTransfer(string nftInfoId, Address to, string nftHash, string nftFile, string owner)
