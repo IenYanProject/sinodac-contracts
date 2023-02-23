@@ -58,6 +58,18 @@ namespace Sinodac.Contracts.DAC.Services
             }
             _dacManager.BatchCreate(dacName, fromDacId, redeemCodeHashList, count);
         }
+        
+        /// <summary>
+        /// 批量Mint
+        /// </summary>
+        /// <param name="dacName"></param>
+        /// <param name="fromDacId"></param>
+        /// <param name="dacFile"></param>
+        /// <param name="count"></param>
+        public void BatchMint(string dacName, long fromDacId, int dacTs, long count,string batchId,string protocolId)
+        {
+            _dacManager.BatchCreate(dacName, fromDacId, dacTs, count,batchId,protocolId);
+        }
 
         /// <summary>
         /// 后端生成兑换码，通过调用该方法绑定兑换码并创建出DAC
@@ -95,9 +107,9 @@ namespace Sinodac.Contracts.DAC.Services
         /// <param name="dacName"></param>
         /// <param name="dacId"></param>
         /// <param name="to"></param>
-        public void InitialTransfer(string dacName, long dacId, Address to)
+        public void InitialTransfer(string nftInfoId, Address to, string nftHash, string nftFile, string owner)
         {
-            _dacManager.InitialTransfer(dacName, dacId, to);
+            _dacManager.InitialTransfer(nftInfoId, to, nftHash, nftFile, owner);
         }
 
         /// <summary>

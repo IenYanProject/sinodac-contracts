@@ -12,7 +12,7 @@ namespace Sinodac.Contracts.DAC
         public MappedState<Hash, DACInfo> RedeemCodeDACMap { get; set; }
         public MappedState<string, long, Hash> DACRedeemCodeMap { get; set; }
         public MappedState<string, long> BindRedeemCodeCountMap { get; set; }
-        public MappedState<string, long, Address> OwnerMap { get; set; }
+        public MappedState<string, Address> OwnerMap { get; set; }
         public MappedState<string, Address, long> BalanceMap { get; set; }
         public MappedState<string, bool> IsApprovedMap { get; set; }
     }

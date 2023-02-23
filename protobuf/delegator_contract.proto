@@ -10,14 +10,12 @@ option csharp_namespace = "Sinodac.Contracts.Delegator";
 
 service DelegatorContract {
     option (aelf.csharp_state) = "DelegatorContractState";
-
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
     rpc RegisterSenders (RegisterSendersInput) returns (google.protobuf.Empty) { }
     rpc RegisterMethods (RegisterMethodsInput) returns (google.protobuf.Empty) { }
     rpc Forward (ForwardInput) returns (google.protobuf.Empty) { }
     rpc ForwardCheck (aelf.Hash) returns (google.protobuf.Empty) { }
 
-    // Roles Management
     rpc CreateRole (CreateRoleInput) returns (google.protobuf.Empty) { }
     rpc UpdateRole (UpdateRoleInput) returns (google.protobuf.Empty) { }
     rpc DisableRole (DisableRoleInput) returns (google.protobuf.Empty) { }
@@ -163,7 +161,9 @@ message MintDACInput {
     string from_id = 1;
     string dac_name = 2;
     int64 from_dac_id = 3;
-    repeated aelf.Hash redeem_code_hash_list = 4;
+    int64 quantity=4;
+    string protocol_id=5;
+    string batch_id=6;
 }
 
 message DelistDACInput {
@@ -175,14 +175,14 @@ message BindRedeemCodeInput {
     string from_id = 1;
     string dac_name = 2;
     repeated aelf.Hash rl = 3;
-    int64 from_dac_id = 4;
+    
 }
 
 message BuyInput {
     string from_id = 1;
-    string dac_name = 2;
-    int64 dac_id = 3;
-    int64 price = 4;
+    string nftInfoid = 2;
+    string file = 3;
+    string nftHash = 4;
 }
 
 message RedeemInput {
@@ -520,8 +520,6 @@ message OrganizationDepartment {
 message EnablePermissionCheckInput {
     bool enable = 1;
 }
-
-// Events
 
 message RoleCreated {
     option (aelf.is_event) = true;

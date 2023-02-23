@@ -175,7 +175,7 @@ namespace Sinodac.Contracts.DAC
                 FromId = "管理员",
                 FromDacId = 1,
                 // Quantity = 10000,
-                RedeemCodeHashList = { HashHelper.ComputeFrom(123) }
+                //RedeemCodeHashList = { HashHelper.ComputeFrom(123) }
             });
 
             {
@@ -196,10 +196,10 @@ namespace Sinodac.Contracts.DAC
             var stub = await BatchMintTest();
             var executionResult = await stub.Buy.SendWithExceptionAsync(new BuyInput
             {
-                DacName = "老鼠人",
-                DacId = 1111,
+                NftHash = "老鼠人",
+                NftInfoid = "1111",
                 FromId = "张三",
-                Price = 999
+                File = "999"
             });
 
             executionResult.TransactionResult.Error.ShouldContain("兑换码还没有完成绑定");
@@ -219,7 +219,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Take(30) },
-                FromDacId = protocol.ReserveFrom
+                //FromDacId = protocol.ReserveFrom
             });
             
             var executionResult = await stub.BindRedeemCode.SendWithExceptionAsync(new BindRedeemCodeInput
@@ -227,7 +227,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Skip(30) },
-                FromDacId = protocol.ReserveFrom.Add(30)
+                //FromDacId = protocol.ReserveFrom.Add(30)
             });
             executionResult.TransactionResult.Error.ShouldContain("抽奖码给多了");
 
@@ -236,7 +236,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Skip(30).Take(30) },
-                FromDacId = protocol.ReserveFrom.Add(30)
+                //FromDacId = protocol.ReserveFrom.Add(30)
             });
             
             await stub.BindRedeemCode.SendAsync(new BindRedeemCodeInput
@@ -244,7 +244,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Skip(60).Take(30) },
-                FromDacId = protocol.ReserveFrom.Add(60)
+                //FromDacId = protocol.ReserveFrom.Add(60)
             });
 
             await stub.BindRedeemCode.SendAsync(new BindRedeemCodeInput
@@ -252,7 +252,7 @@ namespace Sinodac.Contracts.DAC
                 DacName = "老鼠人",
                 FromId = "管理员",
                 Rl = { redeemCodeHashList.Skip(90).Take(10) },
-                FromDacId = protocol.ReserveFrom.Add(90)
+                //FromDacId = protocol.ReserveFrom.Add(90)
             });
 
             var isBindCompleted = await DACContractStub.IsBindCompleted.CallAsync(new StringValue { Value = "老鼠人" });
@@ -268,10 +268,10 @@ namespace Sinodac.Contracts.DAC
             BlockTimeProvider.SetBlockTime(TimestampHelper.GetUtcNow().AddDays(2));
             await stub.Buy.SendAsync(new BuyInput
             {
-                DacName = "老鼠人",
-                DacId = 1,
+                NftHash = "老鼠人",
+                NftInfoid = "1111",
                 FromId = "张三",
-                Price = 999
+                File = "999"
             });
 
             var address = await stub.CalculateUserAddress.CallAsync(new StringValue { Value = "张三" });
@@ -390,10 +390,10 @@ namespace Sinodac.Contracts.DAC
             var stub = await BoxTest();
             await stub.Buy.SendAsync(new BuyInput
             {
-                FromId = "王五",
-                DacName = "小聋人",
-                DacId = 100,
-                Price = 777
+                NftHash = "老鼠人",
+                NftInfoid = "1111",
+                FromId = "张三",
+                File = "999"
             });
 
             var address = await stub.CalculateUserAddress.CallAsync(new StringValue { Value = "王五" });

@@ -95,19 +95,16 @@ namespace Sinodac.Contracts.Delegator
         public override Empty MintDAC(MintDACInput input)
         {
             AssertPermission(input.FromId, DAC.List);
-
             var mintInput = new MintInput()
             {
                 DacName = input.DacName,
                 FromDacId = input.FromDacId,
-                Quantity = input.RedeemCodeHashList.Count,
+                Quantity = input.Quantity,
+                ProtocolId = input.ProtocolId,
+                BatchId = input.BatchId
             };
-            mintInput.RedeemCodeHashList.AddRange(input.RedeemCodeHashList);
-            
-            
             State.DACContract.Mint.Send(mintInput);
             State.TemporaryTxIdMap[Context.TransactionId] = 1;
-
             return new Empty();
         }
 
@@ -123,7 +120,7 @@ namespace Sinodac.Contracts.Delegator
             return new Empty();
         }
 
-        public override Empty BindRedeemCode(BindRedeemCodeInput input)
+        /*public override Empty BindRedeemCode(BindRedeemCodeInput input)
         {
             AssertPermission(input.FromId, DAC.Create);
             State.DACContract.MintForRedeemCode.Send(new MintForRedeemCodeInput
@@ -135,17 +132,17 @@ namespace Sinodac.Contracts.Delegator
             State.TemporaryTxIdMap[Context.TransactionId] = 1;
 
             return new Empty();
-        }
+        }*/
 
         public override Empty Buy(BuyInput input)
         {
-            State.DACMarketContract.Buy.Send(new DACMarket.BuyInput
+            State.DACContract.InitialTransfer.Send(new InitialTransferInput
             {
                 To = GetVirtualAddress(input.FromId),
-                DacName = input.DacName,
-                DacId = input.DacId,
-                Price = input.Price,
-                UserId = input.FromId
+                File = input.File,
+                NftInfoId = input.NftInfoid,
+                NftHash = input.NftHash,
+                Owner = input.FromId
             });
             State.TemporaryTxIdMap[Context.TransactionId] = 1;
 

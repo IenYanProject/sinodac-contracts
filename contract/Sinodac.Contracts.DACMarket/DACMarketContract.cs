@@ -167,12 +167,12 @@ namespace Sinodac.Contracts.DACMarket
             }
             else
             {
-                State.DACContract.InitialTransfer.Send(new InitialTransferInput
-                {
-                    DacName = input.DacName,
-                    DacId = input.DacId,
-                    To = input.To
-                });
+                // State.DACContract.InitialTransfer.Send(new InitialTransferInput
+                // {
+                //     DacName = input.DacName,
+                //     DacId = input.DacId,
+                //     To = input.To
+                // });
 
                 Context.Fire(new DACSold
                 {
@@ -207,12 +207,12 @@ namespace Sinodac.Contracts.DACMarket
             var dacInfo = State.DACContract.GetRedeemCodeDAC.Call(redeemCodeHash);
             Assert(dacInfo.DacName != null, $"兑换码 {input.RedeemCode} 无效");
             Assert(State.PublicTimeMap[dacInfo.DacName] != null, $"{dacInfo.DacName} 还没有上架");
-            State.DACContract.InitialTransfer.Send(new InitialTransferInput
-            {
-                DacName = dacInfo.DacName,
-                DacId = dacInfo.DacId,
-                To = input.To
-            });
+            // State.DACContract.InitialTransfer.Send(new InitialTransferInput
+            // {
+            //     DacName = dacInfo.DacName,
+            //     DacId = dacInfo.DacId,
+            //     To = input.To
+            // });
 
             Context.Fire(new CodeRedeemed
             {
@@ -261,12 +261,12 @@ namespace Sinodac.Contracts.DACMarket
             Assert(ownBoxIdList.Value.Contains(input.BoxId), $"编号为 {input.BoxId} 的盲盒不属于用户 {input.To}");
             ownBoxIdList.Value.Remove(input.BoxId);
 
-            State.DACContract.InitialTransfer.Send(new InitialTransferInput
-            {
-                DacName = boxInfo.DacName,
-                DacId = boxInfo.DacId,
-                To = input.To
-            });
+            // State.DACContract.InitialTransfer.Send(new InitialTransferInput
+            // {
+            //     DacName = boxInfo.DacName,
+            //     DacId = boxInfo.DacId,
+            //     To = input.To
+            // });
 
             Context.Fire(new Unboxed
             {

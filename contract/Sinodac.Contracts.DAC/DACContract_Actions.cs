@@ -46,16 +46,16 @@ namespace Sinodac.Contracts.DAC
         {
             AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
-            dacService.BatchMint(input.DacName, input.FromDacId, input.RedeemCodeHashList.ToList(), input.Quantity);
+            var dacTs = DateTime.Now.Millisecond;
+            dacService.BatchMint(input.DacName, input.FromDacId, dacTs, input.Quantity,input.BatchId,input.ProtocolId);
             return new Empty();
         }
 
         public override Empty InitialTransfer(InitialTransferInput input)
         {
-            AssertSenderIsDACMarketContract();
+            AssertSenderIsDelegatorContract();
             var dacService = GetDACService();
-            Assert(dacService.IsBindCompleted(input.DacName), "兑换码还没有完成绑定");
-            dacService.InitialTransfer(input.DacName, input.DacId, input.To);
+            dacService.InitialTransfer(input.NftInfoId, input.To, input.NftHash, input.File, input.Owner);
             return new Empty();
         }
 
