@@ -27,37 +27,37 @@ namespace Sinodac.Contracts.DAC.Services
             _protocolManager.Create(protocol);
         }
 
-        /// <summary>
-        /// 上架后，批量Mint
-        /// 调用前需要判断该DAC是否审核
-        /// </summary>
-        /// <param name="dacName"></param>
-        /// <param name="fromDacId"></param>
-        /// <param name="redeemCodeHashList"></param>
-        /// <param name="count"></param>
-        public void BatchMint(string dacName, long fromDacId, List<Hash> redeemCodeHashList, long count = 0)
-        {
-            var protocol = _protocolManager.GetProtocol(dacName);
-            // var reserveFrom = protocol.ReserveFrom;
-            // var supposedAlreadyBindCount = fromDacId.Sub(reserveFrom);
-            // if (supposedAlreadyBindCount.Add(redeemCodeHashList.Count) > redeemCodeHashList.Count)
-            // {
-            //     throw new AssertionException("抽奖码给多了");
-            // }
-
-            for (var i = 0; i < redeemCodeHashList.Count; i++)
-            {
-                var dacId = fromDacId.Add(i);
-                var redeemCodeHash = redeemCodeHashList[i];
-                var redeemCount = _redeemCodeManager.Create(dacName, dacId, redeemCodeHash);
-                if (redeemCount > protocol.Circulation)
-                {
-                    throw new AssertionException("抽奖码给多了");
-                }
-                // _dacManager.Create(dacName, dacId, redeemCodeHash);
-            }
-            _dacManager.BatchCreate(dacName, fromDacId, redeemCodeHashList, count);
-        }
+        // /// <summary>
+        // /// 上架后，批量Mint
+        // /// 调用前需要判断该DAC是否审核
+        // /// </summary>
+        // /// <param name="dacName"></param>
+        // /// <param name="fromDacId"></param>
+        // /// <param name="redeemCodeHashList"></param>
+        // /// <param name="count"></param>
+        // public void BatchMint(string dacName, long fromDacId, List<Hash> redeemCodeHashList, long count = 0)
+        // {
+        //     var protocol = _protocolManager.GetProtocol(dacName);
+        //     // var reserveFrom = protocol.ReserveFrom;
+        //     // var supposedAlreadyBindCount = fromDacId.Sub(reserveFrom);
+        //     // if (supposedAlreadyBindCount.Add(redeemCodeHashList.Count) > redeemCodeHashList.Count)
+        //     // {
+        //     //     throw new AssertionException("抽奖码给多了");
+        //     // }
+        //
+        //     for (var i = 0; i < redeemCodeHashList.Count; i++)
+        //     {
+        //         var dacId = fromDacId.Add(i);
+        //         var redeemCodeHash = redeemCodeHashList[i];
+        //         var redeemCount = _redeemCodeManager.Create(dacName, dacId, redeemCodeHash);
+        //         if (redeemCount > protocol.Circulation)
+        //         {
+        //             throw new AssertionException("抽奖码给多了");
+        //         }
+        //         // _dacManager.Create(dacName, dacId, redeemCodeHash);
+        //     }
+        //     _dacManager.BatchCreate(dacName, fromDacId, redeemCodeHashList, count);
+        // }
         
         /// <summary>
         /// 批量Mint

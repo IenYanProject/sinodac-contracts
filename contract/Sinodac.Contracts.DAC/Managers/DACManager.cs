@@ -79,33 +79,33 @@ namespace Sinodac.Contracts.DAC.Managers
             return dacInfo;
         }
        
-        public void BatchCreate(string dacName, long fromDacId, List<Hash> redeemCodeHashList, long count = 0)
-        {
-            var protocol = _protocolManager.GetProtocol(dacName);
-
-            count = count == 0
-                ? protocol.Circulation.Sub(fromDacId).Add(1)
-                : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
-
-            var dacMintInfo = new DACInfoList();
-            
-            for (long dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
-            {
-                if (_dacMap[dacName][dacId] == null)
-                {
-                    var dacInfo = PerformCreate(dacName, dacId, redeemCodeHashList[(int)(dacId - fromDacId)]);
-                    dacMintInfo.Value.Add(dacInfo);
-                }
-            }
-
-            _context.Fire(new DACMinted()
-            {
-                DacName = dacName,
-                FromDacId = fromDacId,
-                Quantity = count,
-                DacInfo = dacMintInfo
-            });
-        }
+        // public void BatchCreate(string dacName, long fromDacId, List<Hash> redeemCodeHashList, long count = 0)
+        // {
+        //     var protocol = _protocolManager.GetProtocol(dacName);
+        //
+        //     count = count == 0
+        //         ? protocol.Circulation.Sub(fromDacId).Add(1)
+        //         : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
+        //
+        //     var dacMintInfo = new DACInfoList();
+        //     
+        //     for (long dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
+        //     {
+        //         if (_dacMap[dacName][dacId] == null)
+        //         {
+        //             var dacInfo = PerformCreate(dacName, dacId, redeemCodeHashList[(int)(dacId - fromDacId)]);
+        //             dacMintInfo.Value.Add(dacInfo);
+        //         }
+        //     }
+        //
+        //     _context.Fire(new DACMinted()
+        //     {
+        //         DacName = dacName,
+        //         FromDacId = fromDacId,
+        //         Quantity = count,
+        //         DacInfo = dacMintInfo
+        //     });
+        // }
         public void BatchCreate(string dacName, long fromDacId, long count ,string batchId,string protocolId)
         {
            
