@@ -207,8 +207,7 @@ message DACMinted {
     int64 from_dac_id = 2 [(aelf.is_indexed) = true];
     int64 quantity = 3 [(aelf.is_indexed) = true];
     string protocol_id = 4;
-    int32 dac_ts=5;
-    DACInfoList dac_info = 6;  
+    DACInfoList dac_info = 5;  
     
 }
 

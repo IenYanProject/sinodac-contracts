@@ -62,9 +62,9 @@ namespace Sinodac.Contracts.DAC.Managers
             _ownerMap[strHash] = initialAddress;
             return _dacMap[dacName][dacId];
         }
-        private DACInfo PerformCreate(string dacName, long dacId, int dacTs,string batchId)
+        private DACInfo PerformCreate(string dacName, long dacId,string batchId)
         {
-            var dacHash = DACHelper.CalculateDACHash(dacName, dacId,dacTs);
+            var dacHash = DACHelper.CalculateDACHash(dacName, dacId, batchId);
             var dacInfo = new DACInfo
             {
                 DacName = dacName,
@@ -106,7 +106,7 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacInfo = dacMintInfo
             });
         }
-        public void BatchCreate(string dacName, long fromDacId, int dacTs, long count ,string batchId,string protocolId)
+        public void BatchCreate(string dacName, long fromDacId, long count ,string batchId,string protocolId)
         {
            
             var dacMintInfo = new DACInfoList();
@@ -114,7 +114,7 @@ namespace Sinodac.Contracts.DAC.Managers
             for (long dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
             {
                 
-                var dacInfo = PerformCreate(dacName, dacId, dacTs,batchId);
+                var dacInfo = PerformCreate(dacName, dacId,batchId);
                 dacMintInfo.Value.Add(dacInfo);
                 
             }
@@ -126,7 +126,6 @@ namespace Sinodac.Contracts.DAC.Managers
                 Quantity = count,
                 DacInfo = dacMintInfo,
                 ProtocolId = protocolId,
-                DacTs = dacTs
             });
         }
         public void InitialTransfer(string nftInfoId, Address to, string nftHash, string nftFile, string owner)
