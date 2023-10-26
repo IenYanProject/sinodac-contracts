@@ -41,6 +41,14 @@ namespace Sinodac.Contracts.Delegator.Managers
             AddRole(new Role
             {
                 RoleCreator = DelegatorContractConstants.System,
+                RoleName = DelegatorContractConstants.Member,
+                Enabled = true,
+                RoleDescription = "普通成员"
+            });
+            
+            AddRole(new Role
+            {
+                RoleCreator = DelegatorContractConstants.System,
                 RoleName = DelegatorContractConstants.DefaultRoleName,
                 Enabled = true,
                 RoleDescription = "不属于任何机构的角色"

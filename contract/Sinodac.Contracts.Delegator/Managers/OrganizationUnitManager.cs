@@ -40,6 +40,16 @@ namespace Sinodac.Contracts.Delegator.Managers
                 Enabled = true,
             });
 
+            // 添加普通机构
+            AddOrganizationUnit(new OrganizationUnit
+            {
+                OrganizationName = DelegatorContractConstants.Member,
+                CreateTime = _context.CurrentBlockTime,
+                OrganizationCreator = DelegatorContractConstants.System,
+                RoleName = DelegatorContractConstants.Member,
+                Enabled = true,
+            });
+            
             // 添加默认机构
             AddOrganizationUnit(new OrganizationUnit
             {

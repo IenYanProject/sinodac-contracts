@@ -13,19 +13,19 @@ namespace Sinodac.Contracts.Delegator
 
             if (string.IsNullOrEmpty(input.OrganizationName))
             {
-                input.OrganizationName = DefaultOrganizationName;
+                input.OrganizationName = Admin;
             }
 
             if (string.IsNullOrEmpty(input.DepartmentName))
             {
-                input.DepartmentName = Member;
+                input.DepartmentName = Admin;
             }
 
             // 管理员可创建自己机构的用户，也可以创建默认机构的用户
-            var creator = managerList.UserManager.GetUser(input.FromId);
-            Assert(
-                input.OrganizationName == creator.OrganizationName || input.OrganizationName == DefaultOrganizationName,
-                $"用户 {input.FromId} 无法创建机构 {input.OrganizationName} 的新用户");
+            var creator = managerList.UserManager.GetUser(nameof(DelegatorContractConstants.Admin).ToLower());
+            // Assert(
+            //     input.OrganizationName == creator.OrganizationName || input.OrganizationName == DefaultOrganizationName,
+            //     $"用户 {input.FromId} 无法创建机构 {input.OrganizationName} 的新用户");
 
             var organizationUnit = managerList.OrganizationUnitManager.GetOrganizationUnit(input.OrganizationName);
             // 只有默认机构被禁用了才会失败

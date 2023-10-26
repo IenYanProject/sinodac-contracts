@@ -94,7 +94,7 @@ namespace Sinodac.Contracts.Delegator
 
         public override Empty MintDAC(MintDACInput input)
         {
-            AssertPermission(input.FromId, DAC.List);
+            AssertPermission(Context.Sender.ToString(), DAC.List);
             var mintInput = new MintInput()
             {
                 DacName = input.DacName,

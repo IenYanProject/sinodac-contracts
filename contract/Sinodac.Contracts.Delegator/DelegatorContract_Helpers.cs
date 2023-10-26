@@ -52,11 +52,11 @@ namespace Sinodac.Contracts.Delegator
         /// <exception cref="AssertionException"></exception>
         private bool CheckPermission(User user, string roleName, string actionId)
         {
-            var departmentKey =
-                KeyHelper.GetOrganizationDepartmentKey(user.OrganizationName, user.OrganizationDepartmentName);
-            Assert(
-                !State.OrganizationDepartmentIgnoredPermissionListMap[departmentKey].Value.Contains(actionId),
-                $"{user.UserName} 所属部门 {departmentKey} 无权调用当前方法：无 {actionId} 权限");
+            // var departmentKey =
+            //     KeyHelper.GetOrganizationDepartmentKey(user.OrganizationName, user.OrganizationDepartmentName);
+            // Assert(
+            //     !State.OrganizationDepartmentIgnoredPermissionListMap[departmentKey].Value.Contains(actionId),
+            //     $"{user.UserName} 所属部门 {departmentKey} 无权调用当前方法：无 {actionId} 权限");
             Assert(
                 State.RolePermissionMap[roleName][actionId],
                 $"{user.UserName} 所属机构的角色 {roleName} 无权调用当前方法：无 {actionId} 权限");
