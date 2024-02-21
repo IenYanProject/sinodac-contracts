@@ -12,29 +12,15 @@ namespace Sinodac.Contracts.Delegator
         {
             Assert(State.Admin.Value == null, "合约已经完成过初始化了");
             State.Admin.Value = input.AdminAddress ?? Context.Sender;
-            var roleManager = GetRoleManager();
-            roleManager.Initialize();
-            var organizationUnitManager = GetOrganizationUnitManager(roleManager);
-            organizationUnitManager.Initialize();
-            var userManager = GetUserManager(roleManager, organizationUnitManager);
-            userManager.Initialize();
 
             State.DACContract.Value = input.DacContractAddress;
-            State.DACMarketContract.Value = input.DacMarketContractAddress;
 
             State.DACContract.Initialize.Send(new Contracts.DAC.InitializeInput
             {
                 AdminAddress = State.Admin.Value,
                 DelegatorContractAddress = Context.Self,
-                DacMarketContractAddress = State.DACMarketContract.Value
             });
 
-            State.DACMarketContract.Initialize.Send(new DACMarket.InitializeInput
-            {
-                AdminAddress = State.Admin.Value,
-                DelegatorContractAddress = Context.Self,
-                DacContractAddress = State.DACContract.Value
-            });
             return new Empty();
         }
 
@@ -58,41 +44,8 @@ namespace Sinodac.Contracts.Delegator
             return new Empty();
         }
 
-        public override Empty RegisterMethods(RegisterMethodsInput input)
-        {
-            if (!input.IsRemove)
-            {
-                foreach (var methodName in input.MethodNameList.Value)
-                {
-                    State.IsPermittedMethodNameMap[Context.Sender][input.ScopeId][methodName] = true;
-                }
-            }
-            else
-            {
-                foreach (var methodName in input.MethodNameList.Value)
-                {
-                    State.IsPermittedMethodNameMap[Context.Sender][input.ScopeId].Remove(methodName);
-                }
-            }
-
-            return new Empty();
-        }
-
         public override Empty Forward(ForwardInput input)
         {
-            var user = State.UserMap[input.FromId];
-            if (user == null)
-            {
-                throw new AssertionException($"用户 {input.FromId} 不存在");
-            }
-
-            var organization = State.OrganizationUnitMap[user.OrganizationName];
-            Assert(State.RolePermissionMap[organization.RoleName][input.ScopeId],
-                $"用户所属的角色 {organization.RoleName} 没有 {input.ScopeId} 权限");
-            Assert(State.IsPermittedAddressMap[input.ToAddress][input.ScopeId][Context.Sender],
-                "交易发起人无权限");
-            Assert(State.IsPermittedMethodNameMap[input.ToAddress][input.ScopeId][input.MethodName],
-                $"交易发起人没有调用 {input.MethodName} 的权限");
             var fromHash = HashHelper.ComputeFrom($"{input.ScopeId}-{input.FromId}");
             Context.SendVirtualInline(fromHash, input.ToAddress, input.MethodName,
                 input.Parameter);

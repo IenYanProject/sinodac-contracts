@@ -5,30 +5,15 @@ namespace Sinodac.Contracts.DAC
 {
     public partial class DACContract
     {
-        private ProtocolManager GetProtocolManager()
-        {
-            return new ProtocolManager(Context, State.DACProtocolInfoMap, State.IsApprovedMap);
-        }
 
-        private DACManager GetDACManager(ProtocolManager protocolManager = null)
+        private DACManager GetDACManager()
         {
-            if (protocolManager == null)
-            {
-                protocolManager = GetProtocolManager();
-            }
-
-            return new DACManager(Context, protocolManager, State.DACInfoMap, State.OwnerMap, State.BalanceMap);
-        }
-
-        private RedeemCodeManager GetRedeemCodeManager()
-        {
-            return new RedeemCodeManager(Context, State.RedeemCodeDACMap, State.DACRedeemCodeMap,
-                State.BindRedeemCodeCountMap);
+            return new DACManager(Context, State.DACInfoMap, State.OwnerMap, State.BalanceMap, State.OwnerNFTMap);
         }
 
         private DACService GetDACService()
         {
-            return new DACService(Context, GetProtocolManager(), GetDACManager(), GetRedeemCodeManager());
+            return new DACService(Context, GetDACManager());
         }
     }
 }

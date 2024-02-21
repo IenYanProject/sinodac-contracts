@@ -16,17 +16,6 @@ namespace Sinodac.Contracts.DAC
                     Value = { input.AdminAddress }
                 }
             });
-            State.DelegatorContract.RegisterMethods.Send(new RegisterMethodsInput
-            {
-                ScopeId = "DAC",
-                MethodNameList = new StringList
-                {
-                    Value =
-                    {
-                        nameof(Create)
-                    }
-                }
-            });
         }
 
         private void AssertSenderIsDelegatorContract()

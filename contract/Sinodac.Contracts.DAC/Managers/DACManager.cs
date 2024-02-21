@@ -12,37 +12,21 @@ namespace Sinodac.Contracts.DAC.Managers
     public class DACManager
     {
         private readonly CSharpSmartContractContext _context;
-        private readonly ProtocolManager _protocolManager;
         private readonly MappedState<string, long, DACInfo> _dacMap;
         private readonly MappedState<string, Address> _ownerMap;
         private readonly MappedState<string, Address, long> _balanceMap;
+        private readonly MappedState<Address, NFTInfoList> _ownerNftMap;
 
-        public DACManager(CSharpSmartContractContext context, ProtocolManager protocolManager,
+        public DACManager(CSharpSmartContractContext context,
             MappedState<string, long, DACInfo> dacMap,
             MappedState<string, Address> ownerMap,
-            MappedState<string, Address, long> balanceMap)
+            MappedState<string, Address, long> balanceMap, MappedState<Address, NFTInfoList> ownerNftMap)
         {
             _context = context;
-            _protocolManager = protocolManager;
             _dacMap = dacMap;
             _ownerMap = ownerMap;
             _balanceMap = balanceMap;
-        }
-
-        public void Create(string dacName, long dacId, Hash redeemCodeHash = null)
-        {
-            var dacInfo = PerformCreate(dacName, dacId, redeemCodeHash);
-
-            var dacInfoList = new DACInfoList();
-            dacInfoList.Value.Add(dacInfo);
-            
-            _context.Fire(new DACMinted
-            {
-                DacName = dacName,
-                FromDacId = dacId,
-                Quantity = 1,
-                DacInfo = dacInfoList
-            });
+            _ownerNftMap = ownerNftMap;
         }
 
         private DACInfo PerformCreate(string dacName, long dacId, Hash dacFile = null)
@@ -62,42 +46,12 @@ namespace Sinodac.Contracts.DAC.Managers
             _ownerMap[strHash] = initialAddress;
             return _dacMap[dacName][dacId];
         }
-
-       
-        public void BatchCreate(string dacName, long fromDacId, List<Hash> redeemCodeHashList, long count = 0)
+        
+        public void BatchCreate(string dacName, long fromDacId, Hash dacFile, long count = 0, long circulation = 0)
         {
-            var protocol = _protocolManager.GetProtocol(dacName);
-
             count = count == 0
-                ? protocol.Circulation.Sub(fromDacId).Add(1)
-                : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
-
-            var dacMintInfo = new DACInfoList();
-            
-            for (long dacId = fromDacId; dacId < count.Add(fromDacId); dacId++)
-            {
-                if (_dacMap[dacName][dacId] == null)
-                {
-                    var dacInfo = PerformCreate(dacName, dacId, redeemCodeHashList[(int)(dacId - fromDacId)]);
-                    dacMintInfo.Value.Add(dacInfo);
-                }
-            }
-
-            _context.Fire(new DACMinted()
-            {
-                DacName = dacName,
-                FromDacId = fromDacId,
-                Quantity = count,
-                DacInfo = dacMintInfo
-            });
-        }
-        public void BatchCreate(string dacName, long fromDacId, Hash dacFile, long count = 0)
-        {
-            var protocol = _protocolManager.GetProtocol(dacName);
-
-            count = count == 0
-                ? protocol.Circulation.Sub(fromDacId).Add(1)
-                : Math.Min(protocol.Circulation.Sub(fromDacId).Add(1), count);
+                ? circulation.Sub(fromDacId).Add(1)
+                : Math.Min(circulation.Sub(fromDacId).Add(1), count);
 
             var dacMintInfo = new DACInfoList();
             
@@ -115,10 +69,11 @@ namespace Sinodac.Contracts.DAC.Managers
                 DacName = dacName,
                 FromDacId = fromDacId,
                 Quantity = count,
-                DacInfo = dacMintInfo
+                DacInfo = dacMintInfo,
+                ContractAddress = _context.Self
             });
         }
-        public void InitialTransfer(string nftInfoId, Address to, string nftHash, string nftFile, string owner)
+        public void InitialTransfer(string nftInfoId, Address to, string nftHash, string nftFile, string owner, string nftName, long nftId)
         {
             var initialAddress = _ownerMap[nftHash];
             // var initialAddress = CalculateInitialAddress(nftHash);
@@ -135,32 +90,22 @@ namespace Sinodac.Contracts.DAC.Managers
             _ownerMap[nftHash] = to;
             _balanceMap[nftFile][to] = _balanceMap[nftFile][to].Add(1);
 
+            var nftInfo = _dacMap[nftName][nftId];
+            _ownerNftMap[to].NftInfo.Add(new NftInfo()
+            {
+                DacHash = nftInfo.DacHash,
+                DacFile = nftInfo.DacFile,
+                DacId = nftInfo.DacId,
+                DacName = nftInfo. DacName
+            });
+            
             _context.Fire(new DACInitialTransferred
             {
                 NftInfoId = nftInfoId,
                 From = initialAddress,
                 To = to,
-                Owner = owner
-            });
-        }
-
-        public void Transfer(string dacName, long dacId, Address from, Address to)
-        {
-            // if (_ownerMap[dacName][dacId] != from)
-            // {
-            //     throw new AssertionException($"{from} 不拥有 DAC {dacName}:{dacId}");
-            // }
-            //
-            // _ownerMap[dacName][dacId] = to;
-            _balanceMap[dacName][to] = _balanceMap[dacName][to].Add(1);
-            _balanceMap[dacName][from] = _balanceMap[dacName][from].Sub(1);
-
-            _context.Fire(new DACTransferred
-            {
-                DacName = dacName,
-                DacId = dacId,
-                From = from,
-                To = to
+                Owner = owner,
+                ContractAddress = _context.Self
             });
         }
 

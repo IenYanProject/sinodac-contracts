@@ -15,9 +15,6 @@
         <ContractReference Include="..\..\protobuf\dac_contract.proto">
             <Link>Protobuf\Proto\dac_contract.proto</Link>
         </ContractReference>
-        <ContractReference Include="..\..\protobuf\dac_market_contract.proto">
-            <Link>Protobuf\Proto\dac_market_contract.proto</Link>
-        </ContractReference>
     </ItemGroup>
 
     <ItemGroup>

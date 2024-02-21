@@ -1,3 +1,4 @@
+using AElf.Sdk.CSharp;
 using Google.Protobuf.WellKnownTypes;
 
 namespace Sinodac.Contracts.DAC
@@ -7,7 +8,8 @@ namespace Sinodac.Contracts.DAC
         public override Empty Initialize(InitializeInput input)
         {
             PerformRegisterPermissions(input);
-            State.DACMarketContractAddress.Value = input.DacMarketContractAddress;
+            State.TokenContract.Value =
+                Context.GetContractAddressByName(SmartContractConstants.TokenContractSystemName);
             return new Empty();
         }
     }

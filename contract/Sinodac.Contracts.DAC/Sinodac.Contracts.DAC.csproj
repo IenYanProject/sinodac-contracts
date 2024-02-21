@@ -20,6 +20,12 @@
         <ContractCode Include="..\..\protobuf\dac_contract.proto">
             <Link>Protobuf\Proto\dac_contract.proto</Link>
         </ContractCode>
+        <ContractReference Include="..\..\protobuf\token_contract.proto">
+            <Link>Protobuf\Proto\reference\token_contract.proto</Link>
+        </ContractReference>
+        <ContractReference Include="..\..\protobuf\token_holder_contract.proto">
+            <Link>Protobuf\Proto\reference\token_holder_contract.proto</Link>
+        </ContractReference>
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="Volo.Abp.Timing" Version="3.1.0" />
